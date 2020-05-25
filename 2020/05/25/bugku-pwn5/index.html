@@ -18,18 +18,18 @@
   
   
   <title>Bugkuctf pwn5 | Ld1ng</title>
-  <meta name="description" content="0x01 前言总算熬过了考试周，攒了好多题没刷。 作为刚学pwn的小白，这题摸了好久才发现摸出一个大坑，心态崩了.. 我决定好好记录一下。  0x02 IDA分析首先checksec一下，查看防护机制，发现只打开了NX。     拖入IDA，发现程序很简单，有两处明显漏洞，第一个是格式化字符串漏洞，如下所示。 1234567memset(&amp;s, 0, 0x20uLL);puts(&quot;人类的本">
+  <meta name="description" content="0x01 前言总算熬过了考试周，攒了好多题没刷。 作为刚学pwn的小白，这题摸了好久才发现摸出一个大坑，心态崩了.. 我决定好好记录一下。  0x02 IDA分析首先checksec一下，查看防护机制，发现只打开了NX。     拖入IDA，发现程序很简单，有两处明显漏洞，第一个是格式化字符串漏洞，如下所示。 1234567memset(&amp;s, 0, 0x20uLL);puts(&amp;quot">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Bugkuctf pwn5">
 <meta property="og:url" content="www.ld1ng.com/2020/05/25/bugku-pwn5/index.html">
 <meta property="og:site_name" content="Ld1ng">
-<meta property="og:description" content="0x01 前言总算熬过了考试周，攒了好多题没刷。 作为刚学pwn的小白，这题摸了好久才发现摸出一个大坑，心态崩了.. 我决定好好记录一下。  0x02 IDA分析首先checksec一下，查看防护机制，发现只打开了NX。     拖入IDA，发现程序很简单，有两处明显漏洞，第一个是格式化字符串漏洞，如下所示。 1234567memset(&amp;s, 0, 0x20uLL);puts(&quot;人类的本">
+<meta property="og:description" content="0x01 前言总算熬过了考试周，攒了好多题没刷。 作为刚学pwn的小白，这题摸了好久才发现摸出一个大坑，心态崩了.. 我决定好好记录一下。  0x02 IDA分析首先checksec一下，查看防护机制，发现只打开了NX。     拖入IDA，发现程序很简单，有两处明显漏洞，第一个是格式化字符串漏洞，如下所示。 1234567memset(&amp;s, 0, 0x20uLL);puts(&amp;quot">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.loli.net/2020/05/25/YPHVey8cw1DMlUA.png">
 <meta property="og:image" content="https://i.loli.net/2020/05/25/3aGwUtbNPZ1JH75.png">
 <meta property="og:image" content="https://i.loli.net/2020/05/25/qyICQo6GHtuKXDj.png">
 <meta property="article:published_time" content="2020-05-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-05-25T13:52:33.084Z">
+<meta property="article:modified_time" content="2020-05-25T13:56:29.542Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="Security">
 <meta name="twitter:card" content="summary">
@@ -399,7 +399,7 @@
 
 
 <p>拖入IDA，发现程序很简单，有两处明显漏洞，第一个是<strong>格式化字符串漏洞</strong>，如下所示。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">memset</span>(&amp;s, <span class="number">0</span>, <span class="number">0x20</span>uLL);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"人类的本质是什么?\n"</span>);</span><br><span class="line"><span class="built_in">read</span>(<span class="number">0</span>, &amp;s, <span class="number">8u</span>LL);</span><br><span class="line"><span class="built_in">printf</span>(&amp;s, &amp;s);</span><br><span class="line"><span class="built_in">puts</span>(&amp;s);</span><br><span class="line"><span class="built_in">puts</span>(&amp;s);</span><br><span class="line"><span class="built_in">puts</span>(&amp;s);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">memset(&amp;s, 0, 0x20uLL);</span><br><span class="line">puts(&quot;人类的本质是什么?\n&quot;);</span><br><span class="line">read(0, &amp;s, 8uLL);</span><br><span class="line">printf(&amp;s, &amp;s);</span><br><span class="line">puts(&amp;s);</span><br><span class="line">puts(&amp;s);</span><br><span class="line">puts(&amp;s);</span><br></pre></td></tr></table></figure>
 
 <p>关于格式化字符串漏洞可以参考这篇文章：<a href="https://www.cnblogs.com/elvirangel/p/7191512.html" target="_blank" rel="noopener">格式化字符串讲解</a></p>
 <p>还有这篇很不错的<a href="[https://veritas501.space/2017/04/28/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/](https://veritas501.space/2017/04/28/格式化字符串漏洞学习/)">经典讲解</a>，讲的特别好，可以好好学习一下。</p>
