@@ -5546,7 +5546,7 @@ code {
   padding: 0.2em 0.4em;
   margin: 0 0.3em;
   color: #555;
-  background: #282828;
+  background: #eee;
   border-radius: 3px;
   font-size: 85%;
 }
@@ -5571,7 +5571,7 @@ pre code {
   top: 0;
   left: 0;
   right: 0;
-  background-color: #f6f6f6;
+  background-color: #3b3b3b;
   padding: 0 10px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
