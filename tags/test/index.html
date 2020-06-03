@@ -236,12 +236,17 @@
 
     
       
-  <div class="widget">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget-body tagcloud">
-      <a href="/tags/CTF/" style="font-size: 14px;">CTF</a> <a href="/tags/OpenCV/" style="font-size: 13px;">OpenCV</a> <a href="/tags/Test/" style="font-size: 13px;">Test</a>
+    <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+    <div class="widget-wrap">
+        <h3 class="widget-title">Tag Cloud</h3>
+        <div id="myCanvasContainer" class="widget tagcloud">
+            <canvas width="250" height="250" id="resCanvas" style="width=100%">
+                <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/OpenCV/" style="font-size: 10px;">OpenCV</a> <a href="/tags/Test/" style="font-size: 10px;">Test</a>
+            </canvas>
+        </div>
     </div>
-  </div>
+
 
     
       
@@ -354,11 +359,11 @@
         <ul>
           <li><a href="/tags">All</a></li>
           
+          <li><a href="/tags/CTF/">CTF</a></li>
+          
           <li><a href="/tags/OpenCV/">OpenCV</a></li>
           
           <li><a href="/tags/Test/">Test</a></li>
-          
-          <li><a href="/tags/CTF/">CTF</a></li>
           
         </ul>
       </nav>
