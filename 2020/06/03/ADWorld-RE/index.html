@@ -17,28 +17,22 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>CUMT CTF Mind reading | Ld1ng</title>
-  <meta name="description" content="前言前几天Dec1CTF和网鼎杯让小白我毫无体验…干脆去学校的CTF平台刷刷入门题… 结果是入门题竟然都被卡住，哭了，下面就写一下这道入门题涉及的知识点。 （其实快要考数据库了，但现在还不想复习）  废话不多说，直接上题 暴躁下载 暴躁拖IDA 暴躁F5 冷静分析🚬   程序很简单 输出“Heard you can read my mine?    Please input your answe">
+  <title>ADWorld_RE  (updating..) | Ld1ng</title>
+  <meta name="description" content="前言终于走出ADWorld的新手区了，逆向和PWN将同期不同时进行更新。。。 快考试了，说实话压力有点大😭 不说了，上题！  0x01 EasyRE先审题，经典Easy了。。一看难度才两颗星，盲猜不简单。。 拖入IDA，shift+f12查看字符串，跟进关键函数 关键代码如下 123456789101112131415161718192021222324252627282930v7 &#x3D; 0i64">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CUMT CTF Mind reading">
-<meta property="og:url" content="http://ld1ng.com/2020/05/11/IDA%E5%8A%A8%E8%B0%83/index.html">
+<meta property="og:title" content="ADWorld_RE  (updating..)">
+<meta property="og:url" content="http://ld1ng.com/2020/06/03/ADWorld-RE/index.html">
 <meta property="og:site_name" content="Ld1ng">
-<meta property="og:description" content="前言前几天Dec1CTF和网鼎杯让小白我毫无体验…干脆去学校的CTF平台刷刷入门题… 结果是入门题竟然都被卡住，哭了，下面就写一下这道入门题涉及的知识点。 （其实快要考数据库了，但现在还不想复习）  废话不多说，直接上题 暴躁下载 暴躁拖IDA 暴躁F5 冷静分析🚬   程序很简单 输出“Heard you can read my mine?    Please input your answe">
+<meta property="og:description" content="前言终于走出ADWorld的新手区了，逆向和PWN将同期不同时进行更新。。。 快考试了，说实话压力有点大😭 不说了，上题！  0x01 EasyRE先审题，经典Easy了。。一看难度才两颗星，盲猜不简单。。 拖入IDA，shift+f12查看字符串，跟进关键函数 关键代码如下 123456789101112131415161718192021222324252627282930v7 &#x3D; 0i64">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://i.loli.net/2020/05/11/dQmZbTsv6h1n9LJ.png">
-<meta property="og:image" content="https://i.loli.net/2020/05/11/Pah3vI1KjRuYDfq.png">
-<meta property="og:image" content="https://i.loli.net/2020/05/11/UiTDCqkF1MBpJvX.png">
-<meta property="og:image" content="https://i.loli.net/2020/05/11/IPMSz7Xg5BsAebG.png">
-<meta property="og:image" content="https://i.loli.net/2020/05/11/Ym8pDyw4d9PMIzt.png">
-<meta property="og:image" content="https://i.loli.net/2020/05/11/3WjPtnA9FXeG1Np.png">
-<meta property="article:published_time" content="2020-05-10T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-06-01T12:13:57.550Z">
+<meta property="article:published_time" content="2020-06-02T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-06-03T16:16:15.335Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
+<meta property="article:tag" content="ADWorld">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2020/05/11/dQmZbTsv6h1n9LJ.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://ld1ng.com/2020/05/11/IDA%E5%8A%A8%E8%B0%83/index.html">
+  <link rel="canonical" href="http://ld1ng.com/2020/06/03/ADWorld-RE/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
   
@@ -362,21 +356,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">Catalogue</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#小结："><span class="toc-number">1.0.0.1.</span> <span class="toc-text">小结：</span></a></li></ol></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-EasyRE"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 EasyRE</span></a></li></ol></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-IDA动调" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-ADWorld-RE" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      CUMT CTF Mind reading
+      ADWorld_RE  (updating..)
     </h1>
   
 
@@ -384,8 +378,8 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2020/05/11/IDA%E5%8A%A8%E8%B0%83/" class="article-date">
-	  <time datetime="2020-05-10T16:00:00.000Z" itemprop="datePublished">2020-05-11</time>
+	<a href="/2020/06/03/ADWorld-RE/" class="article-date">
+	  <time datetime="2020-06-02T16:00:00.000Z" itemprop="datePublished">2020-06-03</time>
 	</a>
 </span>
         
@@ -397,7 +391,7 @@
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link" href="/tags/CTF/" rel="tag">CTF</a>
+	<a class="article-tag-link" href="/tags/ADWorld/" rel="tag">ADWorld</a>, <a class="article-tag-link" href="/tags/CTF/" rel="tag">CTF</a>
   </span>
 
 
@@ -410,54 +404,40 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/05/11/IDA%E5%8A%A8%E8%B0%83/#comments" class="article-comment-link">Comments</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/03/ADWorld-RE/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 492(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 530(words)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 1(minutes)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 2(minutes)</span>
 	
 
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前几天Dec1CTF和网鼎杯让小白我毫无体验…干脆去学校的CTF平台刷刷入门题…</p>
-<p>结果是入门题竟然都被卡住，哭了，下面就写一下这道<strong>入门题</strong>涉及的知识点。</p>
-<p>（其实快要考数据库了，但现在还不想复习）</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>终于走出ADWorld的新手区了，逆向和PWN将同期不同时进行更新。。。</p>
+<p>快考试了，说实话压力有点大😭</p>
+<p>不说了，上题！</p>
 <hr>
-<p>废话不多说，直接上题<img src="https://i.loli.net/2020/05/11/dQmZbTsv6h1n9LJ.png" alt="1"></p>
-<p>暴躁下载</p>
-<p>暴躁拖IDA</p>
-<p>暴躁F5</p>
-<p>冷静分析🚬</p>
-<img src="https://i.loli.net/2020/05/11/Pah3vI1KjRuYDfq.png" alt="批注 2020-05-11 102016"  />
+<h2 id="0x01-EasyRE"><a href="#0x01-EasyRE" class="headerlink" title="0x01 EasyRE"></a>0x01 EasyRE</h2><p>先审题，经典Easy了。。一看难度才两颗星，盲猜不简单。。</p>
+<p>拖入IDA，<code>shift</code>+<code>f12</code>查看字符串，跟进关键函数</p>
+<p>关键代码如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">v7 = <span class="number">0</span>i64;</span><br><span class="line">v8 = <span class="number">0</span>i64;</span><br><span class="line">sub_401050((<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;unk_402158, (<span class="keyword">unsigned</span> <span class="keyword">int</span>)&amp;v7);</span><br><span class="line">  v0 = <span class="built_in">strlen</span>((<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;v7);</span><br><span class="line">  <span class="keyword">if</span> ( v0 &gt;= <span class="number">0x10</span> &amp;&amp; v0 == <span class="number">24</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v1 = <span class="number">0</span>;</span><br><span class="line">    v2 = (<span class="keyword">char</span> *)&amp;v8 + <span class="number">7</span>;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">      v3 = *v2--;</span><br><span class="line">      byte_40336C[v1++] = v3;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> ( v1 &lt; <span class="number">24</span> );</span><br><span class="line">    v4 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">      byte_40336C[v4] = (byte_40336C[v4] + <span class="number">1</span>) ^ <span class="number">6</span>;</span><br><span class="line">      ++v4;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> ( v4 &lt; <span class="number">0x18</span> );</span><br><span class="line">    v5 = <span class="built_in">strcmp</span>(byte_40336C, (<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;unk_402124);</span><br><span class="line">    <span class="keyword">if</span> ( v5 )</span><br><span class="line">      v5 = -(v5 &lt; <span class="number">0</span>) | <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> ( !v5 )</span><br><span class="line">    &#123;</span><br><span class="line">      sub_401020(<span class="string">"right\n"</span>, v7);</span><br><span class="line">      system(<span class="string">"pause"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 
-<p>程序很简单</p>
-<p>输出“Heard you can read my mine?    Please input your answer:” </p>
-<p>输入长度为32的v1，生成随机数v2（跟进mymine函数查看）</p>
-<p>如果输入的v1与v2相同，成功，否则错误。</p>
+<p>程序分为上下两个do while循环，第二个逻辑很简单，关键点：<code>byte_40336C[v4] = (byte_40336C[v4] + 1) ^ 6</code></p>
+<p>第一个循环似乎每个变量都没有明确指向，很难理解</p>
+<p>终极解决方案：看汇编</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">.text:00401100 loc_401100:                             ; CODE XREF: sub_401080+8E↓j</span><br><span class="line">.text:00401100                 mov     al, [esi]</span><br><span class="line">.text:00401102                 lea     esi, [esi-1]</span><br><span class="line">.text:00401105                 mov     byte_40336C[edx], al</span><br><span class="line">.text:0040110B                 inc     edx</span><br><span class="line">.text:0040110C                 cmp     edx, ecx</span><br><span class="line">.text:0040110E                 jl      short loc_401100</span><br><span class="line">.text:00401110                 pop     esi</span><br><span class="line">.text:00401111</span><br><span class="line">.text:00401111 loc_401111:                             ; CODE XREF: sub_401080+6F↑j</span><br><span class="line">.text:00401111                 xor     edx, edx</span><br><span class="line">.text:00401113</span><br><span class="line">.text:00401113 loc_401113:                             ; CODE XREF: sub_401080+A6↓j</span><br><span class="line">.text:00401113                 mov     al, byte_40336C[edx]</span><br><span class="line">.text:00401119                 inc     al</span><br><span class="line">.text:0040111B                 xor     al, 6</span><br><span class="line">.text:0040111D                 mov     byte_40336C[edx], al</span><br><span class="line">.text:00401123                 inc     edx</span><br><span class="line">.text:00401124                 cmp     edx, ecx</span><br><span class="line">.text:00401126                 jb      short loc_401113</span><br><span class="line">.text:00401128                 mov     ecx, offset unk_402124</span><br><span class="line">.text:0040112D                 mov     eax, offset byte_40336C</span><br><span class="line">.text:00401132</span><br></pre></td></tr></table></figure>
+
+<p>其余代码不必理会，主要看关键点，在<code>loc_401100</code>中，从高地址开始依次将<strong>esi存放的地址值所指向的数据</strong>放入<code>byte_40336C[edx]</code>中，所以此处操作（也就是第一个do while循环）是将输入的字符进行倒叙。</p>
+<p>∴函数逻辑是将输入字符进行倒叙，然后分别+1并与6异或，最终数据为<code>(const char *)&amp;unk_402124</code>的值。</p>
+<p>脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a = [<span class="number">0x78</span>, <span class="number">0x49</span>, <span class="number">0x72</span>, <span class="number">0x43</span>, <span class="number">0x6A</span>, <span class="number">0x7E</span>, <span class="number">0x3C</span>, <span class="number">0x72</span>, <span class="number">0x7C</span>, <span class="number">0x32</span>, <span class="number">0x74</span>, <span class="number">0x57</span>, <span class="number">0x73</span>, <span class="number">0x76</span>, <span class="number">0x33</span>, <span class="number">0x50</span>, <span class="number">0x74</span>, <span class="number">0x49</span>, <span class="number">0x7F</span>, <span class="number">0x7A</span>, <span class="number">0x6E</span>, <span class="number">0x64</span>, <span class="number">0x6B</span>, <span class="number">0x61</span>,<span class="number">0x00</span>,<span class="number">0x00</span>,<span class="number">0x00</span>,<span class="number">0x00</span>]</span><br><span class="line">print(len(a))</span><br><span class="line">flag = <span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(a)<span class="number">-1</span>,<span class="number">-1</span>,<span class="number">-1</span>):<span class="comment">#len(a)=28,范围是0-27，所以len(a)需要-1；</span></span><br><span class="line">	flag += chr((a[i] ^ <span class="number">6</span>) - <span class="number">1</span>)</span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
+
+<p>结果：flag{xNqU4otPq3ys9wkDsN}</p>
 <hr>
-<p><strong>知识点一：</strong>了解<code>srand(seed)</code>函数和<code>rand()</code>函数，<code>srand(seed)</code>函数初始化随机种子，会提供一个种子，这个种子会对应一个随机数，如果使用相同的种子后面的<code>rand()</code>函数会出现一样的随机数。在这里随机数种子是一个常值<code>0xABCDu</code>，所以随机数序列是固定的。</p>
-<p>可以<a href="https://baike.baidu.com/item/srand/796881?fr=aladdin" target="_blank" rel="noopener">参考百度</a></p>
-<hr>
-<p>所以我们只需要知道v2的值即可。</p>
-<p>这里无法直接查看，需要动态调试（因为输入之后才会生成v2）</p>
-<p>第一次使用<strong>IDA动态调试</strong>有些紧张   <del>（搓手手）</del></p>
-<p>需要注意的点是：程序需要存放在<strong>不含有中文</strong>的路径下，否则会报错。</p>
-<p>按下F9进入动态调试界面</p>
-<p><img src="https://i.loli.net/2020/05/11/UiTDCqkF1MBpJvX.png" alt="批注 2020-05-11 104811"></p>
-<p>可以在文本框搜索main函数，进入C语言代码界面，F2在第13行下断点</p>
-<p><img src="https://i.loli.net/2020/05/11/IPMSz7Xg5BsAebG.png" alt="批注 2020-05-11 104944"></p>
-<p>在程序界面输入32位字符</p>
-<p><img src="https://i.loli.net/2020/05/11/Ym8pDyw4d9PMIzt.png" alt="批注 2020-05-11 105144"></p>
-<p>回车，随机数v2生成完毕，点击查看即可。</p>
-<p>若找不到点击选择<code>IDA View-RIP</code>。</p>
-<p><img src="https://i.loli.net/2020/05/11/3WjPtnA9FXeG1Np.png" alt="批注 2020-05-11 105347"></p>
-<p><code>∴flag = CUMTCTF{v2}</code></p>
-<h4 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h4><p>本题只是单纯体验一下强大的IDA的动态调试，但并不推荐使用。</p>
-<p>今后做题还是推荐动态能力更强的<a href="http://www.ollydbg.org/" target="_blank" rel="noopener">OD</a>或者<a href="https://x64dbg.com/#start" target="_blank" rel="noopener">x64dbg</a>，配合IDA的静态分析，<del>还有解不出来的逆向题？</del>  一定会对解题更有帮助！</p>
 
       
     </div>
@@ -467,7 +447,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://ld1ng.com/2020/05/11/IDA%E5%8A%A8%E8%B0%83/" title="CUMT CTF Mind reading">http://ld1ng.com/2020/05/11/IDA%E5%8A%A8%E8%B0%83/</a>
+      <a href="http://ld1ng.com/2020/06/03/ADWorld-RE/" title="ADWorld_RE  (updating..)">http://ld1ng.com/2020/06/03/ADWorld-RE/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -514,12 +494,12 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2020/05/25/bugku-pwn5/" title="BugkuCTF pwn5"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+      <a href="/2020/06/03/ADWorld-pwn/" title="ADWorld_PWN  (updating..)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/2020/05/08/OpenCV/" title="基于OpenCV的动态识别系统——随笔"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2020/05/25/bugku-pwn5/" title="BugkuCTF pwn5"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
