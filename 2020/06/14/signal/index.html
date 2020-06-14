@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/06/14/udbCneJyRa9hYHN.png">
 <meta property="og:image" content="https://i.loli.net/2020/06/14/AvlxX4KD5fezk9m.png">
 <meta property="article:published_time" content="2020-06-13T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-06-14T11:23:17.622Z">
+<meta property="article:modified_time" content="2020-06-14T13:25:03.121Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
@@ -453,8 +453,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">case1：进行赋值操作，将v5的值赋给v4，标号索引全加<span class="number">1</span>  </span><br><span class="line"><span class="comment">//后面可以知道v4内数据用来作最后的比较</span></span><br><span class="line">case2：v3与a1的下一个值相加，索引加<span class="number">2</span>（跳过用于运算的数值）</span><br><span class="line">case3：v3减去a1的下一个值，索引加<span class="number">2</span></span><br><span class="line">case4：a1的下一个数值与v3异或，索引加<span class="number">2</span></span><br><span class="line">case5：a1下一个数值与v3相乘，索引加<span class="number">2</span></span><br><span class="line">case6：空操作</span><br><span class="line">case7：v4的数值分别与a1的下一个数值进行比较，全正确则通过</span><br><span class="line">case8：相当于一个复制操作，保存当前值</span><br><span class="line">case9：刚发现没有case9</span><br><span class="line">case10：输入<span class="number">15</span>位数值，放在v3中</span><br><span class="line">case11：v3<span class="number">-1</span></span><br><span class="line">case12：v3+<span class="number">1</span></span><br></pre></td></tr></table></figure>
 
 <p>了解了全部操作，那么就可以分析它的实现流程了</p>
-<h2 id="0x03-实现流程"><a href="#0x03-实现流程" class="headerlink" title="0x03 实现流程"></a>0x03 实现流程</h2><p>1.手撕程序</p>
-<p>对照着<code>0x403040</code>的数据可以一步一步摸清它的脉络</p>
+<h2 id="0x03-实现流程"><a href="#0x03-实现流程" class="headerlink" title="0x03 实现流程"></a>0x03 实现流程</h2><p>对照着<code>0x403040</code>的数据可以一步一步摸清它的脉络</p>
 <p>首先第一个操作码是10，是输入15位数据（也就是要求的flag）</p>
 <p>下一个操作码是4，flag[0]与a1的下一个数值（16）进行异或，索引加2</p>
 <p>下一个操作码是8，保存当前状态。</p>
