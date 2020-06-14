@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>2020 网鼎杯_signal | Ld1ng</title>
+  <meta name="description" content="0x01 前言找了一道好久之前网鼎杯的逆向题，说实话，这是我第一次见虚拟机的逆向 也是搞了好久才做出了，写篇博客纪念一下o(￣▽￣)o 现在已经深夜了，害怕第二天就忘了，所以赶紧记下来 还有刚刚考完操作系统，我裂开了…….  已经第二天了，刚刚写出脚本，回来接着写 说实话第一次见虚拟机的题目还挺有新鲜感的 不过真正吃透一道题也不容易（还是自己太菜） 本题三种解法我了解的差不多了，当作笔记好好记录一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020 网鼎杯_signal">
+<meta property="og:url" content="http://ld1ng.com/2020/06/14/signal/index.html">
+<meta property="og:site_name" content="Ld1ng">
+<meta property="og:description" content="0x01 前言找了一道好久之前网鼎杯的逆向题，说实话，这是我第一次见虚拟机的逆向 也是搞了好久才做出了，写篇博客纪念一下o(￣▽￣)o 现在已经深夜了，害怕第二天就忘了，所以赶紧记下来 还有刚刚考完操作系统，我裂开了…….  已经第二天了，刚刚写出脚本，回来接着写 说实话第一次见虚拟机的题目还挺有新鲜感的 不过真正吃透一道题也不容易（还是自己太菜） 本题三种解法我了解的差不多了，当作笔记好好记录一">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/06/14/TWOQHMdemzoRqYb.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/14/2mfMaRsH1nxLw5e.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/14/vFeAPrMR5ZzUtc8.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/14/udbCneJyRa9hYHN.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/14/AvlxX4KD5fezk9m.png">
+<meta property="article:published_time" content="2020-06-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-06-14T08:43:07.921Z">
+<meta property="article:author" content="Ld1ng">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/06/14/TWOQHMdemzoRqYb.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://ld1ng.com/2020/06/14/signal/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/ld1ng" target="_blank">
+          <img class="img-circle img-rotate" src="/images/liding.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Ld1ng</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md"></h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> JiangSu , China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">Books</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>When people lose their thinking power, the human age will end</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DEVELOP/">DEVELOP</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LIFE/">LIFE</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/REVERSE/">REVERSE</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+    <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+    <div class="widget-wrap">
+        <h3 class="widget-title">Tag Cloud</h3>
+        <div id="myCanvasContainer" class="widget tagcloud">
+            <canvas width="200" height="200" id="resCanvas" style="width=100%">
+                <a href="/tags/ADWorld/" style="font-size: 15px;">ADWorld</a> <a href="/tags/Bugku/" style="font-size: 10px;">Bugku</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/EXAMPLE/" style="font-size: 10px;">EXAMPLE</a> <a href="/tags/OpenCV/" style="font-size: 10px;">OpenCV</a>
+            </canvas>
+        </div>
+    </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ADWorld/" rel="tag">ADWorld</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bugku/" rel="tag">Bugku</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/EXAMPLE/" rel="tag">EXAMPLE</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenCV/" rel="tag">OpenCV</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/REVERSE/">REVERSE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/14/signal/" class="title">2020 网鼎杯_signal</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-13T16:00:00.000Z" itemprop="datePublished">2020-06-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/03/ADWorld-pwn/" class="title">ADWorld_PWN  (updating..)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-02T16:00:00.000Z" itemprop="datePublished">2020-06-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/REVERSE/">REVERSE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/03/ADWorld-RE/" class="title">ADWorld_RE  (updating..)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-02T16:00:00.000Z" itemprop="datePublished">2020-06-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/25/bugku-pwn5/" class="title">BugkuCTF pwn5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-24T16:00:00.000Z" itemprop="datePublished">2020-05-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/REVERSE/">REVERSE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/11/IDA%E5%8A%A8%E8%B0%83/" class="title">CUMT CTF Mind reading</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-10T16:00:00.000Z" itemprop="datePublished">2020-05-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-前言"><span class="toc-number">1.</span> <span class="toc-text">0x01 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-程序分析"><span class="toc-number">1.1.</span> <span class="toc-text">0x02 程序分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-实现流程"><span class="toc-number">1.2.</span> <span class="toc-text">0x03 实现流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-脚本"><span class="toc-number">1.3.</span> <span class="toc-text">0x04 脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-小结"><span class="toc-number">1.4.</span> <span class="toc-text">0x05 小结</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-signal" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      2020 网鼎杯_signal
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/14/signal/" class="article-date">
+	  <time datetime="2020-06-13T16:00:00.000Z" itemprop="datePublished">2020-06-14</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/REVERSE/">REVERSE</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/CTF/" rel="tag">CTF</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/14/signal/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 2.6k(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 11(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h1><p>找了一道好久之前网鼎杯的逆向题，说实话，这是我第一次见虚拟机的逆向</p>
+<p>也是搞了好久才做出了，写篇博客纪念一下o(<em>￣▽￣</em>)o</p>
+<p>现在已经深夜了，害怕第二天就忘了，所以赶紧记下来</p>
+<p>还有刚刚考完操作系统，我裂开了…….</p>
+<hr>
+<p>已经第二天了，刚刚写出脚本，回来接着写</p>
+<p>说实话第一次见虚拟机的题目还挺有新鲜感的</p>
+<p>不过真正吃透一道题也不容易（还是自己太菜）</p>
+<p>本题三种解法我了解的差不多了，当作笔记好好记录一下</p>
+<hr>
+<h2 id="0x02-程序分析"><a href="#0x02-程序分析" class="headerlink" title="0x02 程序分析"></a>0x02 程序分析</h2><p>主函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [esp+18h] [ebp-1D4h]</span></span><br><span class="line"></span><br><span class="line">  __main();</span><br><span class="line">  qmemcpy(&amp;v4, &amp;unk_403040, <span class="number">0x1C8</span>u);</span><br><span class="line">  vm_operad(&amp;v4, <span class="number">114</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"good,The answer format is:flag &#123;&#125;"</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不管别的，把<code>&amp;unk_403040</code>的值扣下来再说</p>
+<p><img src="https://i.loli.net/2020/06/14/TWOQHMdemzoRqYb.png" alt=""></p>
+<p>主函数做的是先把<code>&amp;unk_403040</code>的值赋给<code>&amp;v4</code>，然后进入<code>vm_operad</code>函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">vm_operad</span><span class="params">(<span class="keyword">int</span> *a1, <span class="keyword">int</span> a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> result; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">char</span> v3[<span class="number">100</span>]; <span class="comment">// [esp+13h] [ebp-E5h]</span></span><br><span class="line">  <span class="keyword">char</span> v4[<span class="number">100</span>]; <span class="comment">// [esp+77h] [ebp-81h]</span></span><br><span class="line">  <span class="keyword">char</span> v5; <span class="comment">// [esp+DBh] [ebp-1Dh]</span></span><br><span class="line">  <span class="keyword">int</span> v6; <span class="comment">// [esp+DCh] [ebp-1Ch]</span></span><br><span class="line">  <span class="keyword">int</span> v7; <span class="comment">// [esp+E0h] [ebp-18h]</span></span><br><span class="line">  <span class="keyword">int</span> v8; <span class="comment">// [esp+E4h] [ebp-14h]</span></span><br><span class="line">  <span class="keyword">int</span> v9; <span class="comment">// [esp+E8h] [ebp-10h]</span></span><br><span class="line">  <span class="keyword">int</span> v10; <span class="comment">// [esp+ECh] [ebp-Ch]</span></span><br><span class="line"></span><br><span class="line">  v10 = <span class="number">0</span>;</span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  v8 = <span class="number">0</span>;</span><br><span class="line">  v7 = <span class="number">0</span>;</span><br><span class="line">  v6 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    result = v10;</span><br><span class="line">    <span class="keyword">if</span> ( v10 &gt;= a2 )</span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">    <span class="keyword">switch</span> ( a1[v10] )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        v4[v7] = v5;</span><br><span class="line">        ++v10;</span><br><span class="line">        ++v7;</span><br><span class="line">        ++v9;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        v5 = a1[v10 + <span class="number">1</span>] + v3[v9];</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">        v5 = v3[v9] - LOBYTE(a1[v10 + <span class="number">1</span>]);</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">        v5 = a1[v10 + <span class="number">1</span>] ^ v3[v9];</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">        v5 = a1[v10 + <span class="number">1</span>] * v3[v9];</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">6</span>:</span><br><span class="line">        ++v10;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">7</span>:</span><br><span class="line">        <span class="keyword">if</span> ( v4[v8] != a1[v10 + <span class="number">1</span>] )</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="built_in">printf</span>(<span class="string">"what a shame..."</span>);</span><br><span class="line">          <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        ++v8;</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">8</span>:</span><br><span class="line">        v3[v6] = v5;</span><br><span class="line">        ++v10;</span><br><span class="line">        ++v6;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">10</span>:</span><br><span class="line">        <span class="built_in">read</span>(v3);</span><br><span class="line">        ++v10;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">11</span>:</span><br><span class="line">        v5 = v3[v9] - <span class="number">1</span>;</span><br><span class="line">        ++v10;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">12</span>:</span><br><span class="line">        v5 = v3[v9] + <span class="number">1</span>;</span><br><span class="line">        ++v10;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一次见，感觉这么多数一定很麻烦，但其实如果理解了其中的操作并不难</p>
+<p>粗略的看一下，有 what a shame 这样的字符串，所以应该是要比较字符</p>
+<p>再仔细分析程序，switch 这里用的参数是 a1（0x403040的值），v10 相当于是索引，从0开始递增，</p>
+<p>进而遍历 0x403040之后的所有数（四字节为单位）。</p>
+<p>所以说 0x403040 这里面储存的都是操作数，然后一个一个取出来，找相应的case进行操作。</p>
+<p>##特别要注意的是case7，操作码最后部分的07H都是进行比较用的</p>
+<p><img src="https://i.loli.net/2020/06/14/2mfMaRsH1nxLw5e.png" alt="image-20200614135000672"></p>
+<hr>
+<p>接下来只要根据相应的操作数一步一步分析，</p>
+<p>首先通过分析知道，a1是存入的操作数，v3是你输入的字符，v4，v5用于暂存数据</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">case1：进行赋值操作，将v5的值赋给v4，标号索引全加<span class="number">1</span>  </span><br><span class="line"><span class="comment">//后面可以知道v4内数据用来作最后的比较</span></span><br><span class="line">case2：v3与a1的下一个值相加，索引加<span class="number">2</span>（跳过用于运算的数值）</span><br><span class="line">case3：v3减去a1的下一个值，索引加<span class="number">2</span></span><br><span class="line">case4：a1的下一个数值与v3异或，索引加<span class="number">2</span></span><br><span class="line">case5：a1下一个数值与v3相乘，索引加<span class="number">2</span></span><br><span class="line">case6：空操作</span><br><span class="line">case7：v4的数值分别与a1的下一个数值进行比较，全正确则通过</span><br><span class="line">case8：相当于一个复制操作，保存当前值</span><br><span class="line">case9：刚发现没有case9</span><br><span class="line">case10：输入<span class="number">15</span>位数值，放在v3中</span><br><span class="line">case11：v3<span class="number">-1</span></span><br><span class="line">case12：v3+<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>了解了全部操作，那么就可以分析它的实现流程了</p>
+<h2 id="0x03-实现流程"><a href="#0x03-实现流程" class="headerlink" title="0x03 实现流程"></a>0x03 实现流程</h2><p>1.手撕程序</p>
+<p>对照着<code>0x403040</code>的数据可以一步一步摸清它的脉络</p>
+<p>首先第一个操作码是10，是输入15位数据（也就是要求的flag）</p>
+<p>下一个操作码是4，flag[0]与a1的下一个数值（16）进行异或，索引加2</p>
+<p>下一个操作码是8，保存当前状态。</p>
+<p>下一个操作码是3，当前值减去a1下一个数据（5）</p>
+<p>下一个操作码是1，将现在的数据赋值给v4，各个索引均加1</p>
+<p>进行对下一位flag[1]的运算操作</p>
+<p>所以可以从中找出规律，对于每一位数据的操作都结束于case1，也就是说，程序是将flag[0~14]这15位数据依次作运算，存入v4中，最后将v4的数值分别与对应的数值进行比较</p>
+<hr>
+<h2 id="0x04-脚本"><a href="#0x04-脚本" class="headerlink" title="0x04 脚本"></a>0x04 脚本</h2><p><strong>1.手撕程序</strong></p>
+<p>那么可以动笔来算一下，<del>写的有点乱，无伤大雅，勉强能冲</del>。</p>
+<p><img src="https://i.loli.net/2020/06/14/vFeAPrMR5ZzUtc8.png" alt="image-20200614133839058"></p>
+<p>由于题目的位数不多，逻辑不难，所以手撕还是挺快<del>（乐）</del>的，贴上代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">print</span> (chr((<span class="number">34</span>+<span class="number">5</span>)^<span class="number">16</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr((<span class="number">63</span>//<span class="number">3</span>)^<span class="number">32</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr(<span class="number">52</span>+<span class="number">2</span>+<span class="number">1</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr((<span class="number">50</span>^<span class="number">4</span>)<span class="number">-1</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr((<span class="number">114</span>+<span class="number">33</span>)//<span class="number">3</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr(<span class="number">51</span>+<span class="number">1</span>+<span class="number">1</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr((<span class="number">24</span>+<span class="number">32</span>)^<span class="number">9</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr((<span class="number">167</span>^<span class="number">36</span>)<span class="number">-81</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr(<span class="number">49</span>+<span class="number">1</span><span class="number">-1</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr((<span class="number">241</span><span class="number">-37</span>)//<span class="number">2</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr((<span class="number">40</span>^<span class="number">65</span>)<span class="number">-54</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr(<span class="number">132</span><span class="number">-32</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr((<span class="number">193</span><span class="number">-37</span>)//<span class="number">3</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr((<span class="number">30</span>+<span class="number">32</span>)^<span class="number">9</span>),end=<span class="string">''</span>)</span><br><span class="line"><span class="keyword">print</span> (chr(<span class="number">122</span><span class="number">-1</span><span class="number">-65</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">##疯狂print，虽然看上去很low，但简单粗暴，效率很高</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2.<del>高级</del>脚本</strong></p>
+<p>基本的逆向思维</p>
+<p><img src="https://i.loli.net/2020/06/14/udbCneJyRa9hYHN.png" alt="image-20200614145058127"></p>
+<p>找出v4的值，分别反向做逆运算就可以找出flag</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">v4 = [<span class="number">34</span>,<span class="number">63</span>,<span class="number">52</span>,<span class="number">50</span>,<span class="number">114</span>,<span class="number">51</span>,<span class="number">24</span>,<span class="number">167</span>,<span class="number">49</span>,<span class="number">241</span>,<span class="number">40</span>,<span class="number">132</span>,<span class="number">193</span>,<span class="number">30</span>,<span class="number">122</span>]</span><br><span class="line">v4.reverse()</span><br><span class="line">a=[<span class="number">10</span>, <span class="number">4</span>, <span class="number">16</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">32</span>, <span class="number">8</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">8</span>, <span class="number">11</span>, <span class="number">1</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">33</span>, <span class="number">1</span>, <span class="number">11</span>, <span class="number">8</span>, <span class="number">11</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">81</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">36</span>, <span class="number">1</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">11</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">8</span>, <span class="number">2</span>, <span class="number">37</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">54</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">65</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">32</span>, <span class="number">8</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">8</span>, <span class="number">2</span>, <span class="number">37</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">65</span>, <span class="number">8</span>, <span class="number">12</span>, <span class="number">1</span>]</span><br><span class="line">a.reverse()<span class="comment">#反向</span></span><br><span class="line">v9=<span class="number">0</span><span class="comment">#索引</span></span><br><span class="line">v3=<span class="number">0</span><span class="comment">#flag</span></span><br><span class="line">v5=<span class="number">0</span><span class="comment">#暂存数据</span></span><br><span class="line">flag=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(a)):</span><br><span class="line">    <span class="keyword">if</span> i ==len(a)<span class="number">-1</span>:</span><br><span class="line">        flag.append(v3)                   </span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">1</span> <span class="keyword">and</span> a[i<span class="number">-1</span>]!=<span class="number">1</span>:</span><br><span class="line">        v5 = v4[v9]</span><br><span class="line">        v9+=<span class="number">1</span></span><br><span class="line">        flag.append(v3)                    </span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">2</span>:</span><br><span class="line">        v3 = v5 - a[i<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">3</span>:</span><br><span class="line">        v3 = v5 + a[i<span class="number">-1</span>] </span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">4</span>:                  </span><br><span class="line">        v3 = v5^a[i<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">5</span>:                 </span><br><span class="line">        v3 = int(v5/a[i<span class="number">-1</span>])</span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">8</span>:</span><br><span class="line">        v5 = v3                            </span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">11</span>:</span><br><span class="line">        v3 = v5+<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">12</span>:</span><br><span class="line">        v3 = v5<span class="number">-1</span></span><br><span class="line">flag.reverse()</span><br><span class="line">out=<span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> flag:</span><br><span class="line">    out +=chr(j)</span><br><span class="line">print(<span class="string">"flag&#123;"</span>+out+<span class="string">"&#125;"</span>)</span><br><span class="line"><span class="comment">#看上去很高级，但....有这个时间手算不香吗</span></span><br></pre></td></tr></table></figure>
+
+<p>为了写的通俗易懂，脚本可能会存在考虑不周的地方，不过解出本题还是可以的</p>
+<p>附上队里一位<a href="https://blog.csdn.net/hanxuer_" target="_blank" rel="noopener">ideits小姐姐</a>的脚本,比赛时就解出来是真的强，</p>
+<p>（厚脸皮要来的脚本，学习一下😁）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">v1=[<span class="number">0xa</span>,<span class="number">4</span>,<span class="number">0x10</span>,<span class="number">8</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">0x20</span>,<span class="number">8</span>,<span class="number">5</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">8</span>,<span class="number">0xb</span>,</span><br><span class="line">            <span class="number">1</span>,<span class="number">0xc</span>,<span class="number">8</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">3</span>,<span class="number">8</span>,<span class="number">3</span>,<span class="number">0x21</span>,<span class="number">1</span>,<span class="number">0xb</span>,<span class="number">0x8</span>,<span class="number">0xb</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">8</span>,<span class="number">3</span>,</span><br><span class="line">            <span class="number">0x20</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0x51</span>,<span class="number">8</span>,<span class="number">4</span>,<span class="number">0x24</span>,<span class="number">1</span>,<span class="number">0xc</span>,<span class="number">8</span>,<span class="number">0xb</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">2</span>,<span class="number">8</span>,<span class="number">2</span>,<span class="number">0x25</span>,</span><br><span class="line">            <span class="number">1</span>,<span class="number">2</span>,<span class="number">0x36</span>,<span class="number">8</span>,<span class="number">4</span>,<span class="number">0x41</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0x20</span>,<span class="number">8</span>,<span class="number">5</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">3</span>,<span class="number">8</span>,<span class="number">2</span>,<span class="number">0x25</span>,</span><br><span class="line">            <span class="number">1</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">8</span>,<span class="number">3</span>,<span class="number">0x20</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0x41</span>,<span class="number">8</span>,<span class="number">0xc</span>,<span class="number">1</span>,<span class="number">7</span>,<span class="number">0x22</span>,<span class="number">7</span>,<span class="number">0x3f</span>,<span class="number">7</span>,</span><br><span class="line">            <span class="number">0x34</span>,<span class="number">7</span>,<span class="number">0x32</span>,<span class="number">7</span>,<span class="number">0x72</span>,<span class="number">7</span>,<span class="number">0x33</span>,<span class="number">7</span>,<span class="number">0x18</span>,<span class="number">7</span>,<span class="number">0xa7</span>,</span><br><span class="line">            <span class="number">7</span>,<span class="number">0x31</span>,<span class="number">7</span>,<span class="number">0xf1</span>,<span class="number">7</span>,<span class="number">0x28</span>,<span class="number">7</span>,<span class="number">0x84</span>,</span><br><span class="line">            <span class="number">7</span>,<span class="number">0xc1</span>,<span class="number">7</span>,<span class="number">0x1e</span>,<span class="number">7</span>,<span class="number">0x7a</span>]</span><br><span class="line">print(len(v1))   </span><br><span class="line">v4=[<span class="number">0</span>]*<span class="number">15</span></span><br><span class="line">v3=[<span class="number">0</span>]*<span class="number">15</span></span><br><span class="line">v7=<span class="number">0</span></span><br><span class="line">v9=<span class="number">15</span></span><br><span class="line">v6=<span class="number">14</span></span><br><span class="line">v4=[<span class="number">122</span>, <span class="number">30</span>, <span class="number">193</span>, <span class="number">132</span>, <span class="number">40</span>, <span class="number">241</span>, <span class="number">49</span>, <span class="number">167</span>, <span class="number">24</span>, <span class="number">51</span>, <span class="number">114</span>, <span class="number">50</span>, <span class="number">52</span>, <span class="number">63</span>, <span class="number">34</span>]</span><br><span class="line">print(len(v4))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(v1)<span class="number">-1</span>,<span class="number">-1</span>,<span class="number">-1</span>):</span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">1</span>):</span><br><span class="line">        v5=v4[v7]</span><br><span class="line">        v7+=<span class="number">1</span></span><br><span class="line">        v9-=<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">12</span>):</span><br><span class="line">        v3[v9]=v5<span class="number">-1</span></span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">11</span>):</span><br><span class="line">        v3[v9]=v5+<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">8</span>):</span><br><span class="line">        v5=v3[v6]</span><br><span class="line">        v6-=<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">2</span>):</span><br><span class="line">        v3[v9]=v5-v1[i+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">3</span>):</span><br><span class="line">        v3[v9]=v5+v1[i+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">4</span> ):</span><br><span class="line">        v3[v9]=v5^v1[i+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">5</span>):</span><br><span class="line">        v3[v9]=v5//v1[i+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">else</span> :</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">print(v4)</span><br><span class="line">print(v3)</span><br><span class="line"><span class="keyword">print</span> (<span class="string">""</span>.join(chr(i) <span class="keyword">for</span> i <span class="keyword">in</span> v3))</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.angr</strong></p>
+<p>angr也叫符号执行暴力破解，用于解CTF题目，emmm实战中应该作用不大</p>
+<p>这一块是我的知识盲区，直接贴上<a href="https://www.jianshu.com/p/5df6c4567a7d" target="_blank" rel="noopener">学习资源1</a>、<a href="https://www.secpulse.com/archives/83197.html" target="_blank" rel="noopener">学习资源2</a>、<a href="https://blog.csdn.net/whym1/article/details/78838026" target="_blank" rel="noopener">学习资源3</a>…….<a href="https://github.com/angr/angr" target="_blank" rel="noopener">学习资源N</a>，先记下来，以后慢慢看（咕咕咕）</p>
+<p>贴上大佬们的脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">p = angr.Project(<span class="string">'./signal.exe'</span>)   <span class="comment">#指定angr跑的程序</span></span><br><span class="line">state = p.factory.entry_state()    <span class="comment">#新建一个SimState的对象，得到一个初始化到二进制入口函数的SimState对象。</span></span><br><span class="line">simgr = p.factory.simgr(state)   <span class="comment">#创建simulation manager，angr的主要入口</span></span><br><span class="line"></span><br><span class="line">simgr.explore(find=<span class="number">0x004017A5</span> ,avoid=<span class="number">0x004016E6</span>)  <span class="comment">#争取跑到输出成功的地址，避免跑到输出wrong的地址</span></span><br><span class="line">flag = simgr.found[<span class="number">0</span>].posix.dumps(<span class="number">0</span>)[:<span class="number">15</span>]     <span class="comment">#得到flag</span></span><br><span class="line">print(flag)</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"><span class="comment">#ideits小姐姐的脚本</span></span><br><span class="line"><span class="keyword">import</span> angr</span><br><span class="line">p = angr.Project(<span class="string">'./signal.exe'</span>)</span><br><span class="line">state = p.factory.entry_state()</span><br><span class="line">sm = p.factory.simulation_manager(state)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">good</span><span class="params">(state)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">b"good"</span> <span class="keyword">in</span> state.posix.dumps(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bad</span><span class="params">(state)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">b"what"</span> <span class="keyword">in</span> state.posix.dumps(<span class="number">1</span>)</span><br><span class="line">sm.explore(find = good, avoid = bad)</span><br><span class="line"><span class="keyword">if</span> sm.found:</span><br><span class="line">    find_state = sm.found[<span class="number">0</span>]</span><br><span class="line">flag = find_state.posix.dumps(<span class="number">0</span>)</span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<p><img src="https://i.loli.net/2020/06/14/AvlxX4KD5fezk9m.png" alt="image-20200614160910068"></p>
+<hr>
+<h2 id="0x05-小结"><a href="#0x05-小结" class="headerlink" title="0x05 小结"></a>0x05 小结</h2><p>这可能是我赛后复现过的第一题，还是时隔了这么久。。。</p>
+<p>之前总感觉要从基础学起，从入门题慢慢进阶，后来发现进步速度实在缓慢，</p>
+<p>小结做一下简单的反思</p>
+<p>去翻一下<a href="https://ljzjsc.com/" target="_blank" rel="noopener">炜哥</a>的博客，发现他每次赛后都会写一篇博客复现一下当时没解出来的题目，</p>
+<p>我们英语课经常会讨论一些逆向的话题，他说你必须要逼着自己做一些难题，大家一开始都不会，就是通过每一次复现题目来强制自己学习新的知识，否则会一直停留在入门水平。</p>
+<p><del>大师，我顿悟了</del></p>
+<p>我目前的状态确实不像想学习的态度，比如说比赛题目只要没见过、或者很复杂，我很难静下心来解题，一般这种情况我会直接关掉网页，然后安慰自己，嗯…这题不是给我做的。</p>
+<p>逆向大佬<a href="iyzyi.com">子洋</a>、炜哥遇到巨难的题目会慢慢地啃，就算一道题目花费几天的时间，真正搞懂原理和逻辑也是值得的，说实话，这道signal题难度远不及他们的博客的平均水平，可以说是最简单的虚拟机题目（炜哥比赛手撕半个小时解决），虽然花了几个小时才搞懂，但还是很有成就感的</p>
+<p>张老师说过比赛和题目都不是关键，关键是你能从中学到什么，分清主次，明确学习规划才是当前最重要的</p>
+<p>好好学逆向，争取比赛不再只是去纠结MISC</p>
+<blockquote>
+<p>立flag：今后比赛无论pwn还是逆向，一定要抽出时间复现1-2道赛题</p>
+</blockquote>
+<p>哦对，下一步学习动调，不会吧不会吧，不会真的有re手不会动调吧？</p>
+<p>应该不会吧</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://ld1ng.com/2020/06/14/signal/" title="2020 网鼎杯_signal">http://ld1ng.com/2020/06/14/signal/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/ld1ng" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/liding.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/ld1ng" target="_blank"><span class="text-dark">Ld1ng</span><small class="ml-1x"></small></a></h3>
+        <div>Primary school students majoring in information security.</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/06/03/ADWorld-pwn/" title="ADWorld_PWN  (updating..)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>$</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>Maybe you could buy me a cup of coffee.</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/ipay.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open alipay app scan this qrcode, buy me a coffee!</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechat.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open wechat app scan this qrcode, buy me a coffee!</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> alipay</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> wechat payment</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2020 Ld1ng
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/ld1ng" target="_blank"> ld1ng </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'axhOjPzscogBppPjn36rtaAv-gzGzoHsz',
+    appKey: 'gMB6OHiHJvIxpnVtuoYxyPhk',
+    placeholder: 'Just go go',
+    avatar: 'wavatar',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+
+<!--动态线条背景-->
+<script type="text/javascript"
+color="220,220,220" opacity='0.7' zIndex="-2" count="200" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js">
+</script>
+ <!-- 页面点击礼花效果 -->
+<script type="text/javascript" src="/js/firework.js"></script>
+</body>
+</html>
