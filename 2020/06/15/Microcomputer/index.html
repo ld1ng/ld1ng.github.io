@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>微机实验记录 | Ld1ng</title>
+  <meta name="description" content="0x01前言今天微机原理接口结课了，好不容易整理出实验报告 顺便以博客的形式记录一下本学期7个微机实验  0x02 82551．8255输入、输出实验 12345678910111213141516CODE SEGMENTASSUME CS:CODESTART:MOV DX,28BH ；初始化8255MOV AL,10001001BOUT DX,ALTEST0:MOV DX,28AH ；C口读入开">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微机实验记录">
+<meta property="og:url" content="http://ld1ng.com/2020/06/15/Microcomputer/index.html">
+<meta property="og:site_name" content="Ld1ng">
+<meta property="og:description" content="0x01前言今天微机原理接口结课了，好不容易整理出实验报告 顺便以博客的形式记录一下本学期7个微机实验  0x02 82551．8255输入、输出实验 12345678910111213141516CODE SEGMENTASSUME CS:CODESTART:MOV DX,28BH ；初始化8255MOV AL,10001001BOUT DX,ALTEST0:MOV DX,28AH ；C口读入开">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-06-15T06:01:29.137Z">
+<meta property="article:author" content="Ld1ng">
+<meta property="article:tag" content="Assembly">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://ld1ng.com/2020/06/15/Microcomputer/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/ld1ng" target="_blank">
+          <img class="img-circle img-rotate" src="/images/liding.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Ld1ng</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md"></h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> JiangSu , China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">Books</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>When people lose their thinking power, the human age will end</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DEVELOP/">DEVELOP</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LIFE/">LIFE</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/REVERSE/">REVERSE</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+    <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+    <div class="widget-wrap">
+        <h3 class="widget-title">Tag Cloud</h3>
+        <div id="myCanvasContainer" class="widget tagcloud">
+            <canvas width="200" height="200" id="resCanvas" style="width=100%">
+                <a href="/tags/ADWorld/" style="font-size: 15px;">ADWorld</a> <a href="/tags/Assembly/" style="font-size: 10px;">Assembly</a> <a href="/tags/Bugku/" style="font-size: 10px;">Bugku</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/EXAMPLE/" style="font-size: 10px;">EXAMPLE</a> <a href="/tags/OpenCV/" style="font-size: 10px;">OpenCV</a>
+            </canvas>
+        </div>
+    </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ADWorld/" rel="tag">ADWorld</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Assembly/" rel="tag">Assembly</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bugku/" rel="tag">Bugku</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/EXAMPLE/" rel="tag">EXAMPLE</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenCV/" rel="tag">OpenCV</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/DEVELOP/">DEVELOP</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/15/Microcomputer/" class="title">微机实验记录</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-14T16:00:00.000Z" itemprop="datePublished">2020-06-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/REVERSE/">REVERSE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/14/signal/" class="title">2020 网鼎杯_signal</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-13T16:00:00.000Z" itemprop="datePublished">2020-06-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/03/ADWorld-pwn/" class="title">ADWorld_PWN  (updating..)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-02T16:00:00.000Z" itemprop="datePublished">2020-06-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/REVERSE/">REVERSE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/03/ADWorld-RE/" class="title">ADWorld_RE  (updating..)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-02T16:00:00.000Z" itemprop="datePublished">2020-06-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/25/bugku-pwn5/" class="title">BugkuCTF pwn5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-24T16:00:00.000Z" itemprop="datePublished">2020-05-25</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01前言"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-8255"><span class="toc-number">1.1.</span> <span class="toc-text">0x02 8255</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-8253"><span class="toc-number">1.2.</span> <span class="toc-text">0x03 8253</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-A-D转换"><span class="toc-number">1.3.</span> <span class="toc-text">0x04 A&#x2F;D转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-键盘"><span class="toc-number">1.4.</span> <span class="toc-text">0x05 键盘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-小结"><span class="toc-number">1.5.</span> <span class="toc-text">0x06 小结</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Microcomputer" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      微机实验记录
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/15/Microcomputer/" class="article-date">
+	  <time datetime="2020-06-14T16:00:00.000Z" itemprop="datePublished">2020-06-15</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/DEVELOP/">DEVELOP</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Assembly/" rel="tag">Assembly</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/15/Microcomputer/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1k(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 5(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>今天微机原理接口结课了，好不容易整理出实验报告</p>
+<p>顺便以博客的形式记录一下本学期7个微机实验</p>
+<hr>
+<h2 id="0x02-8255"><a href="#0x02-8255" class="headerlink" title="0x02 8255"></a>0x02 8255</h2><p><strong>1．8255输入、输出实验</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">MOV DX,28BH ；初始化8255</span><br><span class="line">MOV AL,10001001B</span><br><span class="line">OUT DX,AL</span><br><span class="line"></span><br><span class="line">TEST0:</span><br><span class="line">MOV DX,28AH ；C口读入开关状态</span><br><span class="line">IN AL,DX</span><br><span class="line">MOV DX,289H ；B口输出</span><br><span class="line">OUT DX,AL</span><br><span class="line">JMP TEST0 ；继续循环</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2．利用8255设计跑马灯（软延时）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">MOV DX,28BH ；初始化8255</span><br><span class="line">MOV AL,10001001B；控制字</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AH,01H ；暂存01位置的灯</span><br><span class="line"></span><br><span class="line">TEST0:</span><br><span class="line">MOV DX,28AH ；从C口读入开关状态</span><br><span class="line">IN AL,DX</span><br><span class="line">CMP AL,80H ；如果不是K7开关，则循环等待</span><br><span class="line">JNZ TEST0</span><br><span class="line"></span><br><span class="line">TEST1:</span><br><span class="line">MOV AL,AH</span><br><span class="line">MOV DX,289H ；B口输出</span><br><span class="line">OUT DX,AL</span><br><span class="line">ROL AL,1 ；左移一位</span><br><span class="line">MOV BX,150H ；两层嵌套循环，软延时</span><br><span class="line"></span><br><span class="line">CIRCLE:</span><br><span class="line">MOV CX,65535</span><br><span class="line"></span><br><span class="line">DELAY:</span><br><span class="line">LOOP DELAY</span><br><span class="line">DEC BX</span><br><span class="line">JNZ CIRCLE</span><br><span class="line">MOV AH,AL ；暂存灯的状态</span><br><span class="line">JMP TEST0；继续循环</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x03-8253"><a href="#0x03-8253" class="headerlink" title="0x03 8253"></a>0x03 8253</h2><p><strong>1．8253定时实验，利用8253完成2秒的延时。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">;第一级通道2，方式2，先写低字节，后写高字节</span><br><span class="line">MOV AL ,00110101B</span><br><span class="line">MOV DX ,28BH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;计数初值5000</span><br><span class="line">MOV DX ,28AH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,50H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;第二级通道0，方式3，先写低字节，再写高字节</span><br><span class="line">MOV AL,01110111B</span><br><span class="line">MOV DX,28BH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;初值800</span><br><span class="line">MOV DX,288H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,08H</span><br><span class="line">OUT DX,AL</span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2．利用8253硬件延时控制跑马灯运行。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">MOV DX,2ABH；初始化8255</span><br><span class="line">MOV AL,10001011B</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,01H；暂存第一个灯，保证起始第一个灯亮</span><br><span class="line">MOV BL,AL</span><br><span class="line"></span><br><span class="line">TEST0:</span><br><span class="line">MOV DX,2AAH;判断是否是开关1</span><br><span class="line">IN AL,DX</span><br><span class="line">TEST AL,01H</span><br><span class="line">JZ TEST0</span><br><span class="line"></span><br><span class="line">TEST1:</span><br><span class="line">;第一级通道0，方式2，先写低字节，后写高字节</span><br><span class="line">MOV AL ,00110101B</span><br><span class="line">MOV DX ,28BH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;计数初值5000</span><br><span class="line">MOV DX ,28AH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,50H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;第二级通道1，方式3，先写低字节，再写高字节</span><br><span class="line">MOV AL,01110111B</span><br><span class="line">MOV DX,28BH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;初值800</span><br><span class="line">MOV DX,288H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,08H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;脉冲2MHz，周期2s</span><br><span class="line">T3:</span><br><span class="line">MOV AL,BL</span><br><span class="line">MOV DX,2A8H</span><br><span class="line">OUT DX,AL；输出到A口</span><br><span class="line">ROL AL,1;左移一位</span><br><span class="line">MOV BL,AL；暂存当前灯的位置</span><br><span class="line"></span><br><span class="line">T4:</span><br><span class="line">MOV DX,2A9H；读取两次OUT1状态，判断翻转</span><br><span class="line">IN AL,DX</span><br><span class="line">MOV CL,AL</span><br><span class="line">IN AL,DX</span><br><span class="line">CMP AL,CL ；没翻转，继续循环</span><br><span class="line">JZ T4</span><br><span class="line">JMP TEST1</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x04-A-D转换"><a href="#0x04-A-D转换" class="headerlink" title="0x04 A/D转换"></a>0x04 A/D转换</h2><p><strong>1．利用0809完成1个通道的模拟量采集，并利用8255输出二进制码。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">MOV DX,283H；初始化8255</span><br><span class="line">MOV AL,10010000B</span><br><span class="line">OUT DX,AL</span><br><span class="line"></span><br><span class="line">NEXT:</span><br><span class="line">MOV DX,29CH ；虚写，启动一次转换</span><br><span class="line">OUT DX,AL</span><br><span class="line"></span><br><span class="line">TEST0:</span><br><span class="line">MOV DX,280H </span><br><span class="line">IN AL,DX ；A口读入EOC状态</span><br><span class="line">CMP AL,01H ；检查AL的D0是否等于1，若是则转换已经结束</span><br><span class="line">JNZ TEST0 ；如果不是，继续检查</span><br><span class="line"></span><br><span class="line">MOV DX,29CH</span><br><span class="line">IN AL,DX   ；读入转换后的数据</span><br><span class="line">MOV DX,282H</span><br><span class="line">OUT DX,AL ；C口输出</span><br><span class="line">JMP NEXT</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2.利用0832产生三角波输出，并在直流电机上观察结果。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">BEGIN:</span><br><span class="line">MOV AL,1AH ；下限电压</span><br><span class="line"></span><br><span class="line">UP:</span><br><span class="line">MOV DX,290H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV DX,291H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV BX,20H；两层嵌套循环，软延时</span><br><span class="line">INC AL；自增</span><br><span class="line"></span><br><span class="line">DELAY0:</span><br><span class="line">MOV CX,65535</span><br><span class="line"></span><br><span class="line">DELAY1:</span><br><span class="line">LOOP DELAY1</span><br><span class="line">DEC BX</span><br><span class="line">JNZ DELAY0</span><br><span class="line"></span><br><span class="line">CMP AL,100 ；比较是否达到上限值</span><br><span class="line">JNZ UP ；没到继续上升</span><br><span class="line"></span><br><span class="line">DEC AL</span><br><span class="line">DOWN: </span><br><span class="line">MOV DX,290H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV DX,291H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV BX,20H ；软延时</span><br><span class="line">DEC AL；自减</span><br><span class="line"></span><br><span class="line">DELAY2:</span><br><span class="line">MOV CX,65535</span><br><span class="line"></span><br><span class="line">DELAY3:</span><br><span class="line">LOOP DELAY3</span><br><span class="line">DEC BX</span><br><span class="line">JNZ DELAY2</span><br><span class="line"></span><br><span class="line">CMP AL,19H ；比较是否下降到下限值</span><br><span class="line">JNZ DOWN； 没到继续下降</span><br><span class="line"></span><br><span class="line">JMP BEGIN</span><br><span class="line">CODE ENDS</span><br><span class="line">END BEGIN</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x05-键盘"><a href="#0x05-键盘" class="headerlink" title="0x05 键盘"></a>0x05 键盘</h2><p><strong>实现扫描键盘上的按键，并在数码管上显示</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">PORT_A EQU 280H</span><br><span class="line">PORT_B EQU 281H</span><br><span class="line">PORT_C EQU 282H</span><br><span class="line">PORT_CTL EQU 283H</span><br><span class="line"> </span><br><span class="line">DATA SEGMENT</span><br><span class="line">TABLE DB 77H,7BH,7DH,7EH,0B7H,0BBH,0BDH,0BEH,0D7H,0DBH,0DDH,0DEH,0E7H,0EBH,0EDH,0EEH</span><br><span class="line">;TABLE1 DB 40H,79H,24H,30H,19H,12H,02H,78H,00H,18H,80H,03H,43H,21H,06H,0EH;共阴</span><br><span class="line">TABLE1 DB 0BFH,86H,0DBH,0CFH,0E6H,0EDH,0FDH,87H,0FFH,0E7H,0F7H,0FCH,0B9H, 0DEH,0F9H,0F1H</span><br><span class="line">;共阳</span><br><span class="line">DATA ENDS</span><br><span class="line"> </span><br><span class="line">STACK SEGMENT STACK</span><br><span class="line">DW 50 DUP(0)</span><br><span class="line">TOP_STACK LABEL WORD</span><br><span class="line">STACK ENDS</span><br><span class="line"></span><br><span class="line">CODE SEGMENT</span><br><span class="line"> </span><br><span class="line">ASSUME CS:CODE,DS:DATA,SS:STACK</span><br><span class="line">START:</span><br><span class="line">MOV AX,STACK</span><br><span class="line">MOV SS,AX</span><br><span class="line">LEA SP,TOP_STACK</span><br><span class="line">MOV AX,DATA</span><br><span class="line">MOV DS,AX</span><br><span class="line"> </span><br><span class="line">MOV DX,PORT_CTL</span><br><span class="line">MOV AL,10000010B</span><br><span class="line">OUT DX,AL</span><br><span class="line">INIT:</span><br><span class="line">MOV DX,PORT_A</span><br><span class="line">MOV AL,00H</span><br><span class="line">OUT DX,AL</span><br><span class="line"> </span><br><span class="line">MOV DX,PORT_B</span><br><span class="line"> </span><br><span class="line">WAIT_OPEN:IN AL,DX</span><br><span class="line">AND AL,0FH</span><br><span class="line">CMP AL,0FH</span><br><span class="line">JNZ WAIT_OPEN</span><br><span class="line"> </span><br><span class="line">WAIT_PRES:IN AL,DX</span><br><span class="line">AND AL,0FH</span><br><span class="line">CMP AL,0FH</span><br><span class="line">JE WAIT_PRES</span><br><span class="line"> </span><br><span class="line">MOV CX,16EAH</span><br><span class="line">DELAY:LOOP DELAY</span><br><span class="line"> </span><br><span class="line">IN AL,DX</span><br><span class="line">AND AL,0FH</span><br><span class="line">CMP AL,0FH</span><br><span class="line">JE WAIT_PRES</span><br><span class="line"> </span><br><span class="line">MOV AL,0FEH</span><br><span class="line">MOV CL,AL</span><br><span class="line"> </span><br><span class="line">NEXT_ROW:</span><br><span class="line">MOV DX,PORT_A</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV DX,PORT_B</span><br><span class="line">IN AL,DX</span><br><span class="line">AND AL,0FH</span><br><span class="line">CMP AL,0FH</span><br><span class="line">JNE ENCODE</span><br><span class="line">ROL CL,01</span><br><span class="line">MOV AL,CL</span><br><span class="line">JMP NEXT_ROW</span><br><span class="line"> </span><br><span class="line">ENCODE:MOV BX,000FH</span><br><span class="line">IN AL,DX</span><br><span class="line">NEXT_TRY:CMP AL,TABLE[BX]</span><br><span class="line">JE DONE</span><br><span class="line">DEC BX</span><br><span class="line">JNS NEXT_TRY</span><br><span class="line">MOV AH,01</span><br><span class="line">JMP EXIT</span><br><span class="line">DONE:</span><br><span class="line">MOV AL,TABLE1[BX]</span><br><span class="line">AND AL,7FH</span><br><span class="line">MOV DX,PORT_C</span><br><span class="line">OUT DX,AL</span><br><span class="line">JMP INIT</span><br><span class="line">EXIT:HLT</span><br><span class="line">CODE ENDS</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x06-小结"><a href="#0x06-小结" class="headerlink" title="0x06 小结"></a>0x06 小结</h2><p>本周五微机实验，等考完再放考试题吧</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://ld1ng.com/2020/06/15/Microcomputer/" title="微机实验记录">http://ld1ng.com/2020/06/15/Microcomputer/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/ld1ng" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/liding.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/ld1ng" target="_blank"><span class="text-dark">Ld1ng</span><small class="ml-1x"></small></a></h3>
+        <div>Primary school students majoring in information security.</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/06/14/signal/" title="2020 网鼎杯_signal"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>$</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>Maybe you could buy me a cup of coffee.</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/ipay.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open alipay app scan this qrcode, buy me a coffee!</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechat.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open wechat app scan this qrcode, buy me a coffee!</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> alipay</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> wechat payment</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2020 Ld1ng
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/ld1ng" target="_blank"> ld1ng </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'axhOjPzscogBppPjn36rtaAv-gzGzoHsz',
+    appKey: 'gMB6OHiHJvIxpnVtuoYxyPhk',
+    placeholder: 'Just go go',
+    avatar: 'wavatar',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+
+<!--动态线条背景-->
+<script type="text/javascript"
+color="220,220,220" opacity='0.7' zIndex="-2" count="200" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js">
+</script>
+ <!-- 页面点击礼花效果 -->
+<script type="text/javascript" src="/js/firework.js"></script>
+</body>
+</html>
