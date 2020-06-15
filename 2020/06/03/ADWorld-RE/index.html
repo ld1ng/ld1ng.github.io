@@ -29,8 +29,13 @@
 <meta property="og:image" content="https://i.loli.net/2020/06/04/eBCLZfTYJ9zSyUk.png">
 <meta property="og:image" content="https://i.loli.net/2020/06/04/9iYBOCxM8W41SaU.png">
 <meta property="og:image" content="https://i.loli.net/2020/06/04/QwmYE8ZLldAtfiD.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/15/RpS4IDulg6mNwQC.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/15/IQWa5tyVdmjDwvS.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/15/J8tnuEMwkrBG4d1.png">
+<meta property="og:image" content="c:%5CUsers%5C%E9%BC%8E%E5%93%A5%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200615211240591.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/15/H52IupSEOFGUDmX.png">
 <meta property="article:published_time" content="2020-06-02T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-06-04T10:52:03.220Z">
+<meta property="article:modified_time" content="2020-06-15T13:27:12.563Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="ADWorld">
@@ -361,7 +366,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">Catalogue</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-EasyRE"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 EasyRE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Shuffle"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 Shuffle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-re-for-50-plz-50"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 re-for-50-plz-50</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-dmd-50"><span class="toc-number">1.4.</span> <span class="toc-text">0x04 dmd-50</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-EasyRE"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 EasyRE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Shuffle"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 Shuffle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-re-for-50-plz-50"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 re-for-50-plz-50</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-dmd-50"><span class="toc-number">1.4.</span> <span class="toc-text">0x04 dmd-50</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Mysterious"><span class="toc-number">1.5.</span> <span class="toc-text">0x05 Mysterious</span></a></li></ol></li></ol>
     </nav>
   </div>
 </aside>
@@ -412,10 +417,10 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/03/ADWorld-RE/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1.2k(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1.4k(words)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 5(minutes)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 6(minutes)</span>
 	
 
       </div>
@@ -479,6 +484,30 @@
 <blockquote>
 <p>Tips: 舍友<code>x1ngg3</code>提供了一个特别好用的网址,<a href="https://www.somd5.com/" target="_blank" rel="noopener">md5解密</a> ,人傻了…</p>
 </blockquote>
+<hr>
+<h2 id="0x05-Mysterious"><a href="#0x05-Mysterious" class="headerlink" title="0x05 Mysterious"></a>0x05 Mysterious</h2><p>拿到程序，先运行一下</p>
+<p><img src="https://i.loli.net/2020/06/15/RpS4IDulg6mNwQC.png" alt="image-20200615205826004"></p>
+<p>感觉要动态调试，有点害怕，先用常规做法试一下</p>
+<p>32位，IDA ,找字符串</p>
+<p><img src="https://i.loli.net/2020/06/15/IQWa5tyVdmjDwvS.png" alt="image-20200615205736269"></p>
+<p>跟踪到函数，找到关键代码</p>
+<p><img src="https://i.loli.net/2020/06/15/J8tnuEMwkrBG4d1.png" alt="image-20200615210342429"></p>
+<blockquote>
+<p><strong>这里的知识点在于两个C库的函数：</strong></p>
+<p> <code>int atoi(const char \*str)</code>把参数 str 所指向的字符串转换为一个整数（类型为 int 型）</p>
+<p><code>itoa(number, string, radix)</code>把一个整数转换为字符串</p>
+<p>number:要转换的数据；string：目标字符串的地址；radix：转换后的进制数，可以是10进制、16进制等。</p>
+</blockquote>
+<p>由于两个函数长得比较像，我一度以为程序逻辑混乱…</p>
+<p>因此，存在两种解法</p>
+<p>1.</p>
+<p><img src="C:%5CUsers%5C%E9%BC%8E%E5%93%A5%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200615211240591.png" alt="image-20200615211240591"></p>
+<p>输入atoi转整形得到结果+1等于123,则输入开始的数字部分为122</p>
+<p>所以输入<code>122xyz</code>即可</p>
+<p><img src="https://i.loli.net/2020/06/15/H52IupSEOFGUDmX.png" alt=""></p>
+<p>2.<code>_itoa()</code>函数可知，v5是由int型变量v10转换成的字符串，已知v10==123，所以把flag拼接起来即可</p>
+<p><code>flag{123_Buff3r_0v3rf|0w}</code></p>
+<p>至此进阶区做完第一行</p>
 <hr>
 
       
