@@ -17,21 +17,24 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>Archive: 2020/5 | Ld1ng</title>
-  <meta name="description" content="Ld1ng&#39;s Blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Ld1ng">
-<meta property="og:url" content="http://ld1ng.com/archives/2020/05/index.html">
+  <title>对PLT表GOT表的理解 | Ld1ng</title>
+  <meta name="description" content="对于PLT表和GOT表的浅显理解之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址 今天巧合在网上翻到一篇用gdb调试plt表和got表关系的博客，这才对它有了进一步的了解。 GOT（全局偏移表）和 PLT(过程链接表)，是两个表之间的交互才使得函数实现延迟绑定，通过这种方法将过程地址的绑定推迟到第一次调用该函数。 GOT表构成为了实现延迟">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对PLT表GOT表的理解">
+<meta property="og:url" content="http://ld1ng.com/2020/06/16/GOTPLT/index.html">
 <meta property="og:site_name" content="Ld1ng">
-<meta property="og:description" content="Ld1ng&#39;s Blog">
+<meta property="og:description" content="对于PLT表和GOT表的浅显理解之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址 今天巧合在网上翻到一篇用gdb调试plt表和got表关系的博客，这才对它有了进一步的了解。 GOT（全局偏移表）和 PLT(过程链接表)，是两个表之间的交互才使得函数实现延迟绑定，通过这种方法将过程地址的绑定推迟到第一次调用该函数。 GOT表构成为了实现延迟">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190831142407693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsZXhZb3VuZzI4,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200208160601515.gif">
+<meta property="article:published_time" content="2020-06-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-06-16T01:23:25.464Z">
 <meta property="article:author" content="Ld1ng">
-<meta property="article:tag" content="CTF">
-<meta property="article:tag" content="code">
-<meta property="article:tag" content="CUMT">
+<meta property="article:tag" content="KNOWLEDGE">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190831142407693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsZXhZb3VuZzI4,size_16,color_FFFFFF,t_70">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://ld1ng.com/archives/2020/05/index.html">
+  <link rel="canonical" href="http://ld1ng.com/2020/06/16/GOTPLT/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
   
@@ -351,79 +354,240 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#对于PLT表和GOT表的浅显理解"><span class="toc-number">1.</span> <span class="toc-text">对于PLT表和GOT表的浅显理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GOT表构成"><span class="toc-number">1.0.1.</span> <span class="toc-text">GOT表构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PLT表构成"><span class="toc-number">1.0.2.</span> <span class="toc-text">PLT表构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现过程"><span class="toc-number">1.0.3.</span> <span class="toc-text">实现过程</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">Archive: 2020/5</h1>
-	      <p class="text-muted">Total 4 articles</p>
-	    </header>
-	    <div class="article-body">
-	      
+  <div class="content">
+  <article id="post-GOTPLT" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
   
+    <h1 class="article-title" itemprop="name">
+      对PLT表GOT表的理解
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/16/GOTPLT/" class="article-date">
+	  <time datetime="2020-06-15T16:00:00.000Z" itemprop="datePublished">2020-06-16</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/LEARNING/">LEARNING</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/KNOWLEDGE/" rel="tag">KNOWLEDGE</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/16/GOTPLT/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 840(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 3(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="对于PLT表和GOT表的浅显理解"><a href="#对于PLT表和GOT表的浅显理解" class="headerlink" title="对于PLT表和GOT表的浅显理解"></a>对于PLT表和GOT表的浅显理解</h1><p>之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址</p>
+<p>今天巧合在网上翻到一篇用gdb调试plt表和got表关系的博客，这才对它有了进一步的了解。</p>
+<p>GOT（全局偏移表）和 PLT(过程链接表)，是两个表之间的交互才使得函数实现延迟绑定，通过这种方法将过程地址的绑定推迟到第一次调用该函数。</p>
+<h3 id="GOT表构成"><a href="#GOT表构成" class="headerlink" title="GOT表构成"></a>GOT表构成</h3><p>为了实现延迟绑定，GOT的头三条表目是特殊的：</p>
+<blockquote>
+<p>GOT[0]包含.dynamic段的地址，.dynamic段包含了动态链接器用来绑定过程地址的信息，比如符号的位置和重定位信息;</p>
+<p>GOT[1]包含动态链接器的标识;</p>
+<p>GOT[2]包含动态链接器的延迟绑定代码的入口点。</p>
+<p>GOT的其他表目为本模块要引用的一个全局变量或函数的地址。</p>
+</blockquote>
+<h3 id="PLT表构成"><a href="#PLT表构成" class="headerlink" title="PLT表构成"></a>PLT表构成</h3><p>PLT是一个以16字节(32位平台中)表目的数组形式出现的代码序列。就像GOT表，PLT表并不是每个表项都用于存放“函数地址“，其中PLT[0]是一个特殊的表目，它跳转到动态链接器中执行，换句话说，PLT[0]是一个函数，这个函数的作用是通过GOT[1]和GOT[2]来正确绑定一个函数的正式地址到GOT表中来。</p>
+<h3 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h3><p>每个定义在共享库中并被本模块调用的函数在PLT中都有一个表目，从PLT[1]开始．模块对函数的调用会转到相应PLT表目中执行，这些表目由三条指令构成。</p>
+<blockquote>
+<p>第一条指令是跳转到相应的GOT存储的地址值中．</p>
+<p>第二条指令把函数相应的ID压入栈中，</p>
+<p>第三条指令跳转到PLT[0]中调用动态链接器解析函数地址，并把函数真正地址存入相应的GOT表目中。</p>
+</blockquote>
+<p>被调用函数GOT相应表目中存储的最初地址为相应PLT表目中第二条指令的地址值，函数第一次被调用后．GOT表目中的值就为函数的真正地址。</p>
+<p>因此，第一次调用函数时开销比较大．但是其后的每次调用都只会花费一条指令和一个间接的存储器引用。</p>
+<hr>
+<p>所以第一次函数调用过程如下：</p>
+<blockquote>
+<p>1.调用函数找到plt表</p>
+<p>2.jmp 相应的got表</p>
+<p>3.push got表的下标//相应的标识</p>
+<p>4.jmp plt[0]</p>
+<p>5.plt[0]的指令转向got[2],进入动态连接器入口</p>
+<p>//由于GOT[2]中存储的是动态链接器的入口地址，所以通过GOT[1]中的数据作为参数，跳转到GOT[2]所对应的函数入口地址，这个动态链接器会将一个函数的真正地址绑定到相应的GOT[x]中</p>
+<p>6.将真正的函数地址覆盖到got表中</p>
+</blockquote>
+<p>其中2、3、4步（jmp、push、jmp）是第一次调用某函数时进行的三步操作，是实现延时绑定机制的关键</p>
+<p>可以理解为这种状态：</p>
+<p><img src="https://img-blog.csdnimg.cn/20190831142407693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsZXhZb3VuZzI4,size_16,color_FFFFFF,t_70" alt="img"></p>
+<hr>
+<p>最后借用一下大佬的动图：</p>
+<p><img src="https://img-blog.csdnimg.cn/20200208160601515.gif" alt="在这里插入图片描述"></p>
+<hr>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://ld1ng.com/2020/06/16/GOTPLT/" title="对PLT表GOT表的理解">http://ld1ng.com/2020/06/16/GOTPLT/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/ld1ng" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/liding.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/ld1ng" target="_blank"><span class="text-dark">Ld1ng</span><small class="ml-1x"></small></a></h3>
+        <div>Primary school students majoring in information security.</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
   
     
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
     
-      
-      
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2020" aria-expanded="true">
-              <i class="icon icon-calendar-plus text-active"></i><i class="icon icon-calendar-minus text"></i>
-              2020
-            </a>
-            <!-- <a href="/archives/2020" class="archive-year">2020</a> -->
-          </h3>
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/06/15/Microcomputer/" title="微机实验记录"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>$</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>Maybe you could buy me a cup of coffee.</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/ipay.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open alipay app scan this qrcode, buy me a coffee!</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechat.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open wechat app scan this qrcode, buy me a coffee!</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> alipay</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> wechat payment</a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div id="collapse2020" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2020">
-        <div class="panel-body">
-          <div class="collection">
-    
-    
-<a href="/2020/05/25/bugku-pwn5/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-05-24T16:00:00.000Z" itemprop="datePublished">2020-05-25</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> BugkuCTF pwn5
-</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 
-  
-    
-    
-    
-<a href="/2020/05/11/IDA%E5%8A%A8%E8%B0%83/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-05-10T16:00:00.000Z" itemprop="datePublished">2020-05-11</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> CUMT CTF Mind reading
-</a>
 
-
-  
-    
-    
-    
-<a href="/2020/05/08/OpenCV/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-05-07T16:00:00.000Z" itemprop="datePublished">2020-05-08</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 基于OpenCV的动态识别系统——随笔
-</a>
-
-
-  
-    
-    
-    
-<a href="/2020/05/05/hello-world/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-05-04T16:00:00.000Z" itemprop="datePublished">2020-05-05</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> hello, world
-</a>
-
-
-  
-  
-    </div></div></div></section>
-  
-
-	    </div>
-  	</article>
-  	 	
 </main>
 
   <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
@@ -484,6 +648,39 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'axhOjPzscogBppPjn36rtaAv-gzGzoHsz',
+    appKey: 'gMB6OHiHJvIxpnVtuoYxyPhk',
+    placeholder: 'Just go go',
+    avatar: 'wavatar',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
 
 
 
