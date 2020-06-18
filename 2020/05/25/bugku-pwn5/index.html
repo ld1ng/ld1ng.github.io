@@ -18,18 +18,18 @@
   
   
   <title>BugkuCTF pwn5 | Ld1ng</title>
-  <meta name="description" content="0x01 前言总算熬过了考试周，攒了好多题没刷。 作为刚学pwn的小白，这题摸了好久才发现摸出一个大坑，心态崩了.. 我决定好好记录一下。  0x02 IDA分析首先checksec一下，查看防护机制，发现只打开了NX。     拖入IDA，发现程序很简单，有两处明显漏洞，第一个是格式化字符串漏洞，如下所示。 1234567memset(&amp;s, 0, 0x20uLL);puts(&quot;人类的本">
+  <meta name="description" content="0x00 前言总算熬过了考试周，攒了好多题没刷。 作为刚学pwn的小白，这题摸了好久才发现摸出一个大坑，心态崩了.. 我决定好好记录一下。  0x01 IDA分析首先checksec一下，查看防护机制，发现只打开了NX。     拖入IDA，发现程序很简单，有两处明显漏洞，第一个是格式化字符串漏洞，如下所示。 1234567memset(&amp;s, 0, 0x20uLL);puts(&quot;人类的本">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BugkuCTF pwn5">
 <meta property="og:url" content="http://ld1ng.com/2020/05/25/bugku-pwn5/index.html">
 <meta property="og:site_name" content="Ld1ng">
-<meta property="og:description" content="0x01 前言总算熬过了考试周，攒了好多题没刷。 作为刚学pwn的小白，这题摸了好久才发现摸出一个大坑，心态崩了.. 我决定好好记录一下。  0x02 IDA分析首先checksec一下，查看防护机制，发现只打开了NX。     拖入IDA，发现程序很简单，有两处明显漏洞，第一个是格式化字符串漏洞，如下所示。 1234567memset(&amp;s, 0, 0x20uLL);puts(&quot;人类的本">
+<meta property="og:description" content="0x00 前言总算熬过了考试周，攒了好多题没刷。 作为刚学pwn的小白，这题摸了好久才发现摸出一个大坑，心态崩了.. 我决定好好记录一下。  0x01 IDA分析首先checksec一下，查看防护机制，发现只打开了NX。     拖入IDA，发现程序很简单，有两处明显漏洞，第一个是格式化字符串漏洞，如下所示。 1234567memset(&amp;s, 0, 0x20uLL);puts(&quot;人类的本">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.loli.net/2020/05/25/YPHVey8cw1DMlUA.png">
 <meta property="og:image" content="https://i.loli.net/2020/05/25/3aGwUtbNPZ1JH75.png">
 <meta property="og:image" content="https://i.loli.net/2020/05/25/qyICQo6GHtuKXDj.png">
 <meta property="article:published_time" content="2020-05-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-06-03T16:05:18.371Z">
+<meta property="article:modified_time" content="2020-06-18T13:30:37.597Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Bugku">
@@ -360,7 +360,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">Catalogue</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-前言"><span class="toc-number">1.</span> <span class="toc-text">0x01 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-IDA分析"><span class="toc-number">1.1.</span> <span class="toc-text">0x02 IDA分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-程序分析"><span class="toc-number">1.2.</span> <span class="toc-text">0x03 程序分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-漏洞利用"><span class="toc-number">1.3.</span> <span class="toc-text">0x04 漏洞利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-exp"><span class="toc-number">1.4.</span> <span class="toc-text">0x05 exp</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-IDA分析"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 IDA分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-程序分析"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 程序分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-漏洞利用"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 漏洞利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-exp"><span class="toc-number">1.4.</span> <span class="toc-text">0x04 exp</span></a></li></ol></li></ol>
     </nav>
   </div>
 </aside>
@@ -421,11 +421,11 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h1><p>总算熬过了考试周，攒了好多题没刷。</p>
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>总算熬过了考试周，攒了好多题没刷。</p>
 <p>作为刚学pwn的小白，这题摸了好久才发现摸出一个大坑，心态崩了..</p>
 <p>我决定好好记录一下。</p>
 <hr>
-<h2 id="0x02-IDA分析"><a href="#0x02-IDA分析" class="headerlink" title="0x02 IDA分析"></a>0x02 IDA分析</h2><p>首先checksec一下，查看防护机制，发现只打开了NX。</p>
+<h2 id="0x01-IDA分析"><a href="#0x01-IDA分析" class="headerlink" title="0x01 IDA分析"></a>0x01 IDA分析</h2><p>首先checksec一下，查看防护机制，发现只打开了NX。</p>
 <img src="https://i.loli.net/2020/05/25/YPHVey8cw1DMlUA.png" alt="image-20200525200910618" style="zoom:85%;" />
 
 
@@ -441,14 +441,14 @@
 
 
 
-<h2 id="0x03-程序分析"><a href="#0x03-程序分析" class="headerlink" title="0x03 程序分析"></a>0x03 程序分析</h2><p>首先，不同于一开始的入门题，这个程序不存在后门（<code>system</code>和<code>bin/sh</code>），所以需要返回到libc中，那么就需要泄露libc的基地址。</p>
+<h2 id="0x02-程序分析"><a href="#0x02-程序分析" class="headerlink" title="0x02 程序分析"></a>0x02 程序分析</h2><p>首先，不同于一开始的入门题，这个程序不存在后门（<code>system</code>和<code>bin/sh</code>），所以需要返回到libc中，那么就需要泄露libc的基地址。</p>
 <blockquote>
 <p><strong>知识点：</strong>由于延迟绑定机制，只有动态库函数在被调用时，才会地址解析和重定位工作，所以如果想找到libc的基地址的话，必须要通过已经被调用的函数的地址来计算。也就是说如果知道某被调用过的函数的真实地址，再减去偏移地址，即可知道libc基地址，那么libc中任意函数的地址只要加上偏移地址就可以计算出。</p>
 </blockquote>
 <p>那么思路很清晰了，只要通过格式化字符串漏洞泄露出一个确定的函数地址，便可求出libc基地址</p>
 <p>，那么就可以找到<code>system</code>和<code>bin/sh</code>的位置，通过栈溢出就可以get shell了。</p>
 <hr>
-<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>要利用格式化字符串漏洞首先要找到要泄露地址的函数的位置，这里用到gdb动调，emmm有点复杂，这里不做过多讲解，结果如下图所示。</p>
+<h2 id="0x03-漏洞利用"><a href="#0x03-漏洞利用" class="headerlink" title="0x03 漏洞利用"></a>0x03 漏洞利用</h2><p>要利用格式化字符串漏洞首先要找到要泄露地址的函数的位置，这里用到gdb动调，emmm有点复杂，这里不做过多讲解，结果如下图所示。</p>
 <p><img src="https://i.loli.net/2020/05/25/3aGwUtbNPZ1JH75.png" alt="image-20200525210034344"></p>
 <p>很显然可以计算出<code>__libc_start_main+231</code>在栈中的位置：0x28/8+6=11</p>
 <p>即这是格式化字符串的第11个参数，因此泄露地址的payload就是<code>%11$p</code>。</p>
@@ -465,7 +465,7 @@
 <p>用ROPgadget搜索，发现程序中存在pop rdi; ret的地址，因此可以确定payload了</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --binary human --only &#39;pop|ret&#39;</span><br><span class="line">Gadgets information</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">0x000000000040092c : pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x000000000040092e : pop r13 ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x0000000000400930 : pop r14 ; pop r15 ; ret</span><br><span class="line">0x0000000000400932 : pop r15 ; ret</span><br><span class="line">0x000000000040092b : pop rbp ; pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x000000000040092f : pop rbp ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x0000000000400700 : pop rbp ; ret</span><br><span class="line">0x0000000000400933 : pop rdi ; ret</span><br><span class="line">0x0000000000400931 : pop rsi ; pop r15 ; ret</span><br><span class="line">0x000000000040092d : pop rsp ; pop r13 ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x00000000004005e9 : ret</span><br></pre></td></tr></table></figure>
 
-<h2 id="0x05-exp"><a href="#0x05-exp" class="headerlink" title="0x05 exp"></a>0x05 exp</h2><p>通过上面一顿分析，终于可以写exp了</p>
+<h2 id="0x04-exp"><a href="#0x04-exp" class="headerlink" title="0x04 exp"></a>0x04 exp</h2><p>通过上面一顿分析，终于可以写exp了</p>
 <p>但是…</p>
 <p><img src="https://i.loli.net/2020/05/25/qyICQo6GHtuKXDj.png" alt="image-20200525213926059"></p>
 <p>(╯‵□′)╯︵┻━┻！！！！！！！！！！！！！！！！！！！！！</p>
