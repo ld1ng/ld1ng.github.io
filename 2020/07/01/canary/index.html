@@ -25,15 +25,16 @@
 <meta property="og:site_name" content="Ld1ng">
 <meta property="og:description" content="0x00 前言刚开始接触canary，先不谈题目中如何利用，只记一下我对它浅显的理解 0x01 介绍什么是canary呢？ Canary 的本意是金丝雀，来源于英国矿井工人用来探查井下气体是否有毒的金丝雀笼子。工人们每次下井都会带上一只金丝雀。如果井下的气体有毒，金丝雀由于对毒性敏感就会停止鸣叫甚至死亡，从而使工人们得到预警。  这里的canary也具有相似的功能，放在栈底用于检测是否发生栈溢出，">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/07/01/OPEoZQd7nupaBj8.png">
 <meta property="og:image" content="https://i.loli.net/2020/07/01/O7kHLestKch9dTE.png">
 <meta property="og:image" content="https://i.loli.net/2020/07/01/Bx4Ld7kSaJ3EGHl.png">
 <meta property="og:image" content="https://i.loli.net/2020/07/01/PiuQAro8GFBZ9W3.png">
 <meta property="article:published_time" content="2020-06-30T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-07-01T09:16:53.687Z">
+<meta property="article:modified_time" content="2020-07-01T09:23:00.585Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="KNOWLEDGE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2020/07/01/O7kHLestKch9dTE.png">
+<meta name="twitter:image" content="https://i.loli.net/2020/07/01/OPEoZQd7nupaBj8.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://ld1ng.com/2020/07/01/canary/index.html">
   
@@ -460,7 +461,7 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/07/01/canary/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1.1k(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1k(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 4(minutes)</span>
@@ -476,8 +477,7 @@
 <p>这里的canary也具有相似的功能，放在栈底用于检测是否发生栈溢出，它的出现很大程度上增加了栈溢出攻击的难度，并且由于它几乎并不消耗系统资源，所以现在成了 Linux 下保护机制的标配。</p>
 <hr>
 <h3 id="0x02-原理"><a href="#0x02-原理" class="headerlink" title="0x02 原理"></a>0x02 原理</h3><p>x86栈结构：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">     High  </span><br><span class="line">     Address |                 |  </span><br><span class="line">             +-----------------+</span><br><span class="line">             | args            |</span><br><span class="line">             +-----------------+</span><br><span class="line">             | <span class="keyword">return</span> address  |</span><br><span class="line">             +-----------------+</span><br><span class="line">             | old ebp         |</span><br><span class="line">   ebp =&gt;    +-----------------+</span><br><span class="line">             | ebx             |</span><br><span class="line"> ebp<span class="number">-4</span> =&gt;    +-----------------+</span><br><span class="line">             | unknown         |</span><br><span class="line"> ebp<span class="number">-8</span> =&gt;    +-----------------+</span><br><span class="line">             | canary value    |</span><br><span class="line">ebp<span class="number">-12</span> =&gt;    +-----------------+</span><br><span class="line">             | 局部变量         |</span><br><span class="line">     Low     |                 |</span><br><span class="line">     Address</span><br></pre></td></tr></table></figure>
-
+<p><img src="https://i.loli.net/2020/07/01/OPEoZQd7nupaBj8.png" alt="image-20200701172055740"></p>
 <p>主要说一下x86下的canary，x64类似</p>
 <p>栈溢出保护是一种缓冲区溢出攻击缓解手段，当函数存在缓冲区溢出攻击漏洞时，攻击者可以覆盖栈上的返回地址来让 shellcode 能够得到执行。</p>
 <p>当启用栈保护后，函数开始执行的时候会先往栈底插入 cookie 信息，当函数真正返回的时候会验证 cookie 信息是否合法 (栈帧销毁前测试该值是否被改变)，如果不合法就停止程序运行 (栈溢出发生)。</p>
@@ -490,15 +490,15 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -m32 -no-pie canary.c -o canary //无PIE保护</span><br></pre></td></tr></table></figure>
 
 <p>编译之后可以运行，输入两次数据结束</p>
-<p>职业病，拖进IDA看一下</p>
+<p>职业病，拖进IDA</p>
 <p><img src="https://i.loli.net/2020/07/01/O7kHLestKch9dTE.png" alt="image-20200701162154035"></p>
 <p>主要看一下vuln函数，<code>buf</code>是我们开辟的缓冲区，大小70H（十进制112），但是我们只定义了100个大小，为什么会多12字节的大小呢</p>
 <p>然后v3很奇怪，源码中并没有定义这个变量，看到最后return，自己和自己异或，很明显做了一次检查，只有两次相等时才能return 0，所以可以知道v3就是canary</p>
 <p>再看v3在栈中的位置<code>ebp-C</code>正好符合条件。</p>
-<p>输入100个字符之后就是canary</p>
+<p>即输入100个字符之后就是canary</p>
 <p>为了进一步搞清楚泄露canary的原理，可以gdb调试一下</p>
 <p><img src="https://i.loli.net/2020/07/01/Bx4Ld7kSaJ3EGHl.png" alt="image-20200701163648373"></p>
-<p>左面是输入了99个’A’，右面输入100个’A’，可以明显看出我画红线位置的不同，其中0x0a是100个A时候的换行符，而buf大小刚好是100</p>
+<p>左面是输入了99个’A’，右面输入100个’A’，可以明显看出我画红线位置的不同，其中0x0a是100个A之后的换行符，而buf大小刚好是100</p>
 <ul>
 <li>当输入99个A时，加上0x0a的换行标记，正好100个字符占满buf</li>
 <li>当输入100个A时，buf刚好被占满，这时0x0a的换行符覆盖掉了后四位字节的最低位（如图所示），由于32位程序中，canary为四个字节，所以0x0a覆盖掉的就是canary的最低位0x00</li>
