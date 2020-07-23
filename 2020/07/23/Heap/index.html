@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>堆溢出漏洞利用总结 | Ld1ng</title>
+  <meta name="description" content="0x00 前言历时三天的速成，终于把报告上交了🙄 不过话说回来，堆可能是pwn里最难啃的骨头了，没什么固定做法，复杂多变，感觉自己十个脑子也不够用… 自己记录了一些最基本的知识点，但是看过堆题的朋友应该明白， 就这？还想做堆？啥也不是！ 0x01 背景知识堆(heap)是一种全局的数据结构，主要是指用户动态申请的内存(如调用malloc、alloc、new等函数)，不同于栈的是，堆具有更多的灵活">
+<meta property="og:type" content="article">
+<meta property="og:title" content="堆溢出漏洞利用总结">
+<meta property="og:url" content="http://ld1ng.com/2020/07/23/Heap/index.html">
+<meta property="og:site_name" content="Ld1ng">
+<meta property="og:description" content="0x00 前言历时三天的速成，终于把报告上交了🙄 不过话说回来，堆可能是pwn里最难啃的骨头了，没什么固定做法，复杂多变，感觉自己十个脑子也不够用… 自己记录了一些最基本的知识点，但是看过堆题的朋友应该明白， 就这？还想做堆？啥也不是！ 0x01 背景知识堆(heap)是一种全局的数据结构，主要是指用户动态申请的内存(如调用malloc、alloc、new等函数)，不同于栈的是，堆具有更多的灵活">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/1EsYTkOrwICQqng.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/qaxSFDMzu9iPpkT.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/9iB4mYRT1dDb7tA.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/M9V4kXQqRULDdnA.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/7InVkBHpStOg4Nz.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/EYlCgqmK4Qud8FX.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/XMowxTDZ7PsiAq3.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/P6e2dSHTAkmLpvX.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/gErzHZUPC8Kt5nY.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/PIeNXDMBSHuAEaw.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2020/png/268938/1590283439038-3681fb04-725f-4a4e-ae8a-cd6f17aa0b82.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2020/png/268938/1590284609774-10ac80a9-eab4-4ed0-8cd5-86cd1adab978.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/URVaO8tr3z6buBf.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/JgR9imeK6YMQ2rZ.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/kh4bnoClPHOEZRT.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/EHrP51xWJX7fKR2.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/BTQOKLG2XSyHqge.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/vLMebO9hn6pTHP4.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2020/png/268938/1593172846524-c2fc14af-bf0c-44db-8c3d-d2b26e5ea2c5.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/23/RlSDu1gY6TMqkoh.png">
+<meta property="article:published_time" content="2020-07-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-07-23T09:10:02.078Z">
+<meta property="article:author" content="Ld1ng">
+<meta property="article:tag" content="KNOWLEDGE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/07/23/1EsYTkOrwICQqng.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://ld1ng.com/2020/07/23/Heap/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/ld1ng" target="_blank">
+          <img class="img-circle img-rotate" src="/images/liding.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Ld1ng</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md"></h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> JiangSu , China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">Books</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>When people lose their thinking power, the human age will end</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DEVELOP/">DEVELOP</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LEARNING/">LEARNING</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LIFE/">LIFE</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/REVERSE/">REVERSE</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+    <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+    <div class="widget-wrap">
+        <h3 class="widget-title">Tag Cloud</h3>
+        <div id="myCanvasContainer" class="widget tagcloud">
+            <canvas width="200" height="200" id="resCanvas" style="width=100%">
+                <a href="/tags/ADWorld/" style="font-size: 13.33px;">ADWorld</a> <a href="/tags/Assembly/" style="font-size: 10px;">Assembly</a> <a href="/tags/Bugku/" style="font-size: 10px;">Bugku</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/KNOWLEDGE/" style="font-size: 16.67px;">KNOWLEDGE</a> <a href="/tags/OpenCV/" style="font-size: 10px;">OpenCV</a> <a href="/tags/PERSONALITY/" style="font-size: 13.33px;">PERSONALITY</a>
+            </canvas>
+        </div>
+    </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ADWorld/" rel="tag">ADWorld</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Assembly/" rel="tag">Assembly</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bugku/" rel="tag">Bugku</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KNOWLEDGE/" rel="tag">KNOWLEDGE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenCV/" rel="tag">OpenCV</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PERSONALITY/" rel="tag">PERSONALITY</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/07/23/Heap/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/LEARNING/">LEARNING</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/23/Heap/" class="title">堆溢出漏洞利用总结</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-22T16:00:00.000Z" itemprop="datePublished">2020-07-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/07/01/canary/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/LEARNING/">LEARNING</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/01/canary/" class="title">学习canary&amp;&amp;栈迁移</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-30T16:00:00.000Z" itemprop="datePublished">2020-07-01</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/06/20/Graduation/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/LIFE/">LIFE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/20/Graduation/" class="title">观毕业季有感</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-19T16:00:00.000Z" itemprop="datePublished">2020-06-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/06/16/GOTPLT/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/LEARNING/">LEARNING</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/16/GOTPLT/" class="title">学习PLT表GOT表</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-15T16:00:00.000Z" itemprop="datePublished">2020-06-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/06/15/Microcomputer/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/DEVELOP/">DEVELOP</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/15/Microcomputer/" class="title">微机实验记录</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-14T16:00:00.000Z" itemprop="datePublished">2020-06-15</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-背景知识"><span class="toc-number">2.</span> <span class="toc-text">0x01 背景知识</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-基本漏洞类型"><span class="toc-number">3.</span> <span class="toc-text">0x02 基本漏洞类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-常规堆溢出"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.常规堆溢出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Off-By-One"><span class="toc-number">3.1.</span> <span class="toc-text">2.Off By One</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Use-After-Free"><span class="toc-number">3.1.1.</span> <span class="toc-text">3.Use After Free</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Double-Free"><span class="toc-number">3.1.2.</span> <span class="toc-text">4.Double Free</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-堆溢出漏洞利用"><span class="toc-number">4.</span> <span class="toc-text">0x03 堆溢出漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-House-of-spirit-fastbin"><span class="toc-number">4.0.1.</span> <span class="toc-text">1. House of spirit(fastbin)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-house-of-force"><span class="toc-number">4.0.2.</span> <span class="toc-text">2. house of force</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-unlink-旧版"><span class="toc-number">4.0.3.</span> <span class="toc-text">3.unlink(旧版)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-unlink-freenote"><span class="toc-number">4.0.4.</span> <span class="toc-text">4.unlink(freenote)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-forgotten-chunk"><span class="toc-number">4.0.5.</span> <span class="toc-text">5.forgotten chunk</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-小结"><span class="toc-number">5.</span> <span class="toc-text">0x04 小结</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Heap" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      堆溢出漏洞利用总结
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/07/23/Heap/" class="article-date">
+	  <time datetime="2020-07-22T16:00:00.000Z" itemprop="datePublished">2020-07-23</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/LEARNING/">LEARNING</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/KNOWLEDGE/" rel="tag">KNOWLEDGE</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/07/23/Heap/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 5.2k(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 20(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>历时三天的速成，终于把报告上交了🙄</p>
+<p>不过话说回来，堆可能是pwn里最难啃的骨头了，没什么固定做法，复杂多变，感觉自己十个脑子也不够用…</p>
+<p>自己记录了一些最基本的知识点，但是看过堆题的朋友应该明白，</p>
+<p>就这？还想做堆？啥也不是！</p>
+<h1 id="0x01-背景知识"><a href="#0x01-背景知识" class="headerlink" title="0x01 背景知识"></a>0x01 背景知识</h1><p>堆(heap)是一种全局的数据结构，主要是指用户动态申请的内存(如调用malloc、alloc、new等函数)，不同于栈的是，堆具有更多的灵活性，因此堆漏洞的利用也更加复杂，更加零散，在此我总结一下堆溢出漏洞的几种常见的利用方法。</p>
+<p>以下是学习堆所需要掌握并熟悉的基本知识点(自学)。</p>
+<ol>
+<li><p>glibc malloc中三种最基本的堆块数据结构：heap_info, malloc_state, malloc_chunk;</p>
+</li>
+<li><p>chunk内存块结构及各字段功能;</p>
+</li>
+<li><p>bins类型及空闲内存块的管理组织方法;</p>
+</li>
+<li><p>malloc()、free()工作流程；</p>
+</li>
+</ol>
+<h1 id="0x02-基本漏洞类型"><a href="#0x02-基本漏洞类型" class="headerlink" title="0x02 基本漏洞类型"></a>0x02 基本漏洞类型</h1><h3 id="1-常规堆溢出"><a href="#1-常规堆溢出" class="headerlink" title="1.常规堆溢出"></a>1.常规堆溢出</h3><p>堆缓冲区溢出与栈缓冲区溢出类似，指堆上的缓冲区被填入过多数据，导致堆中其他数据被覆盖，主要分为两种情况：</p>
+<p>(1)覆盖本堆块内部数据，通常发生在结构体中，如果结构体中数组溢出，则覆盖后续变量。</p>
+<p>(2)覆盖后续堆块数据，会影响后续堆块的数据，甚至破坏堆块结构。</p>
+<p>对于这两种情况可以类比栈溢出原理，没有太多技巧性的知识，但是CTF中不会出现单纯利用堆溢出的题目，通常多种基本漏洞会相互结合，所以要求常见基本漏洞类型都要掌握并且能够灵活使用。</p>
+<hr>
+<h2 id="2-Off-By-One"><a href="#2-Off-By-One" class="headerlink" title="2.Off By One"></a>2.Off By One</h2><p>缓冲区溢出的一种，但是比较特殊，只能溢出1个字节。</p>
+<p>有两种利用思路：</p>
+<p>(1)  溢出字节为可控制任意字节：通过修改大小造成块结构之间出现重叠，从而泄露其他块数据，或是覆盖其他块数据。</p>
+<p>(2)  溢出字节为 NULL 字节：溢出的一个字节恰好覆盖下一堆块的size域的最低位，将PREV_INUSE位置0，这样前块会被认为是 free 块。这时可以选择使用 unlink 方法进行处理(后面将详细介绍)，这时 prev_size 域就会启用，就可以伪造 prev_size ，从而造成块之间发生重叠。</p>
+<p>下面是一个简单的off by one的程序：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> <span class="built_in">buffer</span>[<span class="number">40</span>]=<span class="string">""</span>;</span><br><span class="line">    <span class="keyword">void</span> *chunk1;</span><br><span class="line">    chunk1=<span class="built_in">malloc</span>(<span class="number">24</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Get Input"</span>);</span><br><span class="line">    gets(<span class="built_in">buffer</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">strlen</span>(<span class="built_in">buffer</span>)==<span class="number">24</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">strcpy</span>(chunk1,<span class="built_in">buffer</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序很简单，但并非安全，问题在于strlen 在计算长度的时候不会把结束符 ‘\x00’ 计算在内，但strcpy 在拷贝的时候会把 ‘\x00’ 也算上，所以就会造成 off by one。(for循环中也比较常见)</p>
+<p>调试一下，便于理解，在main函数下断点，然后单步到输入位置，查看一下chunk情况，</p>
+<p><img src="https://i.loli.net/2020/07/23/1EsYTkOrwICQqng.png" alt=""></p>
+<p>当我们输入24个’A’之后，很明显下一位低字节被覆盖为’\x00’</p>
+<p><img src="https://i.loli.net/2020/07/23/qaxSFDMzu9iPpkT.png" alt=""></p>
+<p>Note：有一个点要注意，为什么申请了24个字节，chunk大小是0x21呢，也就是说为什么用户数据部分大小只有0x10?</p>
+<p>其实是这样的，当前一堆块正在使用时，下一堆块的prev_size也被当作数据部分(大小0x08)，只有前一堆块free时，prev_size域才有意义。</p>
+<hr>
+<h3 id="3-Use-After-Free"><a href="#3-Use-After-Free" class="headerlink" title="3.Use After Free"></a>3.Use After Free</h3><p>Use After Free(UAF)即释放后使用漏洞。若堆指针在释放后未置空，形成悬挂指针，当下次访问该指针时，依然能够访问原指针所指向的堆内容，形成漏洞。通常需要根据具体情况分析，以判断是否具有信息泄露和信息修改的功能。</p>
+<p>这是比赛时最常规的一种方法，绝大多数题目都要借助它来完成，简单来说当我们第一次申请的内存释放之后，没有进行内存回收，下次申请的时候还能申请到这一块内存，导致我们可以用以前的内存指针来访问修改过的内存。</p>
+<p>同样，用一个 UAF的程序展示简单的漏洞利用，以便于理解。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*func_ptr)</span><span class="params">(<span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sys1</span><span class="params">(<span class="keyword">char</span> command[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">system(command);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">echo</span><span class="params">(<span class="keyword">char</span> content[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%s"</span>,content);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    func_ptr *p1=(func_ptr*)<span class="built_in">malloc</span>(<span class="number">4</span>*<span class="keyword">sizeof</span>(<span class="keyword">int</span>));<span class="comment">//申请了4个int大小的内存</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"malloc addr: %p\n"</span>,p1);<span class="comment">//因为前2个也就是0x10是用来管理chunk的</span></span><br><span class="line">    p1[<span class="number">2</span>]=echo;<span class="comment">//所以从第三个开始</span></span><br><span class="line">    p1[<span class="number">2</span>](<span class="string">"hello world\n"</span>);</span><br><span class="line">    <span class="built_in">free</span>(p1); <span class="comment">//在这里free了p1,但并未将p1置空,导致后续可以再使用p1指针</span></span><br><span class="line">    p1[<span class="number">2</span>](<span class="string">"hello again\n"</span>); <span class="comment">//p1指针未被置空,虽然free了,但仍可使用.</span></span><br><span class="line">    func_ptr *p2=(func_ptr*)<span class="built_in">malloc</span>(<span class="number">4</span>*<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">    <span class="comment">//free一块内存后,再次申请同样大小的指针会把刚刚释放的内存分配出来</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"malloc addr: %p\n"</span>,p2);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"malloc addr: %p\n"</span>,p1);<span class="comment">//p2与p1指针指向的内存为同一地址</span></span><br><span class="line">    p2[<span class="number">2</span>]=sys1; <span class="comment">//在这里将p1指针里面保存的echo函数指针覆盖成为了sys1指针.</span></span><br><span class="line">    p1[<span class="number">2</span>](<span class="string">"/bin/sh"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很明显，p1,p2指针指向了同一地址，原因就是p1被释放后，放入fastbin，当p2再次申请同样大小的空间时，直接从fastbin中取出刚刚被释放、且大小合适的内存空间（即p1），以提高分配速度，如果程序员粗心大意，那么就会造成了可以被利用的UAF漏洞。</p>
+<p><img src="https://i.loli.net/2020/07/23/9iB4mYRT1dDb7tA.png" alt=""></p>
+<p>成功获取shell。</p>
+<hr>
+<h3 id="4-Double-Free"><a href="#4-Double-Free" class="headerlink" title="4.Double Free"></a>4.Double Free</h3><p>Double Free是UAF较为特殊的一种，也是比赛中经常被使用的基本方法之一，简单的说，double free是任意地址写的一种技巧，要与堆管理的其他特性相结合使用，先不谈利用，这里我只是介绍一下double free最基础的原理。以fastbin为例，fastbin 是 LIFO 的数据结构，使用单向链表实现。根据fastbin 的特性，释放的chunk 会以单向链表的形式回收到fastbin 里面，然后通过 fastbin-&gt;fd 来遍历。由于 free 的过程会对 free list 做检查，我们不能连续两次 free 同一个 chunk，所以这里在两次 free 之间，增加了一次对其他 chunk 的 free 过程，从而绕过了检查顺利执行，然后再 malloc 三次，就在同一个地址 malloc 了两次，也就有了两个指向同一块内存区域的指针。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Allocating 3 buffers.\n"</span>);</span><br><span class="line">    <span class="keyword">char</span> *a = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="keyword">char</span> *b = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="keyword">char</span> *c = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(a, <span class="string">"AAAAAAAA"</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(b, <span class="string">"BBBBBBBB"</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(c, <span class="string">"CCCCCCCC"</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"1st malloc(9) %p points to %s\n"</span>, a, a);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"2nd malloc(9) %p points to %s\n"</span>, b, b);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"3rd malloc(9) %p points to %s\n"</span>, c, c);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Freeing the first one %p.\n"</span>, a);</span><br><span class="line">    <span class="built_in">free</span>(a);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Then freeing another one %p.\n"</span>, b);</span><br><span class="line">    <span class="built_in">free</span>(b);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Freeing the first one %p again.\n"</span>, a);</span><br><span class="line">    <span class="built_in">free</span>(a);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Allocating 3 buffers.\n"</span>);</span><br><span class="line">    <span class="keyword">char</span> *d = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="keyword">char</span> *e = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="keyword">char</span> *f = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(d, <span class="string">"DDDDDDDD"</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"4st malloc(9) %p points to %s the first time\n"</span>, d, d);</span><br><span class="line">    <span class="built_in">strcpy</span>(e, <span class="string">"EEEEEEEE"</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"5nd malloc(9) %p points to %s\n"</span>, e, e);</span><br><span class="line">    <span class="built_in">strcpy</span>(f, <span class="string">"FFFFFFFF"</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"6rd malloc(9) %p points to %s the second time\n"</span>, f, f);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序free(a)了两次，可以一步一步调试chunk的情况，</p>
+<p>三次malloc之后</p>
+<p><img src="https://i.loli.net/2020/07/23/M9V4kXQqRULDdnA.png" alt=""></p>
+<p>free(a)之后，可以看到a被加到了fastbin中</p>
+<p><img src="https://i.loli.net/2020/07/23/7InVkBHpStOg4Nz.png" alt=""></p>
+<p><img src="https://i.loli.net/2020/07/23/EYlCgqmK4Qud8FX.png" alt=""></p>
+<p>free(b)之后,可以看到b也被加到fastbin中，并且fd指针指向了a的地址</p>
+<p><img src="https://i.loli.net/2020/07/23/XMowxTDZ7PsiAq3.png" alt=""></p>
+<p><img src="https://i.loli.net/2020/07/23/P6e2dSHTAkmLpvX.png" alt=""></p>
+<p>再次free(a)之后，a-&gt;fd又指向了b，也就是说a再一次被添加到fastbin，同时b-&gt;fd=a，所以实际上形成了一个环。</p>
+<p><img src="https://i.loli.net/2020/07/23/gErzHZUPC8Kt5nY.png" alt=""></p>
+<p>最后三次malloc之后,发现0x44(‘D’)不见了，其实是第二次malloc a的时候0x46将其覆盖了。这就是double free的基本原理，但可以想象，如果第一次申请a的时候，将fd指针修改成有意义的地址，那么我们就可以做到任意地址写(可以结合堆溢出)。</p>
+<p><img src="https://i.loli.net/2020/07/23/PIeNXDMBSHuAEaw.png" alt=""></p>
+<p>在 libc-2.26 之后，即使两次 free，也没有触发 double-free 的异常检测，这是因为 tcache 的机制有关，水平有限，这里暂不探讨。</p>
+<hr>
+<h1 id="0x03-堆溢出漏洞利用"><a href="#0x03-堆溢出漏洞利用" class="headerlink" title="0x03 堆溢出漏洞利用"></a>0x03 堆溢出漏洞利用</h1><h3 id="1-House-of-spirit-fastbin"><a href="#1-House-of-spirit-fastbin" class="headerlink" title="1. House of spirit(fastbin)"></a>1. House of spirit(fastbin)</h3><p><strong>利用技术:</strong></p>
+<blockquote>
+<p>(1)fastbin为单链表(只用到fd)，结构简单，容易伪造</p>
+<p>(2)为了提高分配效率，安全检查少</p>
+<p> (3)只针对fastbin大小的chunk，small/large chunk不适用</p>
+<p> (4)存在堆溢出、use-after-free 等能控制 chunk 内容的漏洞</p>
+</blockquote>
+<p><strong>利用思路:</strong></p>
+<ol>
+<li><p>空闲fast chunk如果发生溢出被覆盖，则链表指针fd可以被修改</p>
+</li>
+<li><p>通过修改链表指针fd，在fastbin中引入伪造的free chunk(最重要的是必须保证伪造的chunk结构合法)</p>
+</li>
+<li><p>下次分配时分配伪造的fast chunk</p>
+</li>
+<li><p>伪造的fast chunk可以在以下位置：</p>
+</li>
+</ol>
+<p>在栈上伪造fast chunk：覆盖返回地址</p>
+<p>在bss上伪造fast chunk：修改全局变量</p>
+<p>在堆上伪造fast chunk：修改堆上数据</p>
+<p>以fastbin_dup_into_stack为例，该程序便是利用double free进行fastbin attack其余两种可类比该例子</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> stack_var = <span class="number">0x21</span>;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Allocating 3 buffers.\n"</span>);</span><br><span class="line">    <span class="keyword">char</span> *a = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="keyword">char</span> *b = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="keyword">char</span> *c = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(a, <span class="string">"AAAAAAAA"</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(b, <span class="string">"BBBBBBBB"</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(c, <span class="string">"CCCCCCCC"</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"1st malloc(9) %p points to %s\n"</span>, a, a);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"2nd malloc(9) %p points to %s\n"</span>, b, b);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"3rd malloc(9) %p points to %s\n"</span>, c, c);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Freeing the first one %p.\n"</span>, a);</span><br><span class="line">    <span class="built_in">free</span>(a);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Then freeing another one %p.\n"</span>, b);</span><br><span class="line">    <span class="built_in">free</span>(b);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Freeing the first one %p again.\n"</span>, a);</span><br><span class="line">    <span class="built_in">free</span>(a);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Allocating 4 buffers.\n"</span>);</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> *d = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    *d = (<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span>) (((<span class="keyword">char</span>*)&amp;stack_var) - <span class="keyword">sizeof</span>(d));</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"4nd malloc(9) %p points to %p\n"</span>, d, &amp;d);</span><br><span class="line">    <span class="keyword">char</span> *e = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(e, <span class="string">"EEEEEEEE"</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"5nd malloc(9) %p points to %s\n"</span>, e, e);</span><br><span class="line">    <span class="keyword">char</span> *f = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(f, <span class="string">"FFFFFFFF"</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"6rd malloc(9) %p points to %s\n"</span>, f, f);</span><br><span class="line">    <span class="keyword">char</span> *g = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(g, <span class="string">"GGGGGGGG"</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"7th malloc(9) %p points to %s\n"</span>, g, g);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个程序展示了怎样通过修改指针，将其指向一个伪造的 free chunk，在伪造的地址处 malloc 出一个 chunk。Double free之前的程序基本没变，关键点在于我们的下一次malloc：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> *d = <span class="built_in">malloc</span>(<span class="number">9</span>);</span><br><span class="line">*d = (<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span>) (((<span class="keyword">char</span>*)&amp;stack_var) - <span class="keyword">sizeof</span>(d));</span><br></pre></td></tr></table></figure>
+
+<p>填充了一个地址：栈地址-0x8</p>
+<p>  这一步的意义就是在于在栈上构造了一个合法chunk，伪造的chunk要有合法的堆头信息，所以应从size域-0x8开始。</p>
+<p>特别要注意的是，fake fastbin中的size需要与改写指针的fastbin块大小一致，且p位为1。</p>
+<p>可以看一下栈中的位置</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2020/png/268938/1590283439038-3681fb04-725f-4a4e-ae8a-cd6f17aa0b82.png" alt=""></p>
+<p>而在fastbin中，原本的a堆块fd指针已经改为栈中对应的地址，因此当下一次malloc a时，就会在我们伪造的假chunk分配内存。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2020/png/268938/1590284609774-10ac80a9-eab4-4ed0-8cd5-86cd1adab978.png" alt=""></p>
+<p>如果能实现在栈中的任意地址写，那么就可以用栈的方法获取shell。</p>
+<p>同样，如果存在堆溢出漏洞，也可以进行free chunk fd指针的修改，但是为了总结相关原理和便于理解，我举的例子都很简单，仅适合入门者学习参考。</p>
+<hr>
+<h3 id="2-house-of-force"><a href="#2-house-of-force" class="headerlink" title="2. house of force"></a>2. house of force</h3><p><strong>利用条件：</strong></p>
+<p>1.能够以溢出的方式控制到top chunk的size域</p>
+<p>2.能够自由地控制堆分配尺寸的大小</p>
+<p>3.可以构造size拿到top chunk本身之外的内存，如libc的内存空间</p>
+<p>这种方法主要是指堆块溢出覆盖top chunk中的size域的情况，通过将其修改为一个非常大的数据，从而可以申请非常大的空间，使得新top chunk的头部落到想要修改的位置。在下次申请时，就能够得到目标内存，从而实现泄露和改写。</p>
+<p><strong>利用步骤如下：</strong></p>
+<p>(1)首先先泄露出堆地址。</p>
+<p>(2)利用堆溢出，将top chunk的size域修改为很大的数</p>
+<p>(3)申请大块内存(可以通过堆地址和目标地址的距离进行计算)，使得top chunk的头部落在目标地址范围内。</p>
+<p>(4)再次申请内存，那么新申请的内存即为目标地址，通常情况下(未开启FullRelro)，一般是将目标地址设为got表地址。</p>
+<p><img src="https://i.loli.net/2020/07/23/URVaO8tr3z6buBf.png" alt=""></p>
+<p>当我们计算好当前堆块与目标地址之间的偏移后，申请该大小的堆块，让chunk头会恰好落在目标地址前(低地址)，这时再次申请，我们就可以改写目标地址内容。</p>
+<hr>
+<h3 id="3-unlink-旧版"><a href="#3-unlink-旧版" class="headerlink" title="3.unlink(旧版)"></a>3.unlink(旧版)</h3><p>unlink攻击技术是利用glibc malloc的内存回收机制，通过堆溢出等方法进行内存修改。</p>
+<p>要想利用unlink，首先要了解free()的工作过程：</p>
+<blockquote>
+<p>(1)如果size&lt;max fast，放入fastbin，结束</p>
+<p>(2)如果前一个chunk是free的，unlink前面的chunk，合并两个chunk，并放入unsorted bin</p>
+<p>(3)如果后一个chunk是free的，则unlink后面的chunk，合并两个chunk，并放入unsorted bin</p>
+<p>(4)如果后一个是top chunk，则将当前chunk并入top chunk</p>
+<p>(5)前后chunk都不是free的，则直接放入unsorted bin</p>
+</blockquote>
+<p>相关代码如下:</p>
+<p><img src="https://i.loli.net/2020/07/23/JgR9imeK6YMQ2rZ.png" alt="image-20200723164353967"></p>
+<p>流程大体是这样的：</p>
+<p>(1)将前一个chunk占用的内存合并到当前chunk;</p>
+<p>(2)修改指向当前chunk的指针，改为指向前一个chunk。</p>
+<p>(3)使用unlink宏，将前一个free chunk从双向循环链表中移除</p>
+<p>向前合并和向后合并过程类似，这里不再赘述。</p>
+<p>了解了unlink的基本原理之后，可以结合例子理解</p>
+<p>存在unlink攻击漏洞的程序如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt; </span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">( <span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[] )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">char</span> * first, * second; </span><br><span class="line"></span><br><span class="line">first = <span class="built_in">malloc</span>( <span class="number">666</span> );</span><br><span class="line">second = <span class="built_in">malloc</span>( <span class="number">12</span> );</span><br><span class="line">  <span class="keyword">if</span>(argc!=<span class="number">1</span>)</span><br><span class="line">     <span class="built_in">strcpy</span>( first, argv[<span class="number">1</span>] );</span><br><span class="line"></span><br><span class="line"><span class="built_in">free</span>( first );</span><br><span class="line"><span class="built_in">free</span>( second );</span><br><span class="line"><span class="keyword">return</span>( <span class="number">0</span> );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该程序存在一个堆溢出漏洞：如果用户输入的argv1的大小比first变量的666字节更大的话，那么输入的数据就有可能覆盖掉下一个chunk的chunk header——这可以导致任意代码执行。而攻击的核心思路就是利用glibc malloc的unlink机制。</p>
+<p>现在我们再来分析如果一个攻击者精心构造输入数据并通过strcpy覆盖了second chunk的chunk header后会发生什么情况。 </p>
+<p>假设被覆盖后的chunk header相关数据如下： </p>
+<p>(1) 填充prev_size位为一个偶数</p>
+<p>(2) size = -4 (64位下为-8) </p>
+<p>(3) fd = free 函数的got表地址address – 12； </p>
+<p>(4) bk = shellcode的地址 </p>
+<p>那么当程序调用free(first)后会发生什么呢？</p>
+<p>我们一步一步分析，前面已经介绍过了free的流程，由于first前面无free的chunk，所以不会发生向后合并，因此来判断下面是向前合并，代码如下：</p>
+<p><img src="https://i.loli.net/2020/07/23/kh4bnoClPHOEZRT.png" alt="image-20200723164646772"></p>
+<p>本例中，next chunk就是second chunk，从上面代码可知chunk判断下一堆块是否free的方法，即通过nextchunk + nextsize计算得到指向下下一个chunk的指针，然后判断下下个chunk的size的PREV_INUSE标记位是否为0。在本例中，此时nextsize被我们设置为了-4，这样glibc malloc就会将next chunk的prev_size字段看做是next-next chunk的size字段，而我们已经将next chunk的prev_size字段设置为了一个偶数，因此此时通过inuse_bit_at_offset宏获取到的nextinuse为0，即next chunk为free！既然next chunk为free，那么就需要进行向前合并，所以就会调用unlink(nextchunk, bck, fwd)函数。</p>
+<p>真正的重点就是这个unlink函数的利用，认真分析一下unlink的代码</p>
+<p><img src="https://i.loli.net/2020/07/23/EHrP51xWJX7fKR2.png" alt=""></p>
+<p>打眼一看，很像数据结构中学过的删除链表中某一结点的操作，确实如此，unlink实现的功能正是在bins链表中删除掉已经被合并的块。</p>
+<p>具体利用流程如下：</p>
+<p>(1)首先FD = nextchunk-&gt;fd = free地址 – 12; </p>
+<p>(2)然后BK = nextchunk-&gt;bk = shellcode起始地址；</p>
+<p>(3)再将BK赋值给FD-&gt;bk，即（free地址 – 12）-&gt;bk = shellcode起始地址； </p>
+<p>(4)最后将FD赋值给BK-&gt;fd，即(shellcode起始地址)-&gt;fd = free地址 – 12。</p>
+<p>作图理解一下：</p>
+<p><img src="https://i.loli.net/2020/07/23/BTQOKLG2XSyHqge.png" alt="image-20200723165236574"></p>
+<p>结合图片应该很好理解，借助了unlink将free()的got表修改为shellcode地址，当再次free(second)时，就会转而运行我们写好的shellcode了。</p>
+<p>这里的chunk头并不是真实的，只是我们在攻击中需要让glic malloc在进行unlink时将它们强制看作chunk结构体而伪造的，也就是我上面说的结构合法。</p>
+<hr>
+<h3 id="4-unlink-freenote"><a href="#4-unlink-freenote" class="headerlink" title="4.unlink(freenote)"></a>4.unlink(freenote)</h3><p>上面Unlink的方法有些过时，但是可以拿过来学习一下原理，有助于对堆有更好的理解，目前新式的unlink中加入了许多限制，其中最重要的一条是：</p>
+<p><code>FD-&gt;bk !=p || BK-&gt;fd !=p;</code></p>
+<p>也就是说由于有一个保护检查机制，它会检查这个 chunk 的前一个 chunk 的 bk 指针是不是指向这个 chunk（后一个也一样），直接导致很多利用方式难以满足这个条件，比较有效的是freenote的方式。</p>
+<p>下面介绍freenote的主要利用思路。</p>
+<p>Free chunk 的双链表结构如下所示：</p>
+<p><code>FD = p-&gt;fd = *(&amp;p + 2)</code></p>
+<p><code>BK = p-&gt;bk = *(&amp;p + 3)</code></p>
+<p>但现在执行unlink(P,BK,FD)时，需要满足FD-&gt;bk = p &amp;&amp; BK-&gt;fd = p的条件，即：</p>
+<p><code>FD-&gt;bk = *(*(&amp;p + 2) + 3 ) = *(p[2] + 3) == p</code></p>
+<p><code>BK-&gt;fd = *(*(&amp;p + 3) + 2 ) = *(p[3] + 2) == p</code></p>
+<p>=&gt;</p>
+<p><code>p[2] = &amp;p – 3, p[3] = &amp;p – 2</code></p>
+<p>这里比较绕，建议画图辅助理解。</p>
+<p>这时如果存在一个全局变量G_P，其中存储的指针指向p的话，那么就可以通过设置p[2] = &amp;p – 3, p[3] = &amp;p – 2 进行伪造，来满足指针检查。</p>
+<p><img src="https://i.loli.net/2020/07/23/vLMebO9hn6pTHP4.png" alt=""></p>
+<p>根据图所示，当构造的fake chunk溢出修改了下一个chunk的 prev_size和p位，就可以将fake chunk 伪造成free chunk，这时free掉下一个chunk，两个块便可合并，触发unlink。</p>
+<blockquote>
+<p>FD = P-&gt;fd </p>
+<p>BK = P-&gt;bk </p>
+<p>FD-&gt;bk = BK</p>
+<p>BK-&gt;fd = FD</p>
+</blockquote>
+<p><img src="https://cdn.nlark.com/yuque/0/2020/png/268938/1593172846524-c2fc14af-bf0c-44db-8c3d-d2b26e5ea2c5.png" alt=""></p>
+<p>最终执行:</p>
+<blockquote>
+<p>FD-&gt;bk = BK; =&gt;p = *(&amp;p+3) = p[3] = &amp;p-2</p>
+<p>BK-&gt;fd = FD; =&gt;p = *(&amp;p+2) = p[2] = &amp;p-3</p>
+</blockquote>
+<p>使得：</p>
+<p><code>p= &amp;p – 3</code></p>
+<p>最后，p指针指向全局变量G_P前面3个4(8字节)字节处。如果G_P是个管理结构，那么就可以实现任意地址读写了。</p>
+<p>即可以通过修改p所指向的内容来修改p的指针了</p>
+<p>需要满足如下条件：</p>
+<ol>
+<li><p>存在堆覆盖，可以改写到即将要释放的堆块，将其prev_size改成所构造的堆块大小，size中p位改为0.</p>
+</li>
+<li><p>存在已知地址的指针(通常为全局变量)指向伪造的堆块头部。</p>
+</li>
+<li><p>能够释放后续堆块来触发unlink。</p>
+</li>
+</ol>
+<hr>
+<h3 id="5-forgotten-chunk"><a href="#5-forgotten-chunk" class="headerlink" title="5.forgotten chunk"></a>5.forgotten chunk</h3><p>forgotten chunk主要是指chunk的申请释放中被遗忘的部分，虽然堆块的申请和释放逻辑相对来说比较完善，但是检查还是存在漏洞。</p>
+<p>简单的情况是从前往后释放，构造出残留堆块。</p>
+<p><img src="https://i.loli.net/2020/07/23/RlSDu1gY6TMqkoh.png" alt="image-20200723165755808"></p>
+<p>如图所示，如果存在缓冲区溢出，然后通过正常申请释放构造出重叠堆块。</p>
+<p>对于已经使用的A,B,C三个堆块，在大小方面没有要求，其中如果A存在堆溢出，且能够覆盖到堆块B的size域(或存在其他改写方式也能达到相同目的)，将堆块B的size域的部分改写成size(B)+size(C)的值(NMP位保持不变)，然后对堆块B进行释放，这样是可以通过检查的，并且能将B,C识别成一个堆块进行处理。其中原本C后续堆块的prev_size域会被当成数据部分处理，不起标识作用，使检查能顺利通过。</p>
+<p>在此基础上，可以结合最基本的堆利用方法、unlink、fastbin来对堆块进行利用。</p>
+<p>(1)如果C块或者其上还有其他未知块部分存在变量指针，则采用最基本堆利用方法，直接构造指针数据即可。</p>
+<p>(2)如果存在fastbin中的堆块，且其中想改写的目的地址符合fastbin利用条件，则采用fastbin的方法。</p>
+<p>(3)直接申请新堆块，在其中构造unlink利用的条件，通过释放堆块来触发unlink。</p>
+<p>具体利用什么方法视情况而定。</p>
+<hr>
+<h1 id="0x04-小结"><a href="#0x04-小结" class="headerlink" title="0x04 小结"></a>0x04 小结</h1><p>堆的利用灵活多变，且情况比栈的利用复杂的多，我所记录的只是一些最基本且常见的方法，便于对堆溢出漏洞利用有一个比较客观的认识，至于更多技巧，则需要自己不断实践和学习积累来获得。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://ld1ng.com/2020/07/23/Heap/" title="堆溢出漏洞利用总结">http://ld1ng.com/2020/07/23/Heap/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/ld1ng" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/liding.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/ld1ng" target="_blank"><span class="text-dark">Ld1ng</span><small class="ml-1x"></small></a></h3>
+        <div>Primary school students majoring in information security.</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/07/01/canary/" title="学习canary&amp;&amp;栈迁移"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>$</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>Maybe you could buy me a cup of coffee.</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/ipay.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open alipay app scan this qrcode, buy me a coffee!</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechat.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open wechat app scan this qrcode, buy me a coffee!</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> alipay</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> wechat payment</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2020 Ld1ng
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/ld1ng" target="_blank"> ld1ng </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'axhOjPzscogBppPjn36rtaAv-gzGzoHsz',
+    appKey: 'gMB6OHiHJvIxpnVtuoYxyPhk',
+    placeholder: 'Just go go',
+    avatar: 'wavatar',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+
+<!--动态线条背景-->
+<script type="text/javascript"
+color="220,220,220" opacity='0.7' zIndex="-2" count="150" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js">
+</script>
+ <!-- 页面点击礼花效果 -->
+<script type="text/javascript" src="/js/firework.js"></script>
+</body>
+</html>
