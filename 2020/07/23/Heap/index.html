@@ -46,7 +46,7 @@
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2020/png/268938/1593172846524-c2fc14af-bf0c-44db-8c3d-d2b26e5ea2c5.png">
 <meta property="og:image" content="https://i.loli.net/2020/07/23/RlSDu1gY6TMqkoh.png">
 <meta property="article:published_time" content="2020-07-22T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-07-23T09:10:02.078Z">
+<meta property="article:modified_time" content="2020-07-23T10:33:42.344Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="KNOWLEDGE">
 <meta name="twitter:card" content="summary">
@@ -426,7 +426,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">Catalogue</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-背景知识"><span class="toc-number">2.</span> <span class="toc-text">0x01 背景知识</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-基本漏洞类型"><span class="toc-number">3.</span> <span class="toc-text">0x02 基本漏洞类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-常规堆溢出"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.常规堆溢出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Off-By-One"><span class="toc-number">3.1.</span> <span class="toc-text">2.Off By One</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Use-After-Free"><span class="toc-number">3.1.1.</span> <span class="toc-text">3.Use After Free</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Double-Free"><span class="toc-number">3.1.2.</span> <span class="toc-text">4.Double Free</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-堆溢出漏洞利用"><span class="toc-number">4.</span> <span class="toc-text">0x03 堆溢出漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-House-of-spirit-fastbin"><span class="toc-number">4.0.1.</span> <span class="toc-text">1. House of spirit(fastbin)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-house-of-force"><span class="toc-number">4.0.2.</span> <span class="toc-text">2. house of force</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-unlink-旧版"><span class="toc-number">4.0.3.</span> <span class="toc-text">3.unlink(旧版)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-unlink-freenote"><span class="toc-number">4.0.4.</span> <span class="toc-text">4.unlink(freenote)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-forgotten-chunk"><span class="toc-number">4.0.5.</span> <span class="toc-text">5.forgotten chunk</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-小结"><span class="toc-number">5.</span> <span class="toc-text">0x04 小结</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-背景知识"><span class="toc-number">2.</span> <span class="toc-text">0x01 背景知识</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-基本漏洞类型"><span class="toc-number">3.</span> <span class="toc-text">0x02 基本漏洞类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-常规堆溢出"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.常规堆溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Off-By-One"><span class="toc-number">3.0.2.</span> <span class="toc-text">2.Off By One</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Use-After-Free"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.Use After Free</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Double-Free"><span class="toc-number">3.0.4.</span> <span class="toc-text">4.Double Free</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-堆溢出漏洞利用"><span class="toc-number">4.</span> <span class="toc-text">0x03 堆溢出漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-House-of-spirit-fastbin"><span class="toc-number">4.0.1.</span> <span class="toc-text">1. House of spirit(fastbin)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-house-of-force"><span class="toc-number">4.0.2.</span> <span class="toc-text">2. house of force</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-unlink-旧版"><span class="toc-number">4.0.3.</span> <span class="toc-text">3.unlink(旧版)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-unlink-freenote"><span class="toc-number">4.0.4.</span> <span class="toc-text">4.unlink(freenote)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-forgotten-chunk"><span class="toc-number">4.0.5.</span> <span class="toc-text">5.forgotten chunk</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-小结"><span class="toc-number">5.</span> <span class="toc-text">0x04 小结</span></a></li></ol>
     </nav>
   </div>
 </aside>
@@ -508,7 +508,7 @@
 <p>(2)覆盖后续堆块数据，会影响后续堆块的数据，甚至破坏堆块结构。</p>
 <p>对于这两种情况可以类比栈溢出原理，没有太多技巧性的知识，但是CTF中不会出现单纯利用堆溢出的题目，通常多种基本漏洞会相互结合，所以要求常见基本漏洞类型都要掌握并且能够灵活使用。</p>
 <hr>
-<h2 id="2-Off-By-One"><a href="#2-Off-By-One" class="headerlink" title="2.Off By One"></a>2.Off By One</h2><p>缓冲区溢出的一种，但是比较特殊，只能溢出1个字节。</p>
+<h3 id="2-Off-By-One"><a href="#2-Off-By-One" class="headerlink" title="2.Off By One"></a>2.Off By One</h3><p>缓冲区溢出的一种，但是比较特殊，只能溢出1个字节。</p>
 <p>有两种利用思路：</p>
 <p>(1)  溢出字节为可控制任意字节：通过修改大小造成块结构之间出现重叠，从而泄露其他块数据，或是覆盖其他块数据。</p>
 <p>(2)  溢出字节为 NULL 字节：溢出的一个字节恰好覆盖下一堆块的size域的最低位，将PREV_INUSE位置0，这样前块会被认为是 free 块。这时可以选择使用 unlink 方法进行处理(后面将详细介绍)，这时 prev_size 域就会启用，就可以伪造 prev_size ，从而造成块之间发生重叠。</p>
@@ -623,22 +623,28 @@
 <p>该程序存在一个堆溢出漏洞：如果用户输入的argv1的大小比first变量的666字节更大的话，那么输入的数据就有可能覆盖掉下一个chunk的chunk header——这可以导致任意代码执行。而攻击的核心思路就是利用glibc malloc的unlink机制。</p>
 <p>现在我们再来分析如果一个攻击者精心构造输入数据并通过strcpy覆盖了second chunk的chunk header后会发生什么情况。 </p>
 <p>假设被覆盖后的chunk header相关数据如下： </p>
+<blockquote>
 <p>(1) 填充prev_size位为一个偶数</p>
 <p>(2) size = -4 (64位下为-8) </p>
 <p>(3) fd = free 函数的got表地址address – 12； </p>
 <p>(4) bk = shellcode的地址 </p>
+</blockquote>
 <p>那么当程序调用free(first)后会发生什么呢？</p>
 <p>我们一步一步分析，前面已经介绍过了free的流程，由于first前面无free的chunk，所以不会发生向后合并，因此来判断下面是向前合并，代码如下：</p>
 <p><img src="https://i.loli.net/2020/07/23/kh4bnoClPHOEZRT.png" alt="image-20200723164646772"></p>
-<p>本例中，next chunk就是second chunk，从上面代码可知chunk判断下一堆块是否free的方法，即通过nextchunk + nextsize计算得到指向下下一个chunk的指针，然后判断下下个chunk的size的PREV_INUSE标记位是否为0。在本例中，此时nextsize被我们设置为了-4，这样glibc malloc就会将next chunk的prev_size字段看做是next-next chunk的size字段，而我们已经将next chunk的prev_size字段设置为了一个偶数，因此此时通过inuse_bit_at_offset宏获取到的nextinuse为0，即next chunk为free！既然next chunk为free，那么就需要进行向前合并，所以就会调用unlink(nextchunk, bck, fwd)函数。</p>
+<p>本例中，next chunk就是second chunk，从上面代码可知chunk判断下一堆块是否free的方法，即通过nextchunk + nextsize计算得到指向下下一个chunk的指针，然后判断下下个chunk的size的PREV_INUSE标记位是否为0。</p>
+<p>在本例中，此时nextsize被我们设置为了-4，这样glibc malloc就会将next chunk的prev_size字段看做是next-next chunk的size字段，而我们已经将next chunk的prev_size字段设置为了一个偶数，因此此时通过inuse_bit_at_offset宏获取到的nextinuse为0，即next chunk为free！</p>
+<p>既然next chunk为free，那么就需要进行向前合并，所以就会调用unlink(nextchunk, bck, fwd)函数。</p>
 <p>真正的重点就是这个unlink函数的利用，认真分析一下unlink的代码</p>
 <p><img src="https://i.loli.net/2020/07/23/EHrP51xWJX7fKR2.png" alt=""></p>
 <p>打眼一看，很像数据结构中学过的删除链表中某一结点的操作，确实如此，unlink实现的功能正是在bins链表中删除掉已经被合并的块。</p>
 <p>具体利用流程如下：</p>
+<blockquote>
 <p>(1)首先FD = nextchunk-&gt;fd = free地址 – 12; </p>
 <p>(2)然后BK = nextchunk-&gt;bk = shellcode起始地址；</p>
 <p>(3)再将BK赋值给FD-&gt;bk，即（free地址 – 12）-&gt;bk = shellcode起始地址； </p>
 <p>(4)最后将FD赋值给BK-&gt;fd，即(shellcode起始地址)-&gt;fd = free地址 – 12。</p>
+</blockquote>
 <p>作图理解一下：</p>
 <p><img src="https://i.loli.net/2020/07/23/BTQOKLG2XSyHqge.png" alt="image-20200723165236574"></p>
 <p>结合图片应该很好理解，借助了unlink将free()的got表修改为shellcode地址，当再次free(second)时，就会转而运行我们写好的shellcode了。</p>
@@ -698,6 +704,8 @@
 <p>具体利用什么方法视情况而定。</p>
 <hr>
 <h1 id="0x04-小结"><a href="#0x04-小结" class="headerlink" title="0x04 小结"></a>0x04 小结</h1><p>堆的利用灵活多变，且情况比栈的利用复杂的多，我所记录的只是一些最基本且常见的方法，便于对堆溢出漏洞利用有一个比较客观的认识，至于更多技巧，则需要自己不断实践和学习积累来获得。</p>
+<p>感觉没用的知识又增加了(●ˇ∀ˇ●)</p>
+<p>没看过heap题，对它的exp真心恐惧，现在本菜鸡内心慌得一批….</p>
 
       
     </div>
