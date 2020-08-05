@@ -18,12 +18,12 @@
   
   
   <title>WMCTF2020 RE Wmare | Ld1ng</title>
-  <meta name="description" content="0x00 前言好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是的不会） 这里就水一篇记录一下这道肝疼的RE题。 好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x01 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述了。 点击传送门直接开启新世界。  0x02 遇">
+  <meta name="description" content="0x00 前言好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是真的不会） 这里就水一篇记录一下这道肝疼的RE题。 好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x01 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述了。 点击传送门直接开启新世界。  0x02">
 <meta property="og:type" content="article">
 <meta property="og:title" content="WMCTF2020 RE Wmare">
 <meta property="og:url" content="http://ld1ng.com/2020/08/05/WMare/index.html">
 <meta property="og:site_name" content="Ld1ng">
-<meta property="og:description" content="0x00 前言好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是的不会） 这里就水一篇记录一下这道肝疼的RE题。 好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x01 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述了。 点击传送门直接开启新世界。  0x02 遇">
+<meta property="og:description" content="0x00 前言好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是真的不会） 这里就水一篇记录一下这道肝疼的RE题。 好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x01 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述了。 点击传送门直接开启新世界。  0x02">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.loli.net/2020/08/05/CHvORtU94N8hpKj.png">
 <meta property="og:image" content="https://i.loli.net/2020/08/05/PkWFHLha5jui8gU.png">
@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/08/05/nRQHUTb6AIOPVWG.png">
 <meta property="og:image" content="https://i.loli.net/2020/08/05/E2LPbZ5q68ltArf.png">
 <meta property="article:published_time" content="2020-08-04T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-08-05T07:39:58.964Z">
+<meta property="article:modified_time" content="2020-08-05T07:50:58.529Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="ADWorld">
@@ -474,7 +474,7 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是的不会）</p>
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是真的不会）</p>
 <p>这里就<del>水一篇</del>记录一下这道肝疼的RE题。</p>
 <p>好一个虚拟机！这道题断断续续看了两三天…首先感谢我<a href="https://ljzjsc.com/" target="_blank" rel="noopener">炜哥</a>的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿…. </p>
 <p>咳咳进入正题</p>
@@ -490,7 +490,7 @@
 <p>代码很长，不过48小时的比赛慢慢看呗…</p>
 <p>最后的全局段内存处分别是ACCESS和FAIL，即数据校验成功与否。</p>
 <p>接着分析上面代码即可，一点一点动调可以摸出大体逻辑：</p>
-<p>一层大循环0x81/3次，内部进行3次小循环（每个循环9次），对数据进行加密</p>
+<p>第一层大循环0x81/3次，内部进行3次小循环（每个循环9次），对数据进行加密</p>
 <blockquote>
 <p>EAX、EBX：用于从内存取数，或者送入内存</p>
 <p>ECX: 负责记数，每执行完成一个小循环（9次），inc ecx</p>
@@ -507,11 +507,11 @@
 <p>所以可以看出ds段数据的地址范围是0x00-0x20，即36个字节，正好与flag的字节数一致。</p>
 <p>继续动调在关键的几个指令处你会发现</p>
 <p><img src="https://i.loli.net/2020/08/05/NAhVnGqvsJaE7e3.png" alt=""></p>
-<p>也就是说每一个小循环对数据加密后会覆盖到原本数据的位置。</p>
+<p>也就是说对于每一次加密，加密后的数据会覆盖到原本数据的位置。</p>
 <p>如：原数据：1，2，3，4，5</p>
-<p>​       第一次：取出1，2进行加密，加密得3，则覆盖到原本1的位置，现在的内存为3，2，3，4，5</p>
-<p>​       第二次：再取出2，3进行加密，加密得5，则内存变为：3，5，3，4，5</p>
-<p>​       以此类推，循环0x81×9次</p>
+<p>　　第一次：取出1，2进行加密，加密得3，则覆盖到原本1的位置，现在的内存为3，2，3，4，5</p>
+<p>　　第二次：再取出2，3进行加密，加密得5，则内存变为：3，5，3，4，5</p>
+<p>　　以此类推，加密0x81×9次</p>
 <p>现在搞懂了加密规则，再来看校验的步骤</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">00000000000060f2: (): xor ecx, ecx             </span><br><span class="line">00000000000060f4: (): xor edx, edx            </span><br><span class="line">00000000000060f6: (): cmp ecx, 0x00000012       &#x2F;&#x2F;循环0x12次，即十进制18次</span><br><span class="line">00000000000060f9: (): jz .+25 (0x00006114)     &#x2F;&#x2F;如果满0x12次，直接跳转判断edx的值</span><br><span class="line">00000000000060fb: (): shl ecx, 0x01             &#x2F;&#x2F;ecx左移一位，相当于乘2</span><br><span class="line">00000000000060fd: (): mov ax, word ptr ds:[ecx-19092685]&#x2F;&#x2F;取校验数据，低16位放入ax</span><br><span class="line">0000000000006105: ( ): mov bx, word ptr ds:[ecx]&#x2F;&#x2F;内存处取加密过的数据，低16位放入bx</span><br><span class="line">0000000000006109: (): cmp ax, bx               &#x2F;&#x2F;比较，如果不相等edx+1</span><br><span class="line">000000000000610c: (): jz .+1 (0x0000610f)    </span><br><span class="line">000000000000610e: (): inc edx               </span><br><span class="line">000000000000610f: (): shr ecx, 0x01          &#x2F;&#x2F;ecx右移1位，相当于除以2</span><br><span class="line">0000000000006111: (): inc ecx                &#x2F;&#x2F;ecx加1</span><br><span class="line">0000000000006112: (): jmp .-30 (0x000060f6)   &#x2F;&#x2F;跳转比较ecx和0x12的大小</span><br><span class="line">0000000000006114: (): cmp edx, 0x00000000      &#x2F;&#x2F;如果edx不等于0，则失败</span><br><span class="line">0000000000006117: (): jnz .+98 (0x0000617b)</span><br></pre></td></tr></table></figure>
 
@@ -524,8 +524,6 @@
 <p>现在知道两者差别后终于搞懂了….</p>
 <blockquote>
 <p>加密时，一次取4个字节，循环9次，即36个字节，内存区域ds:[0x0]-ds:[0x20]。</p>
-</blockquote>
-<blockquote>
 <p>校验时，一次取2个字节，循环18次，也是36个字节，内存区域相同。</p>
 </blockquote>
 <p>所以，全部明白之后，题目就迎刃而解了。</p>
