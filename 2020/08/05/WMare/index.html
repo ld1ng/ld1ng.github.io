@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>WMCTF2020 RE Wmare | Ld1ng</title>
+  <meta name="description" content="0x00 前言好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是的不会） 这里就水一篇记录一下这道肝疼的RE题。 好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x01 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述了。 点击传送门直接开启新世界。  0x02 遇">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WMCTF2020 RE Wmare">
+<meta property="og:url" content="http://ld1ng.com/2020/08/05/WMare/index.html">
+<meta property="og:site_name" content="Ld1ng">
+<meta property="og:description" content="0x00 前言好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是的不会） 这里就水一篇记录一下这道肝疼的RE题。 好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x01 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述了。 点击传送门直接开启新世界。  0x02 遇">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/08/05/CHvORtU94N8hpKj.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/05/PkWFHLha5jui8gU.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/05/NAhVnGqvsJaE7e3.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/05/9dzXOYig1WmrEJL.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/05/nRQHUTb6AIOPVWG.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/05/E2LPbZ5q68ltArf.png">
+<meta property="article:published_time" content="2020-08-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-08-05T07:39:58.964Z">
+<meta property="article:author" content="Ld1ng">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="ADWorld">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/08/05/CHvORtU94N8hpKj.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://ld1ng.com/2020/08/05/WMare/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/ld1ng" target="_blank">
+          <img class="img-circle img-rotate" src="/images/liding.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Ld1ng</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md"></h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> JiangSu , China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">Books</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>When people lose their thinking power, the human age will end</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DEVELOP/">DEVELOP</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LEARNING/">LEARNING</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LIFE/">LIFE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/REVERSE/">REVERSE</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+    <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+    <div class="widget-wrap">
+        <h3 class="widget-title">Tag Cloud</h3>
+        <div id="myCanvasContainer" class="widget tagcloud">
+            <canvas width="200" height="200" id="resCanvas" style="width=100%">
+                <a href="/tags/ADWorld/" style="font-size: 15px;">ADWorld</a> <a href="/tags/Assembly/" style="font-size: 10px;">Assembly</a> <a href="/tags/Bugku/" style="font-size: 10px;">Bugku</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/KNOWLEDGE/" style="font-size: 15px;">KNOWLEDGE</a> <a href="/tags/OpenCV/" style="font-size: 10px;">OpenCV</a> <a href="/tags/PERSONALITY/" style="font-size: 10px;">PERSONALITY</a>
+            </canvas>
+        </div>
+    </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ADWorld/" rel="tag">ADWorld</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Assembly/" rel="tag">Assembly</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bugku/" rel="tag">Bugku</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KNOWLEDGE/" rel="tag">KNOWLEDGE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenCV/" rel="tag">OpenCV</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PERSONALITY/" rel="tag">PERSONALITY</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/08/05/WMare/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/REVERSE/">REVERSE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/05/WMare/" class="title">WMCTF2020 RE Wmare</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-04T16:00:00.000Z" itemprop="datePublished">2020-08-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/07/24/ADWorld-pwn/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/24/ADWorld-pwn/" class="title">ADWorld_PWN  (updating..)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-23T16:00:00.000Z" itemprop="datePublished">2020-07-24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/07/23/Heap/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/LEARNING/">LEARNING</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/23/Heap/" class="title">堆溢出漏洞利用总结</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-22T16:00:00.000Z" itemprop="datePublished">2020-07-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/07/01/canary/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/LEARNING/">LEARNING</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/01/canary/" class="title">学习canary&amp;&amp;栈迁移</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-30T16:00:00.000Z" itemprop="datePublished">2020-07-01</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/06/20/Graduation/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/LIFE/">LIFE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/20/Graduation/" class="title">观毕业季有感</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-19T16:00:00.000Z" itemprop="datePublished">2020-06-20</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-传送门"><span class="toc-number">2.</span> <span class="toc-text">0x01 传送门</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-遇到的问题"><span class="toc-number">3.</span> <span class="toc-text">0x02 遇到的问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-小结"><span class="toc-number">4.</span> <span class="toc-text">0x03 小结</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-WMare" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      WMCTF2020 RE Wmare
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/05/WMare/" class="article-date">
+	  <time datetime="2020-08-04T16:00:00.000Z" itemprop="datePublished">2020-08-05</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/REVERSE/">REVERSE</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/ADWorld/" rel="tag">ADWorld</a>, <a class="article-tag-link" href="/tags/CTF/" rel="tag">CTF</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/08/05/WMare/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1.7k(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 7(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是的不会）</p>
+<p>这里就<del>水一篇</del>记录一下这道肝疼的RE题。</p>
+<p>好一个虚拟机！这道题断断续续看了两三天…首先感谢我<a href="https://ljzjsc.com/" target="_blank" rel="noopener">炜哥</a>的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿…. </p>
+<p>咳咳进入正题</p>
+<hr>
+<h1 id="0x01-传送门"><a href="#0x01-传送门" class="headerlink" title="0x01 传送门"></a>0x01 <a href="https://ljzjsc.com/index.php/archives/69/" target="_blank" rel="noopener">传送门</a></h1><p>炜哥博客里记录的很详细，从启动到手撕一气呵成/滑稽脸，我就不再赘述了。</p>
+<p>点击传送门直接开启新世界。</p>
+<hr>
+<h1 id="0x02-遇到的问题"><a href="#0x02-遇到的问题" class="headerlink" title="0x02 遇到的问题"></a>0x02 遇到的问题</h1><p>我只简单地记录一下我在调试时遇到的问题。</p>
+<p>从一开始找到<code>WELCOME TO WMCTF! INPUT:</code>以及输入函数都没太大问题，关键还是在于最后的校验函数。</p>
+<p>我先拷一下校验的汇编：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line">0000000000006000: (                   ): jmp .+0 (0x00006002)      ; eb00</span><br><span class="line">0000000000006002: (                   ): xor ecx, ecx              ; 31c9</span><br><span class="line">0000000000006004: (                   ): cmp ecx, 0x00000081       ; 81f981000000</span><br><span class="line">000000000000600a: (                   ): jz .+226 (0x000060f2)     ; 0f84e2000000</span><br><span class="line">0000000000006010: (                   ): xor esi, esi              ; 31f6</span><br><span class="line">0000000000006012: (                   ): cmp esi, 0x00000009       ; 83fe09</span><br><span class="line">0000000000006015: (                   ): jz .+209 (0x000060ec)     ; 0f84d1000000</span><br><span class="line">000000000000601b: (                   ): xor edx, edx              ; 31d2</span><br><span class="line">000000000000601d: (                   ): mov eax, esi              ; 89f0</span><br><span class="line">000000000000601f: (                   ): inc eax                   ; 40</span><br><span class="line">0000000000006020: (                   ): mov ebx, 0x00000009       ; bb09000000</span><br><span class="line">0000000000006025: (                   ): div eax, ebx              ; f7f3</span><br><span class="line">0000000000006027: (                   ): mov edi, edx              ; 89d7</span><br><span class="line">0000000000006029: (                   ): xor edx, edx              ; 31d2</span><br><span class="line">000000000000602b: (                   ): mov eax, ecx              ; 89c8</span><br><span class="line">000000000000602d: (                   ): mov ebx, 0x00000003       ; bb03000000</span><br><span class="line">0000000000006032: (                   ): div eax, ebx              ; f7f3</span><br><span class="line">0000000000006034: (                   ): jz .+5 (0x0000603b)       ; 7405</span><br><span class="line">0000000000006036: (                   ): jnz .+3 (0x0000603b)      ; 7503</span><br><span class="line">0000000000006038: (                   ): ret 0x0099                ; c29900</span><br><span class="line">000000000000603b: (                   ): cmp edx, 0x00000000       ; 83fa00</span><br><span class="line">000000000000603e: (                   ): jz .+7 (0x00006047)       ; 7407</span><br><span class="line">0000000000006040: (                   ): cmp edx, 0x00000001       ; 83fa01</span><br><span class="line">0000000000006043: (                   ): jz .+56 (0x0000607d)      ; 7438</span><br><span class="line">0000000000006045: (                   ): jnz .+108 (0x000060b3)    ; 756c</span><br><span class="line">0000000000006047: (                   ): shl esi, 0x02             ; c1e602</span><br><span class="line">000000000000604a: (                   ): mov eax, dword ptr ds:[esi] ; 3e8b06</span><br><span class="line">000000000000604d: (                   ): shl edi, 0x02             ; c1e702</span><br><span class="line">0000000000006050: (                   ): mov ebx, dword ptr ds:[edi] ; 3e8b1f</span><br><span class="line">0000000000006053: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">0000000000006055: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">0000000000006057: (                   ): or eax, ebx               ; 09d8</span><br><span class="line">0000000000006059: (                   ): not edx                   ; f7d2</span><br><span class="line">000000000000605b: (                   ): not edi                   ; f7d7</span><br><span class="line">000000000000605d: (                   ): or edx, edi               ; 09fa</span><br><span class="line">000000000000605f: (                   ): and eax, edx              ; 21d0</span><br><span class="line">0000000000006061: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">0000000000006063: (                   ): mov ebx, 0x24114514       ; bb14451124</span><br><span class="line">0000000000006068: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">000000000000606a: (                   ): not eax                   ; f7d0</span><br><span class="line">000000000000606c: (                   ): not ebx                   ; f7d3</span><br><span class="line">000000000000606e: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">0000000000006070: (                   ): not eax                   ; f7d0</span><br><span class="line">0000000000006072: (                   ): and edx, edi              ; 21fa</span><br><span class="line">0000000000006074: (                   ): not edx                   ; f7d2</span><br><span class="line">0000000000006076: (                   ): and eax, edx              ; 21d0</span><br><span class="line">0000000000006078: (                   ): mov dword ptr ds:[esi], eax ; 3e8906</span><br><span class="line">000000000000607b: (                   ): jmp .+102 (0x000060e3)    ; eb66</span><br><span class="line">000000000000607d: (                   ): shl esi, 0x02             ; c1e602</span><br><span class="line">0000000000006080: (                   ): mov eax, dword ptr ds:[esi] ; 3e8b06</span><br><span class="line">0000000000006083: (                   ): shl edi, 0x02             ; c1e702</span><br><span class="line">0000000000006086: (                   ): mov ebx, dword ptr ds:[edi] ; 3e8b1f</span><br><span class="line">0000000000006089: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">000000000000608b: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">000000000000608d: (                   ): not eax                   ; f7d0</span><br><span class="line">000000000000608f: (                   ): not ebx                   ; f7d3</span><br><span class="line">0000000000006091: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">0000000000006093: (                   ): not eax                   ; f7d0</span><br><span class="line">0000000000006095: (                   ): and edx, edi              ; 21fa</span><br><span class="line">0000000000006097: (                   ): not edx                   ; f7d2</span><br><span class="line">0000000000006099: (                   ): and eax, edx              ; 21d0</span><br><span class="line">000000000000609b: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">000000000000609d: (                   ): mov ebx, 0x01919810       ; bb10989101</span><br><span class="line">00000000000060a2: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">00000000000060a4: (                   ): not ebx                   ; f7d3</span><br><span class="line">00000000000060a6: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">00000000000060a8: (                   ): not edx                   ; f7d2</span><br><span class="line">00000000000060aa: (                   ): and edx, edi              ; 21fa</span><br><span class="line">00000000000060ac: (                   ): or eax, edx               ; 09d0</span><br><span class="line">00000000000060ae: (                   ): mov dword ptr ds:[esi], eax ; 3e8906</span><br><span class="line">00000000000060b1: (                   ): jmp .+48 (0x000060e3)     ; eb30</span><br><span class="line">00000000000060b3: (                   ): shl esi, 0x02             ; c1e602</span><br><span class="line">00000000000060b6: (                   ): mov eax, dword ptr ds:[esi] ; 3e8b06</span><br><span class="line">00000000000060b9: (                   ): shl edi, 0x02             ; c1e702</span><br><span class="line">00000000000060bc: (                   ): mov ebx, dword ptr ds:[edi] ; 3e8b1f</span><br><span class="line">00000000000060bf: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">00000000000060c1: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">00000000000060c3: (                   ): not ebx                   ; f7d3</span><br><span class="line">00000000000060c5: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">00000000000060c7: (                   ): not edx                   ; f7d2</span><br><span class="line">00000000000060c9: (                   ): and edx, edi              ; 21fa</span><br><span class="line">00000000000060cb: (                   ): or eax, edx               ; 09d0</span><br><span class="line">00000000000060cd: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">00000000000060cf: (                   ): mov ebx, 0x19260817       ; bb17082619</span><br><span class="line">00000000000060d4: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">00000000000060d6: (                   ): or eax, ebx               ; 09d8</span><br><span class="line">00000000000060d8: (                   ): not edx                   ; f7d2</span><br><span class="line">00000000000060da: (                   ): not edi                   ; f7d7</span><br><span class="line">00000000000060dc: (                   ): or edx, edi               ; 09fa</span><br><span class="line">00000000000060de: (                   ): and eax, edx              ; 21d0</span><br><span class="line">00000000000060e0: (                   ): mov dword ptr ds:[esi], eax ; 3e8906</span><br><span class="line">00000000000060e3: (                   ): shr esi, 0x02             ; c1ee02</span><br><span class="line">00000000000060e6: (                   ): inc esi                   ; 46</span><br><span class="line">00000000000060e7: (                   ): jmp .-218 (0x00006012)    ; e926ffffff</span><br><span class="line">00000000000060ec: (                   ): inc ecx                   ; 41</span><br><span class="line">00000000000060ed: (                   ): jmp .-238 (0x00006004)    ; e912ffffff</span><br><span class="line">00000000000060f2: (                   ): xor ecx, ecx              ; 31c9</span><br><span class="line">00000000000060f4: (                   ): xor edx, edx              ; 31d2</span><br><span class="line">00000000000060f6: (                   ): cmp ecx, 0x00000012       ; 83f912</span><br><span class="line">00000000000060f9: (                   ): jz .+25 (0x00006114)      ; 7419</span><br><span class="line">00000000000060fb: (                   ): shl ecx, 0x01             ; d1e1</span><br><span class="line">00000000000060fd: (                   ): mov ax, word ptr ds:[ecx-19092685] ; 3e668b8133abdcfe</span><br><span class="line">0000000000006105: (                   ): mov bx, word ptr ds:[ecx] ; 3e668b19</span><br><span class="line">0000000000006109: (                   ): cmp ax, bx                ; 6639d8</span><br><span class="line">000000000000610c: (                   ): jz .+1 (0x0000610f)       ; 7401</span><br><span class="line">000000000000610e: (                   ): inc edx                   ; 42</span><br><span class="line">000000000000610f: (                   ): shr ecx, 0x01             ; d1e9</span><br><span class="line">0000000000006111: (                   ): inc ecx                   ; 41</span><br><span class="line">0000000000006112: (                   ): jmp .-30 (0x000060f6)     ; ebe2</span><br><span class="line">0000000000006114: (                   ): cmp edx, 0x00000000       ; 83fa00</span><br><span class="line">0000000000006117: (                   ): jnz .+98 (0x0000617b)     ; 7562</span><br><span class="line">0000000000006119: (                   ): mov byte ptr gs:0x00000320, 0x41 ; 65c6052003000041</span><br><span class="line">0000000000006121: (                   ): mov byte ptr gs:0x00000321, 0x02 ; 65c6052103000002</span><br><span class="line">0000000000006129: (                   ): mov byte ptr gs:0x00000322, 0x63 ; 65c6052203000063</span><br><span class="line">0000000000006131: (                   ): mov byte ptr gs:0x00000323, 0x02 ; 65c6052303000002</span><br><span class="line">0000000000006139: (                   ): mov byte ptr gs:0x00000324, 0x63 ; 65c6052403000063</span><br><span class="line">0000000000006141: (                   ): mov byte ptr gs:0x00000325, 0x02 ; 65c6052503000002</span><br><span class="line">0000000000006149: (                   ): mov byte ptr gs:0x00000326, 0x65 ; 65c6052603000065</span><br><span class="line">0000000000006151: (                   ): mov byte ptr gs:0x00000327, 0x02 ; 65c6052703000002</span><br><span class="line">0000000000006159: (                   ): mov byte ptr gs:0x00000328, 0x73 ; 65c6052803000073</span><br><span class="line">0000000000006161: (                   ): mov byte ptr gs:0x00000329, 0x02 ; 65c605290300000</span><br><span class="line">0000000000006169: (                   ): mov byte ptr gs:0x0000032a, 0x73 ; 65c6052a03000073</span><br><span class="line">0000000000006171: (                   ): mov byte ptr gs:0x0000032b, 0x02 ; 65c6052b03000002</span><br><span class="line">0000000000006179: (                   ): jmp .+64 (0x000061bb)     ; eb40</span><br><span class="line">000000000000617b: (                   ): mov byte ptr gs:0x00000320, 0x46 ; 65c6052003000046</span><br><span class="line">0000000000006183: (                   ): mov byte ptr gs:0x00000321, 0x04 ; 65c6052103000004</span><br><span class="line">000000000000618b: (                   ): mov byte ptr gs:0x00000322, 0x61 ; 65c6052203000061</span><br><span class="line">0000000000006193: (                   ): mov byte ptr gs:0x00000323, 0x04 ; 65c6052303000004</span><br><span class="line">000000000000619b: (                   ): mov byte ptr gs:0x00000324, 0x69 ; 65c6052403000069</span><br><span class="line">00000000000061a3: (                   ): mov byte ptr gs:0x00000325, 0x04 ; 65c6052503000004</span><br><span class="line">00000000000061ab: (                   ): mov byte ptr gs:0x00000326, 0x6c ; 65c605260300006c</span><br><span class="line">00000000000061b3: (                   ): mov byte ptr gs:0x00000327, 0x04 ; 65c6052703000004</span><br><span class="line">00000000000061bb: (                   ): jmp .-2 (0x000061bb)      ; ebfe</span><br></pre></td></tr></table></figure>
+
+<p>代码很长，不过48小时的比赛慢慢看呗…</p>
+<p>最后的全局段内存处分别是ACCESS和FAIL，即数据校验成功与否。</p>
+<p>接着分析上面代码即可，一点一点动调可以摸出大体逻辑：</p>
+<p>一层大循环0x81/3次，内部进行3次小循环（每个循环9次），对数据进行加密</p>
+<blockquote>
+<p>EAX、EBX：用于从内存取数，或者送入内存</p>
+<p>ECX: 负责记数，每执行完成一个小循环（9次），inc ecx</p>
+<p>ESI、EDI：负责作为段内偏移来寻址，同时esi还用来记录小循环内部的循环次数</p>
+</blockquote>
+<p>由于炜哥博客很详细，所以我只提一下一个困惑我很长时间的内容——取内存的问题</p>
+<p>主要看这两条指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov eax, dword ptr ds:[esi]</span><br><span class="line">mov ebx, dword ptr ds:[edi]</span><br></pre></td></tr></table></figure>
+
+<p>esi，edi的值决定着ds段基址的偏移，</p>
+<p><img src="https://i.loli.net/2020/08/05/CHvORtU94N8hpKj.png" alt="image-20200805144842040"></p>
+<p>通过动调可以发现ebx总是取到的eax后四个字节的数据，但是到了di到了0x20之后会被重新归零</p>
+<p><img src="https://i.loli.net/2020/08/05/PkWFHLha5jui8gU.png" alt=""></p>
+<p>所以可以看出ds段数据的地址范围是0x00-0x20，即36个字节，正好与flag的字节数一致。</p>
+<p>继续动调在关键的几个指令处你会发现</p>
+<p><img src="https://i.loli.net/2020/08/05/NAhVnGqvsJaE7e3.png" alt=""></p>
+<p>也就是说每一个小循环对数据加密后会覆盖到原本数据的位置。</p>
+<p>如：原数据：1，2，3，4，5</p>
+<p>​       第一次：取出1，2进行加密，加密得3，则覆盖到原本1的位置，现在的内存为3，2，3，4，5</p>
+<p>​       第二次：再取出2，3进行加密，加密得5，则内存变为：3，5，3，4，5</p>
+<p>​       以此类推，循环0x81×9次</p>
+<p>现在搞懂了加密规则，再来看校验的步骤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">00000000000060f2: (): xor ecx, ecx             </span><br><span class="line">00000000000060f4: (): xor edx, edx            </span><br><span class="line">00000000000060f6: (): cmp ecx, 0x00000012       &#x2F;&#x2F;循环0x12次，即十进制18次</span><br><span class="line">00000000000060f9: (): jz .+25 (0x00006114)     &#x2F;&#x2F;如果满0x12次，直接跳转判断edx的值</span><br><span class="line">00000000000060fb: (): shl ecx, 0x01             &#x2F;&#x2F;ecx左移一位，相当于乘2</span><br><span class="line">00000000000060fd: (): mov ax, word ptr ds:[ecx-19092685]&#x2F;&#x2F;取校验数据，低16位放入ax</span><br><span class="line">0000000000006105: ( ): mov bx, word ptr ds:[ecx]&#x2F;&#x2F;内存处取加密过的数据，低16位放入bx</span><br><span class="line">0000000000006109: (): cmp ax, bx               &#x2F;&#x2F;比较，如果不相等edx+1</span><br><span class="line">000000000000610c: (): jz .+1 (0x0000610f)    </span><br><span class="line">000000000000610e: (): inc edx               </span><br><span class="line">000000000000610f: (): shr ecx, 0x01          &#x2F;&#x2F;ecx右移1位，相当于除以2</span><br><span class="line">0000000000006111: (): inc ecx                &#x2F;&#x2F;ecx加1</span><br><span class="line">0000000000006112: (): jmp .-30 (0x000060f6)   &#x2F;&#x2F;跳转比较ecx和0x12的大小</span><br><span class="line">0000000000006114: (): cmp edx, 0x00000000      &#x2F;&#x2F;如果edx不等于0，则失败</span><br><span class="line">0000000000006117: (): jnz .+98 (0x0000617b)</span><br></pre></td></tr></table></figure>
+
+<p>在0x0006109处下断点，然后动调一下观察ecx如何变化</p>
+<p><img src="https://i.loli.net/2020/08/05/9dzXOYig1WmrEJL.png" alt=""></p>
+<p><img src="https://i.loli.net/2020/08/05/nRQHUTb6AIOPVWG.png" alt=""></p>
+<p><img src="https://i.loli.net/2020/08/05/E2LPbZ5q68ltArf.png" alt=""></p>
+<p>可以看到每次取数据时，ecx偏移加2</p>
+<p>一开始由于ax和eax等寄存器的误导，实在没想通这一块代码</p>
+<p>现在知道两者差别后终于搞懂了….</p>
+<blockquote>
+<p>加密时，一次取4个字节，循环9次，即36个字节，内存区域ds:[0x0]-ds:[0x20]。</p>
+</blockquote>
+<blockquote>
+<p>校验时，一次取2个字节，循环18次，也是36个字节，内存区域相同。</p>
+</blockquote>
+<p>所以，全部明白之后，题目就迎刃而解了。</p>
+<p>至于加密方法是三个数据异或，这是我没有想到的…</p>
+<h1 id="0x03-小结"><a href="#0x03-小结" class="headerlink" title="0x03 小结"></a>0x03 小结</h1><p>出题人是魔鬼，我复现了一遍才体会到了炜哥的艰辛，tql</p>
+<p>全程考察汇编能力，好多都是微机原理学过的内容（全忘干净了），</p>
+<p>趁此机会复习一下吧。</p>
+<p>不过看大神们说可以用IDA？我的IDA可能有自己的想法，还是算了吧…</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://ld1ng.com/2020/08/05/WMare/" title="WMCTF2020 RE Wmare">http://ld1ng.com/2020/08/05/WMare/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/ld1ng" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/liding.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/ld1ng" target="_blank"><span class="text-dark">Ld1ng</span><small class="ml-1x"></small></a></h3>
+        <div>Primary school students majoring in information security.</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/07/24/ADWorld-pwn/" title="ADWorld_PWN  (updating..)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>$</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>Maybe you could buy me a cup of coffee.</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/ipay.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open alipay app scan this qrcode, buy me a coffee!</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechat.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open wechat app scan this qrcode, buy me a coffee!</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> alipay</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> wechat payment</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2020 Ld1ng
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/ld1ng" target="_blank"> ld1ng </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'axhOjPzscogBppPjn36rtaAv-gzGzoHsz',
+    appKey: 'gMB6OHiHJvIxpnVtuoYxyPhk',
+    placeholder: 'Just go go',
+    avatar: 'wavatar',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+
+<!--动态线条背景-->
+<script type="text/javascript"
+color="220,220,220" opacity='0.7' zIndex="-2" count="150" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js">
+</script>
+ <!-- 页面点击礼花效果 -->
+<script type="text/javascript" src="/js/firework.js"></script>
+</body>
+</html>
