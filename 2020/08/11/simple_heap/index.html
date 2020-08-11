@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/08/11/PEqzWCFpwbIv5G7.png">
 <meta property="og:image" content="https://i.loli.net/2020/08/11/t6GjbmLXWDV5oeQ.png">
 <meta property="article:published_time" content="2020-08-10T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-08-11T14:33:07.411Z">
+<meta property="article:modified_time" content="2020-08-11T15:51:18.902Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
@@ -535,7 +535,7 @@
 <p>　　　　　２.放一张图立马就知道了</p>
 <p><img src="https://i.loli.net/2020/08/11/tluzdIYBOTLnpyM.png" alt=""></p>
 <p>这里没有对齐，我手动对齐一下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x7f763bbe2aed</span>:<span class="number">0x763bbe1260000000</span>	<span class="number">0x000000000000007f</span></span><br><span class="line"><span class="number">0x7f763bbe2afd</span>:<span class="number">0x763b8a3ea0000000</span>	<span class="number">0x763b8a3a7000007f</span></span><br><span class="line"><span class="number">0x7f763bbe2b0d</span>:<span class="number">0x000000000000007f</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x7f763bbe2b1d</span>:<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x7f763bbe2aed</span>:<span class="number">0x763bbe1260000000</span>　<span class="number">0x000000000000007f</span></span><br><span class="line"><span class="number">0x7f763bbe2afd</span>:<span class="number">0x763b8a3ea0000000</span>　<span class="number">0x763b8a3a7000007f</span></span><br><span class="line"><span class="number">0x7f763bbe2b0d</span>:<span class="number">0x000000000000007f</span>　<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x7f763bbe2b1d</span>:<span class="number">0x0000000000000000</span>　<span class="number">0x0000000000000000</span></span><br></pre></td></tr></table></figure>
 
 <p>我的天，典型的chunk结构</p>
 <p>之前一直不懂为什么要在这里构造，我查看内存都是0x28、0x20这种对齐的格式，实在想不通的时候，我直接查看了0x23，看到这张图我恍然大悟。。</p>
