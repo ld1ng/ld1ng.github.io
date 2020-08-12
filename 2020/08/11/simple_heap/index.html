@@ -18,12 +18,12 @@
   
   
   <title>Welcome to the world of Heap | Ld1ng</title>
-  <meta name="description" content="0x00 前言题目地址：[V&amp;N2020 公开赛]simpleHeap 听说是一道比较基础的堆题，于是手贱点开了…这就是堆吗 wxl，断断续续看了差不多两天，不能说会做了，勉强搞明白了原理，并且手动调试了一遍 😲权当见见世面吧，这里也通过写博客快速梳理一遍。  0x01 分析程序经典菜单，直接IDA 12345678910111213141516171819202122232425262">
+  <meta name="description" content="0x00 前言题目地址：[V&amp;N2020 公开赛]simpleHeap 听说是一道比较基础的堆题，于是手贱点开了…这就是堆吗 wxl，断断续续看了差不多两天，不能说会做了，勉强搞明白了原理，并且手动调试了一遍 😲权当见见世面吧，这里也通过写博客快速梳理一遍。  今天开了pwnable的号嘿嘿，以后题目的wp就写在pwnable了 点击左下角的栈溢出就可以访问了(&#x2F;▽＼)  0x01 分析">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Welcome to the world of Heap">
 <meta property="og:url" content="http://ld1ng.com/2020/08/11/simple_heap/index.html">
 <meta property="og:site_name" content="Ld1ng">
-<meta property="og:description" content="0x00 前言题目地址：[V&amp;N2020 公开赛]simpleHeap 听说是一道比较基础的堆题，于是手贱点开了…这就是堆吗 wxl，断断续续看了差不多两天，不能说会做了，勉强搞明白了原理，并且手动调试了一遍 😲权当见见世面吧，这里也通过写博客快速梳理一遍。  0x01 分析程序经典菜单，直接IDA 12345678910111213141516171819202122232425262">
+<meta property="og:description" content="0x00 前言题目地址：[V&amp;N2020 公开赛]simpleHeap 听说是一道比较基础的堆题，于是手贱点开了…这就是堆吗 wxl，断断续续看了差不多两天，不能说会做了，勉强搞明白了原理，并且手动调试了一遍 😲权当见见世面吧，这里也通过写博客快速梳理一遍。  今天开了pwnable的号嘿嘿，以后题目的wp就写在pwnable了 点击左下角的栈溢出就可以访问了(&#x2F;▽＼)  0x01 分析">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.loli.net/2020/08/11/pde4C1IrUcNHW5h.png">
 <meta property="og:image" content="https://i.loli.net/2020/08/11/IZHW4h25M1RKuT6.png">
@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/08/11/PEqzWCFpwbIv5G7.png">
 <meta property="og:image" content="https://i.loli.net/2020/08/11/t6GjbmLXWDV5oeQ.png">
 <meta property="article:published_time" content="2020-08-10T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-08-11T15:51:18.902Z">
+<meta property="article:modified_time" content="2020-08-12T14:03:01.701Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
@@ -471,7 +471,7 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/08/11/simple_heap/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 1.9k(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 2k(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 8(minutes)</span>
@@ -485,6 +485,9 @@
 <p>听说是一道比较基础的堆题，于是手贱点开了…这就是堆吗</p>
 <p>wxl，断断续续看了差不多两天，不能说会做了，勉强搞明白了原理，并且手动调试了一遍</p>
 <p>😲权当见见世面吧，这里也通过写博客快速梳理一遍。</p>
+<hr>
+<p>今天开了pwnable的号嘿嘿，以后题目的wp就写在pwnable了</p>
+<p>点击左下角的栈溢出就可以访问了(/▽＼)</p>
 <hr>
 <h1 id="0x01-分析程序"><a href="#0x01-分析程序" class="headerlink" title="0x01 分析程序"></a>0x01 分析程序</h1><p>经典菜单，直接IDA</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> __fastcall <span class="title">main</span><span class="params">(__int64 a1, <span class="keyword">char</span> **a2, <span class="keyword">char</span> **a3)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  __int64 savedregs; <span class="comment">// [rsp+10h] [rbp+0h]</span></span><br><span class="line"></span><br><span class="line">  sub_A39();</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Welcome to V&amp;N challange!"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"This's a simple heap for you."</span>);</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    Menu();    <span class="comment">//打印菜单</span></span><br><span class="line">    put_in();  <span class="comment">//输入选项 （atoi）</span></span><br><span class="line">    <span class="keyword">switch</span> ( &amp;savedregs )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1u</span>:</span><br><span class="line">        Add();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">2u</span>:</span><br><span class="line">        Edit();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3u</span>:</span><br><span class="line">        Show();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">4u</span>:</span><br><span class="line">        Delete();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">5u</span>:</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"Please input current choice."</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
