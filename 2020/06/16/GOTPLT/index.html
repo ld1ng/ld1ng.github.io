@@ -18,12 +18,12 @@
   
   
   <title>学习PLT表GOT表 | Ld1ng</title>
-  <meta name="description" content="对PLT表和GOT表的浅显理解之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址 今天巧合在网上翻到一篇用gdb调试plt表和got表关系的博客，这才对它有了进一步的了解。 GOT（全局偏移表）和 PLT(过程链接表)，是两个表之间的交互才使得函数实现延迟绑定，通过这种方法将过程地址的绑定推迟到第一次调用该函数。 GOT表构成为了实现延迟绑">
+  <meta name="description" content="对PLT表和GOT表的浅显理解 之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址 今天巧合在网上翻到一篇用gdb调试plt表和got表关系的博客，这才对它有了进一步的了解。 GOT（全局偏移表）和 PLT(过程链接表)，是两个表之间的交互才使得函数实现延迟绑定，通过这种方法将过程地址的绑定推迟到第一次调用该函数。  GOT表构成 为了实">
 <meta property="og:type" content="article">
 <meta property="og:title" content="学习PLT表GOT表">
 <meta property="og:url" content="http://ld1ng.com/2020/06/16/GOTPLT/index.html">
 <meta property="og:site_name" content="Ld1ng">
-<meta property="og:description" content="对PLT表和GOT表的浅显理解之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址 今天巧合在网上翻到一篇用gdb调试plt表和got表关系的博客，这才对它有了进一步的了解。 GOT（全局偏移表）和 PLT(过程链接表)，是两个表之间的交互才使得函数实现延迟绑定，通过这种方法将过程地址的绑定推迟到第一次调用该函数。 GOT表构成为了实现延迟绑">
+<meta property="og:description" content="对PLT表和GOT表的浅显理解 之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址 今天巧合在网上翻到一篇用gdb调试plt表和got表关系的博客，这才对它有了进一步的了解。 GOT（全局偏移表）和 PLT(过程链接表)，是两个表之间的交互才使得函数实现延迟绑定，通过这种方法将过程地址的绑定推迟到第一次调用该函数。  GOT表构成 为了实">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20190831142407693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsZXhZb3VuZzI4,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200208160601515.gif">
@@ -410,7 +410,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">Catalogue</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#对PLT表和GOT表的浅显理解"><span class="toc-number">1.</span> <span class="toc-text">对PLT表和GOT表的浅显理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GOT表构成"><span class="toc-number">1.0.1.</span> <span class="toc-text">GOT表构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PLT表构成"><span class="toc-number">1.0.2.</span> <span class="toc-text">PLT表构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现过程"><span class="toc-number">1.0.3.</span> <span class="toc-text">实现过程</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#对plt表和got表的浅显理解"><span class="toc-number">1.</span> <span class="toc-text"> 对PLT表和GOT表的浅显理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#got表构成"><span class="toc-number">1.0.1.</span> <span class="toc-text"> GOT表构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#plt表构成"><span class="toc-number">1.0.2.</span> <span class="toc-text"> PLT表构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现过程"><span class="toc-number">1.0.3.</span> <span class="toc-text"> 实现过程</span></a></li></ol></li></ol></li></ol>
     </nav>
   </div>
 </aside>
@@ -461,7 +461,7 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/16/GOTPLT/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 839(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 841(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 3(minutes)</span>
@@ -471,18 +471,22 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="对PLT表和GOT表的浅显理解"><a href="#对PLT表和GOT表的浅显理解" class="headerlink" title="对PLT表和GOT表的浅显理解"></a>对PLT表和GOT表的浅显理解</h1><p>之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址</p>
+        <h1 id="对plt表和got表的浅显理解"><a class="markdownIt-Anchor" href="#对plt表和got表的浅显理解"></a> 对PLT表和GOT表的浅显理解</h1>
+<p>之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址</p>
 <p>今天巧合在网上翻到一篇用gdb调试plt表和got表关系的博客，这才对它有了进一步的了解。</p>
 <p>GOT（全局偏移表）和 PLT(过程链接表)，是两个表之间的交互才使得函数实现延迟绑定，通过这种方法将过程地址的绑定推迟到第一次调用该函数。</p>
-<h3 id="GOT表构成"><a href="#GOT表构成" class="headerlink" title="GOT表构成"></a>GOT表构成</h3><p>为了实现延迟绑定，GOT的头三条表目是特殊的：</p>
+<h3 id="got表构成"><a class="markdownIt-Anchor" href="#got表构成"></a> GOT表构成</h3>
+<p>为了实现延迟绑定，GOT的头三条表目是特殊的：</p>
 <blockquote>
 <p>GOT[0]包含.dynamic段的地址，.dynamic段包含了动态链接器用来绑定过程地址的信息，比如符号的位置和重定位信息;</p>
 <p>GOT[1]包含动态链接器的标识;</p>
 <p>GOT[2]包含动态链接器的延迟绑定代码的入口点。</p>
 <p>GOT的其他表目为本模块要引用的一个全局变量或函数的地址。</p>
 </blockquote>
-<h3 id="PLT表构成"><a href="#PLT表构成" class="headerlink" title="PLT表构成"></a>PLT表构成</h3><p>PLT是一个以16字节(32位平台中)表目的数组形式出现的代码序列。就像GOT表，PLT表并不是每个表项都用于存放“函数地址“，其中PLT[0]是一个特殊的表目，它跳转到动态链接器中执行，换句话说，PLT[0]是一个函数，这个函数的作用是通过GOT[1]和GOT[2]来正确绑定一个函数的正式地址到GOT表中来。</p>
-<h3 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h3><p>每个定义在共享库中并被本模块调用的函数在PLT中都有一个表目，从PLT[1]开始．模块对函数的调用会转到相应PLT表目中执行，这些表目由三条指令构成。</p>
+<h3 id="plt表构成"><a class="markdownIt-Anchor" href="#plt表构成"></a> PLT表构成</h3>
+<p>PLT是一个以16字节(32位平台中)表目的数组形式出现的代码序列。就像GOT表，PLT表并不是每个表项都用于存放“函数地址“，其中PLT[0]是一个特殊的表目，它跳转到动态链接器中执行，换句话说，PLT[0]是一个函数，这个函数的作用是通过GOT[1]和GOT[2]来正确绑定一个函数的正式地址到GOT表中来。</p>
+<h3 id="实现过程"><a class="markdownIt-Anchor" href="#实现过程"></a> 实现过程</h3>
+<p>每个定义在共享库中并被本模块调用的函数在PLT中都有一个表目，从PLT[1]开始．模块对函数的调用会转到相应PLT表目中执行，这些表目由三条指令构成。</p>
 <blockquote>
 <p>第一条指令是跳转到相应的GOT存储的地址值中．</p>
 <p>第二条指令把函数相应的ID压入栈中，</p>
@@ -490,7 +494,7 @@
 </blockquote>
 <p>被调用函数GOT相应表目中存储的最初地址为相应PLT表目中第二条指令的地址值，函数第一次被调用后．GOT表目中的值就为函数的真正地址。</p>
 <p>因此，第一次调用函数时开销比较大．但是其后的每次调用都只会花费一条指令和一个间接的存储器引用。</p>
-<hr>
+<hr />
 <p>所以第一次函数调用过程如下：</p>
 <blockquote>
 <p>1.调用函数找到plt表</p>
@@ -503,11 +507,11 @@
 </blockquote>
 <p>其中2、3、4步（jmp、push、jmp）是第一次调用某函数时进行的三步操作，是实现延时绑定机制的关键</p>
 <p>可以理解为这种状态：</p>
-<p><img src="https://img-blog.csdnimg.cn/20190831142407693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsZXhZb3VuZzI4,size_16,color_FFFFFF,t_70" alt="img"></p>
-<hr>
+<p><img src="https://img-blog.csdnimg.cn/20190831142407693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsZXhZb3VuZzI4,size_16,color_FFFFFF,t_70" alt="img" /></p>
+<hr />
 <p>最后借用一下大佬的动图：</p>
-<p><img src="https://img-blog.csdnimg.cn/20200208160601515.gif" alt="在这里插入图片描述"></p>
-<hr>
+<p><img src="https://img-blog.csdnimg.cn/20200208160601515.gif" alt="在这里插入图片描述" /></p>
+<hr />
 
       
     </div>
@@ -781,5 +785,20 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
  <!-- 页面点击礼花效果 -->
 <script type="text/javascript" src="/js/firework.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>

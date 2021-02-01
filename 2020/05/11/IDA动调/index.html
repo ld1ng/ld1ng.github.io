@@ -18,12 +18,12 @@
   
   
   <title>CUMT CTF Mind reading | Ld1ng</title>
-  <meta name="description" content="前言前几天Dec1CTF和网鼎杯让小白我毫无体验…干脆去学校的CTF平台刷刷入门题… 结果是入门题竟然都被卡住，哭了，下面就写一下这道入门题涉及的知识点。 （其实快要考数据库了，但现在还不想复习）  废话不多说，直接上题 暴躁下载 暴躁拖IDA 暴躁F5 冷静分析🚬   程序很简单 输出“Heard you can read my mine?    Please input your answe">
+  <meta name="description" content="前言 前几天Dec1CTF和网鼎杯让小白我毫无体验…干脆去学校的CTF平台刷刷入门题… 结果是入门题竟然都被卡住，哭了，下面就写一下这道入门题涉及的知识点。 （其实快要考数据库了，但现在还不想复习）  废话不多说，直接上题 暴躁下载 暴躁拖IDA 暴躁F5 冷静分析🚬  程序很简单 输出“Heard you can read my mine?    Please input your answ">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CUMT CTF Mind reading">
 <meta property="og:url" content="http://ld1ng.com/2020/05/11/IDA%E5%8A%A8%E8%B0%83/index.html">
 <meta property="og:site_name" content="Ld1ng">
-<meta property="og:description" content="前言前几天Dec1CTF和网鼎杯让小白我毫无体验…干脆去学校的CTF平台刷刷入门题… 结果是入门题竟然都被卡住，哭了，下面就写一下这道入门题涉及的知识点。 （其实快要考数据库了，但现在还不想复习）  废话不多说，直接上题 暴躁下载 暴躁拖IDA 暴躁F5 冷静分析🚬   程序很简单 输出“Heard you can read my mine?    Please input your answe">
+<meta property="og:description" content="前言 前几天Dec1CTF和网鼎杯让小白我毫无体验…干脆去学校的CTF平台刷刷入门题… 结果是入门题竟然都被卡住，哭了，下面就写一下这道入门题涉及的知识点。 （其实快要考数据库了，但现在还不想复习）  废话不多说，直接上题 暴躁下载 暴躁拖IDA 暴躁F5 冷静分析🚬  程序很简单 输出“Heard you can read my mine?    Please input your answ">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.loli.net/2020/05/11/dQmZbTsv6h1n9LJ.png">
 <meta property="og:image" content="https://i.loli.net/2020/05/11/Pah3vI1KjRuYDfq.png">
@@ -414,7 +414,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">Catalogue</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#小结："><span class="toc-number">1.0.0.1.</span> <span class="toc-text">小结：</span></a></li></ol></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#小结"><span class="toc-number">1.0.0.1.</span> <span class="toc-text"> 小结：</span></a></li></ol></li></ol></li></ol></li></ol>
     </nav>
   </div>
 </aside>
@@ -475,41 +475,42 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前几天Dec1CTF和网鼎杯让小白我毫无体验…干脆去学校的CTF平台刷刷入门题…</p>
+        <h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>前几天Dec1CTF和网鼎杯让小白我毫无体验…干脆去学校的CTF平台刷刷入门题…</p>
 <p>结果是入门题竟然都被卡住，哭了，下面就写一下这道<strong>入门题</strong>涉及的知识点。</p>
 <p>（其实快要考数据库了，但现在还不想复习）</p>
-<hr>
-<p>废话不多说，直接上题<img src="https://i.loli.net/2020/05/11/dQmZbTsv6h1n9LJ.png" alt="1"></p>
+<hr />
+<p>废话不多说，直接上题<img src="https://i.loli.net/2020/05/11/dQmZbTsv6h1n9LJ.png" alt="1" /></p>
 <p>暴躁下载</p>
 <p>暴躁拖IDA</p>
 <p>暴躁F5</p>
 <p>冷静分析🚬</p>
 <img src="https://i.loli.net/2020/05/11/Pah3vI1KjRuYDfq.png" alt="批注 2020-05-11 102016"  />
-
 <p>程序很简单</p>
-<p>输出“Heard you can read my mine?    Please input your answer:” </p>
+<p>输出“Heard you can read my mine?    Please input your answer:”</p>
 <p>输入长度为32的v1，生成随机数v2（跟进mymine函数查看）</p>
 <p>如果输入的v1与v2相同，成功，否则错误。</p>
-<hr>
-<p><strong>知识点一：</strong>了解<code>srand(seed)</code>函数和<code>rand()</code>函数，<code>srand(seed)</code>函数初始化随机种子，会提供一个种子，这个种子会对应一个随机数，如果使用相同的种子后面的<code>rand()</code>函数会出现一样的随机数。在这里随机数种子是一个常值<code>0xABCDu</code>，所以随机数序列是固定的。</p>
+<hr />
+<p>**知识点一：**了解<code>srand(seed)</code>函数和<code>rand()</code>函数，<code>srand(seed)</code>函数初始化随机种子，会提供一个种子，这个种子会对应一个随机数，如果使用相同的种子后面的<code>rand()</code>函数会出现一样的随机数。在这里随机数种子是一个常值<code>0xABCDu</code>，所以随机数序列是固定的。</p>
 <p>可以<a href="https://baike.baidu.com/item/srand/796881?fr=aladdin" target="_blank" rel="noopener">参考百度</a></p>
-<hr>
+<hr />
 <p>所以我们只需要知道v2的值即可。</p>
 <p>这里无法直接查看，需要动态调试（因为输入之后才会生成v2）</p>
-<p>第一次使用<strong>IDA动态调试</strong>有些紧张   <del>（搓手手）</del></p>
+<p>第一次使用<strong>IDA动态调试</strong>有些紧张   <s>（搓手手）</s></p>
 <p>需要注意的点是：程序需要存放在<strong>不含有中文</strong>的路径下，否则会报错。</p>
 <p>按下F9进入动态调试界面</p>
-<p><img src="https://i.loli.net/2020/05/11/UiTDCqkF1MBpJvX.png" alt="批注 2020-05-11 104811"></p>
+<p><img src="https://i.loli.net/2020/05/11/UiTDCqkF1MBpJvX.png" alt="批注 2020-05-11 104811" /></p>
 <p>可以在文本框搜索main函数，进入C语言代码界面，F2在第13行下断点</p>
-<p><img src="https://i.loli.net/2020/05/11/IPMSz7Xg5BsAebG.png" alt="批注 2020-05-11 104944"></p>
+<p><img src="https://i.loli.net/2020/05/11/IPMSz7Xg5BsAebG.png" alt="批注 2020-05-11 104944" /></p>
 <p>在程序界面输入32位字符</p>
-<p><img src="https://i.loli.net/2020/05/11/Ym8pDyw4d9PMIzt.png" alt="批注 2020-05-11 105144"></p>
+<p><img src="https://i.loli.net/2020/05/11/Ym8pDyw4d9PMIzt.png" alt="批注 2020-05-11 105144" /></p>
 <p>回车，随机数v2生成完毕，点击查看即可。</p>
 <p>若找不到点击选择<code>IDA View-RIP</code>。</p>
-<p><img src="https://i.loli.net/2020/05/11/3WjPtnA9FXeG1Np.png" alt="批注 2020-05-11 105347"></p>
+<p><img src="https://i.loli.net/2020/05/11/3WjPtnA9FXeG1Np.png" alt="批注 2020-05-11 105347" /></p>
 <p><code>∴flag = CUMTCTF{v2}</code></p>
-<h4 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h4><p>本题只是单纯体验一下强大的IDA的动态调试，但并不推荐使用。</p>
-<p>今后做题还是推荐动态能力更强的<a href="http://www.ollydbg.org/" target="_blank" rel="noopener">OD</a>或者<a href="https://x64dbg.com/#start" target="_blank" rel="noopener">x64dbg</a>，配合IDA的静态分析，<del>还有解不出来的逆向题？</del>  一定会对解题更有帮助！</p>
+<h4 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结：</h4>
+<p>本题只是单纯体验一下强大的IDA的动态调试，但并不推荐使用。</p>
+<p>今后做题还是推荐动态能力更强的<a href="http://www.ollydbg.org/" target="_blank" rel="noopener">OD</a>或者<a href="https://x64dbg.com/#start" target="_blank" rel="noopener">x64dbg</a>，配合IDA的静态分析，<s>还有解不出来的逆向题？</s>  一定会对解题更有帮助！</p>
 
       
     </div>
@@ -783,5 +784,20 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
  <!-- 页面点击礼花效果 -->
 <script type="text/javascript" src="/js/firework.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>

@@ -456,35 +456,28 @@
     <option value="0" selected> 中文 Chinese </option>
     <option value="1"> 英文 English </option>
 </select> -->
-
 <!-- Chinese Version -->
-
 <!--copied from markdown -->
-
 <p>哈喽，</p>
 <p>这是<strong>Ld1ng</strong>的博客</p>
-<p><del>AKA矿大彭于晏</del>   </p>
+<p><s>AKA矿大彭于晏</s></p>
 <p>我将在这里记录下我的所学，所闻，所见，所感</p>
 <p>以及二进制狗的日常生活</p>
 <p>QQ:1057721436</p>
 <p>欢迎学习交流</p>
 <p></p>
-
 <h5>Talks</h5>
-
 <ul>
     <li><a href="https://github.com" target="_blank" rel="noopener">GitHub</a></li>
     <li><a href="https://mail.qq.com/" target="_blank" rel="noopener">qqmail</a></li>
     <li><a href="https://mail.google.com/" target="_blank" rel="noopener">Gmail</a></li>
 </ul>
-
 <div class="zh post-container">
 </div>
 <!-- English Version -->
 <!-- <div class="en post-container">
     <blockquote><p>Yet another iOS Developer. <br>
     Yet another Life-long Student.</p></blockquote>
-
 <pre><code>&lt;p&gt;Hi, I am &lt;strong&gt;Baiying Qiu&lt;/strong&gt;，you can call me &lt;strong&gt;BY&lt;/strong&gt;. I am an iOS software engineer and currently working in Xiamen&lt;/p&gt;
 
 &lt;p&gt;This is my personal blog, through making Github Pages and Hexo.My GitHub  👉 &lt;a href=&quot;http://github.com/ld1ng&quot;&gt;Github·BY&lt;/a&gt;.&lt;/p&gt;
@@ -498,10 +491,10 @@
 &lt;li&gt;&lt;a href=&quot;http://jekyll.com.cn/&quot;&gt;jekyll&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://pages.github.com/&quot;&gt;GitHub Pages&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://qiubaiying.github.io&quot;&gt;BY&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</code></pre></div> -->
-
+&lt;/ul&gt;
+</code></pre>
+</div> -->
 <!-- Handle Language Change -->
-
 <script type="text/javascript">
     // get nodes
     var $zh = document.querySelector(".zh");
@@ -510,7 +503,7 @@
 
     // bind hashchange event
     window.addEventListener('hashchange', _render);
-
+    
     // handle render
     function _render(){
         var _hash = window.location.hash;
@@ -527,7 +520,7 @@
             $en.style.display = "none";
         }
     }
-
+    
     // handle select change
     function onLanChange(index){
         if(index == 0){
@@ -536,18 +529,14 @@
             window.location.hash = "#en"
         }
     }
-
+    
     // init
     _render();
 </script>
-
-
 <!-- Gitalk 评论 start  -->
 
 <!-- Gitalk end -->
-
  <!-- disqus 评论框 start  -->
-
 
 
       
@@ -793,5 +782,20 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
  <!-- 页面点击礼花效果 -->
 <script type="text/javascript" src="/js/firework.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>

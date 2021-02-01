@@ -470,7 +470,7 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <hr>
+        <hr />
 <p>如果有一群人在你生命的某一时间突然闯进你的生活，相处四年之后又悄然离开</p>
 <p>如果有个地方任凭你挥洒青春，多年后却只能留在你的回忆之中</p>
 <p>会是什么感受？</p>
@@ -793,5 +793,20 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
  <!-- 页面点击礼花效果 -->
 <script type="text/javascript" src="/js/firework.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>
