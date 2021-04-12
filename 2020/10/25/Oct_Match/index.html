@@ -27,7 +27,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.loli.net/2020/10/14/qFdcubhy6HrtQ1f.png">
 <meta property="article:published_time" content="2020-10-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-11-18T16:41:58.694Z">
+<meta property="article:modified_time" content="2021-04-12T11:11:43.785Z">
 <meta property="article:author" content="Ld1ng">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
@@ -480,7 +480,7 @@
 <p>只要能泄露出libc我有100种方法解决！</p>
 <p>可惜比赛就是泄露不出libc，做了几天堆，连ROP泄露libc基址都忘了…</p>
 <p>一道堆栈结合的题目</p>
-<p>**思路是：**introduce函数存在栈溢出，可以先泄露canary，然后伪造fakechunk，double free将堆劫持到栈上，利用ROP泄露出libc基址，泄露出libc后就可以为所欲为了，有多种思路</p>
+<p><strong>思路是：</strong> introduce函数存在栈溢出，可以先泄露canary，然后伪造fakechunk，double free将堆劫持到栈上，利用ROP泄露出libc基址，泄露出libc后就可以为所欲为了，有多种思路</p>
 <p>这是此时的栈结构</p>
 <p><img src="https://i.loli.net/2020/10/14/qFdcubhy6HrtQ1f.png" alt="image-20201014104706034" /></p>
 <h2 id="exp"><a class="markdownIt-Anchor" href="#exp"></a> exp</h2>
@@ -808,5 +808,20 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
  <!-- 页面点击礼花效果 -->
 <script type="text/javascript" src="/js/firework.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>
