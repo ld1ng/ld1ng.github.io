@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Ld1ng">
+
+
+
+    <meta name="description" content="Ld1ng's Blog">
+
+
+    <meta name="keywords" content="CTF,code,CUMT">
+
+
+<title>基于OpenCV的动态识别系统——随笔 | Ld1ng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">基于OpenCV的动态识别系统——随笔</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Ld1ng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">May 8, 2020</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/DEVELOP/">DEVELOP</a>
+                            
+                        </span>
+                    
+                     
+    <span class="post-count">
+Words:
+    <a href="">1.5k</a>  
+    </span>
+
+
+    <span class="post-count">
+Time:
+    <a href="">5min</a>  
+    </span>
+
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>大一申报的大创项目，没办法自己申报的项目，哭着也得做完，总的来说真正开始搞得时间就是最后一个月</p>
+<p>这篇文章只是记录了我做项目时遇到的一些问题以及解决方案，不讨论具体实现和源码。</p>
+<h2 id="项目简介"><a href="#项目简介" class="headerlink" title="项目简介"></a>项目简介</h2><p>基于OpenCV-python和python3.6的课堂动态识别系统，可自动估算教室人数，计算课堂抬头率（即专注度），并评定一节课的课堂质量。</p>
+<hr>
+<h3 id="一-为什么用OpenCV-python而非OpenCV-C-："><a href="#一-为什么用OpenCV-python而非OpenCV-C-：" class="headerlink" title="一. 为什么用OpenCV-python而非OpenCV-C++："></a>一. 为什么用OpenCV-python而非OpenCV-C++：</h3><ol>
+<li><p>主要原因是对于入门者来说困难，python相比于C++更简单，更容易理解。</p>
+</li>
+<li><p>薄弱的文档 ：C++文档很少会贴出代码的例子，以致于理解变得更加得困难。尽管贴出的代码有用，但是其也并非很好地被记录在文档中。#附上<a target="_blank" rel="noopener" href="http://woshicver.com/">OpenCV中文文档</a></p>
+</li>
+<li><p>一个计算机视觉引擎时常需要大量的机器学习程序。然而，相比于 OpenCV（Python），OpenCV（C++）只含有一个小型的机器学习算法子集。</p>
+</li>
+<li><p>python有了 <strong>OpenCV</strong>、 <strong>numpy</strong> 、 <strong>scipy</strong> 、 <strong>scikit-learn</strong> 以及 <strong>matplotlib</strong> ，在计算机视觉领域和机器学习领域，提供了一个学习和实验的强大环境。</p>
+</li>
+</ol>
+<p>  #5. 其实我也尝试过api端口，亲测利用opencv-python可以实现。</p>
+<h3 id="二-为何在实现统计人数功能时不使用OpenCV："><a href="#二-为何在实现统计人数功能时不使用OpenCV：" class="headerlink" title="二. 为何在实现统计人数功能时不使用OpenCV："></a>二. 为何在实现统计人数功能时不使用OpenCV：</h3><ol>
+<li><p>统计人数时视频很卡顿。</p>
+</li>
+<li><p>opencv只能识别正脸，当低头、侧脸时无法检测。（后面引进一个强大的工具<code>ImageAI</code>）</p>
+</li>
+<li><p>算法相对基础，实际应用误差大。（测试时3米以外很难识别，而imageai10米内问题不大）</p>
+</li>
+<li><p>本人对opencv相关知识掌握不到位，利用工具比较方便。</p>
+</li>
+</ol>
+<h3 id="三-什么是ImageAI？"><a href="#三-什么是ImageAI？" class="headerlink" title="三. 什么是ImageAI？"></a>三. 什么是ImageAI？</h3><p>  <code>ImageAI</code>是一个python库，旨在使开发人员能够使用简单的几行代码构建具有包含深度学习和计算机视觉功能的应用程序和系统。 ImageAI本着简洁的原则，支持最先进的机器学习算法，用于图像预测，自定义图像预测，物体检测，视频检测，视频对象跟踪和图像预测训练。ImageAI目前支持使用在ImageNet-1000数据集上训练的4种不同机器学习算法进行图像预测和训练。ImageAI还支持使用在COCO数据集上训练的RetinaNet进行对象检测，视频检测和对象跟踪。 最终，ImageAI将为计算机视觉提供更广泛和更专业化的支持，包括但不限于特殊环境和特殊领域的图像识别。</p>
+<p>#附上<a target="_blank" rel="noopener" href="https://imageai-cn.readthedocs.io/zh_CN/latest/">ImageAI 中文文档</a> , 幸运的是，基本用法介绍很详尽，可以放心学习。</p>
+<h3 id="四-为什么用ImageAI？"><a href="#四-为什么用ImageAI？" class="headerlink" title="四.为什么用ImageAI？"></a>四.为什么用ImageAI？</h3><p>优点：深度学习库，训练模型样本大，不需要自己训练模型，算法简洁，节约时间精力，识别精确度。</p>
+<p>缺点：可以分析输入的图片视频，但无法实时检测监控中画面。</p>
+<p>（转换思路——固定间隔截取一帧画面，将视频分析转为对图片的分析，实现统计人数的作用）</p>
+<h3 id="五-具体实现流程："><a href="#五-具体实现流程：" class="headerlink" title="五.具体实现流程："></a>五.具体实现流程：</h3><ol>
+<li><p>调出系统摄像头</p>
+</li>
+<li><p>通过Haar级联实时检测人脸（Haar 级联不具有旋转不变性，即不认为侧面照与正面照是相同的）</p>
+</li>
+<li><p>统计出正脸人数（视为专心听讲人数）</p>
+</li>
+<li><p>固定时间间隔截取一帧画面</p>
+</li>
+<li><p>利用imageai对图片进行分析，统计出总人数</p>
+</li>
+<li><p>总人数与正脸人数做差，计算出低头或转头的人数，视此部分人数即为听讲不专注人数</p>
+</li>
+<li><p>计算班级整体专注度，评价课堂质量</p>
+</li>
+</ol>
+<h3 id="六-克服困难及设计思路："><a href="#六-克服困难及设计思路：" class="headerlink" title="六.克服困难及设计思路："></a>六.克服困难及设计思路：</h3><p>  首先，预想的实时视频中分析与统计人数的实现相对困难: 此项目要求精准对相对较高，利用<strong>opencv</strong> <strong>Haar级联</strong>检测人脸精准度低且测试距离短，且运行后画面卡顿（不明原因），很难符合要求。</p>
+<p>  因此寻找到更强大的工具——<strong>ImageAI</strong>，它可以解决人不同姿势的识别问题，但是缺陷是不能通过摄像头对画面进行实时检测物体，于是转换思路，通过截取一帧画面，将视频分析问题转化为图片分析问题，进而实现人数的统计的功能。</p>
+<p>  上课的专注程度问题复杂，我尝试过通过<strong>分析眨眼频率</strong>来判断人是否困倦，事实证明当只分析一个人时功能正常实现（且只能分析正脸），但是这种算法无法做到多人实时检测。于是反向思维，即不分析睡觉的同学，而是分析认真听讲的同学，如果能统计出这一部分人，做差便是不专心的同学人数。于是利用<strong>Haar级联精准度低</strong>的特点，测出正脸人数，其余便是不专注学生数量（包括低头、转头或转身）。</p>
+<p>  设定课堂质量评价标准，以班级<strong>专注度</strong>为标准，专注度&gt;85%，课堂质量为优；50%&lt;专注度&lt;85%，课堂质量为中；专注度&lt;50%，课堂质量为差。</p>
+<h3 id="七-存在的问题bug："><a href="#七-存在的问题bug：" class="headerlink" title="七.存在的问题bug："></a>七.存在的问题bug：</h3><ol>
+<li><p>对于光线要求比较高，在昏暗条件下（如阴天）效果不好。</p>
+</li>
+<li><p>测试距离不足，对于面积大的教室效果欠佳。</p>
+</li>
+<li><p>学生的眼镜有一定干扰，带上眼镜后识别准确度会有所下降。</p>
+</li>
+<li><p>人数多而密集时，精准度也会大大降低。</p>
+</li>
+</ol>
+<h3 id="八-README-md："><a href="#八-README-md：" class="headerlink" title="八.README.md："></a>八.README.md：</h3><p>本项目利用 <code>OpenCV</code>、 <code>ImageAI</code> 和 <code>Python3</code> 完成，经测试适用于人数不多、采光较好的小教室。</p>
+<p>时间仓促，程序简陋，测试结果粗略，仅以学习为目的，仅供参考。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://ld1ng.top/2020/05/08/OpenCV/">http://ld1ng.top/2020/05/08/OpenCV/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/06/14/signal/">2020 网鼎杯_signal</a>
+            
+            
+        </section>
+
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+      var gitalk = new Gitalk({
+        clientID: '458a98372426d92cae5a',
+        clientSecret: '91e874ad339e3ffbd20d52f4d247739c8e722a72',
+        repo: 'ld1ng.github.io',
+        owner: 'Ld1ng',
+        admin: 'Ld1ng',
+        id: md5(location.pathname),
+        labels: 'Gitalk'.split(',').filter(l => l),
+        perPage: 10,
+        pagerDirection: 'last',
+        createIssueManually: true,
+        distractionFreeMode: false
+      })
+      gitalk.render('gitalk-container')
+</script>
+
+
+    </article>
+</div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>Ld1ng🍕 © 2020 - 2023 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

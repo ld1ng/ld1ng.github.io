@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Ld1ng">
+
+
+
+    <meta name="description" content="Ld1ng's Blog">
+
+
+    <meta name="keywords" content="CTF,code,CUMT">
+
+
+<title>观毕业季有感 | Ld1ng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">观毕业季有感</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Ld1ng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">June 20, 2020</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/LIFE/">LIFE</a>
+                            
+                        </span>
+                    
+                     
+    <span class="post-count">
+Words:
+    <a href="">907</a>  
+    </span>
+
+
+    <span class="post-count">
+Time:
+    <a href="">3min</a>  
+    </span>
+
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <hr>
+<p>如果有一群人在你生命的某一时间突然闯进你的生活，相处四年之后又悄然离开</p>
+<p>如果有个地方任凭你挥洒青春，多年后却只能留在你的回忆之中</p>
+<p>会是什么感受？</p>
+<p>宿舍楼挂起气球，画上板报，欢送毕业生</p>
+<p>退办宿舍点，旧书回收点，行李托运点，全套服务，不请自来</p>
+<p>一年一度的毕业季又到了。</p>
+<p>每年这个时候都颇有感触，今年也是，</p>
+<p>校园里多了许多拖着行李箱的人，他们的内心什么感受，走在路上实在难以揣测</p>
+<p>大学四年走到终点，或许应该像电影里像书里像歌里那样一起缅怀逝去的青春</p>
+<p>也或许忙着论文忙着答辩忙着复试忙着找工作而匆匆一顿饭就说了再见</p>
+<p>他们脸上似乎流露着轻松和释然，却又有些伤感</p>
+<p>或者感慨万千而表现得很平淡，我不好说</p>
+<p>图书馆、镜湖周围，多了许多拍毕业照的人</p>
+<p>他们穿着这辈子唯一一次也可能是最后一次的毕业服</p>
+<p>身边站着这辈子可能再也见不到的同学</p>
+<p>脚下踩着这辈子可能再也回不来的母校</p>
+<p>脸上洋溢着这辈子可能最百感交集的笑容</p>
+<p>帽子扔到天空的一瞬间，也意味着，真到了说再见的时候</p>
+<p>昨天和舍友坐着小黄车去学院楼上课，身旁坐着一位毕业生，他和司机一直在交谈</p>
+<p>“最后一次坐学校的小黄了，师傅，东门”</p>
+<p>“带你绕一圈吧，顺便再看看学校的风景”</p>
+<p>路程不远，但聊了很多。</p>
+<p>晚上考完试回来，路经二食堂听到有人在唱歌，</p>
+<p>台阶下三人抱着吉他轻唱，歌很慢，很柔，很好听</p>
+<p>台阶上坐得满满的人，我知道都是毕业生，他们三五成群靠在一起，有朋友，有情侣，有像我一样的围观者</p>
+<p>有的谈笑风生，有的拍照留念，有的陷入深思，有的低声抽泣，</p>
+<p>再往前走，很多人聚在一起告别，大家语气都很快乐，像是团建过后，第二天还会再相见。</p>
+<p>同行四年，同学一场，天各一方，皆是性情中人，为离别而感伤，理所当然</p>
+<p>至于有人说太媚俗，道不同，你可能无法理解</p>
+<p>毕业季像是一篇诗歌的终章，又是另一篇文章的序章</p>
+<p>当你离开校门的那一刻，就意味着你要和过去做个了断，和那些朋友们做个告别</p>
+<p>转眼我也步入大三，我实在难以想像我毕业时会是什么感受</p>
+<p>可能再也吃不到天天吐槽的食堂大妈的饭菜</p>
+<p>想打球再也找不到随叫随到的兄弟</p>
+<p>上网买东西淘宝收货地址再也不能填学校</p>
+<p>最重要的是那些陪你走过青春的人</p>
+<p>那些你曾以为无比重要的人生节点</p>
+<p>那些你以为不可或缺的人</p>
+<p>当真到了要说再见的时候</p>
+<p>我会是什么感受？</p>
+<blockquote>
+<p>夕阳下的花径。</p>
+<p>我同朋友挥手告别，向前走去。</p>
+<p>两个同学在前面走着。</p>
+<p>八重樱花落了一地。</p>
+<p>再抬头，走在前面的同学消失在了风里。</p>
+<p>电线杆上的飞鸟惊起，向远方飞去。</p>
+<p>我再也没有见过那只飞鸟。</p>
+</blockquote>
+<img src="https://i.loli.net/2020/06/21/FNHuRqDbTyWIa3L.png" alt="image-20200621000130902" style="zoom: 33%;" />
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://ld1ng.top/2020/06/20/Graduation/">http://ld1ng.top/2020/06/20/Graduation/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/07/01/canary/">学习canary&&栈迁移</a>
+            
+            
+            <a class="next" rel="next" href="/2020/06/16/GOTPLT/">学习PLT表GOT表</a>
+            
+        </section>
+
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+      var gitalk = new Gitalk({
+        clientID: '458a98372426d92cae5a',
+        clientSecret: '91e874ad339e3ffbd20d52f4d247739c8e722a72',
+        repo: 'ld1ng.github.io',
+        owner: 'Ld1ng',
+        admin: 'Ld1ng',
+        id: md5(location.pathname),
+        labels: 'Gitalk'.split(',').filter(l => l),
+        perPage: 10,
+        pagerDirection: 'last',
+        createIssueManually: true,
+        distractionFreeMode: false
+      })
+      gitalk.render('gitalk-container')
+</script>
+
+
+    </article>
+</div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>Ld1ng🍕 © 2020 - 2023 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

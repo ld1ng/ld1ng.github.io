@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Ld1ng">
+
+
+
+    <meta name="description" content="Ld1ng's Blog">
+
+
+    <meta name="keywords" content="CTF,code,CUMT">
+
+
+<title>微机实验记录 | Ld1ng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">微机实验记录</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Ld1ng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">June 15, 2020</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/DEVELOP/">DEVELOP</a>
+                            
+                        </span>
+                    
+                     
+    <span class="post-count">
+Words:
+    <a href="">3.6k</a>  
+    </span>
+
+
+    <span class="post-count">
+Time:
+    <a href="">16min</a>  
+    </span>
+
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="0x00前言"><a href="#0x00前言" class="headerlink" title="0x00前言"></a>0x00前言</h1><p>今天微机原理接口结课了，好不容易整理出实验报告</p>
+<p>顺便以博客的形式记录一下本学期7个微机实验</p>
+<hr>
+<p>2020.6.19</p>
+<p>刚刚考完微机实验，运气好，实验很简单</p>
+<p>文章最后记录一下实验过程</p>
+<hr>
+<h2 id="0x01-8255"><a href="#0x01-8255" class="headerlink" title="0x01 8255"></a>0x01 8255</h2><p><strong>1．8255输入、输出实验</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">MOV DX,28BH ；初始化8255</span><br><span class="line">MOV AL,10001001B</span><br><span class="line">OUT DX,AL</span><br><span class="line"></span><br><span class="line">TEST0:</span><br><span class="line">MOV DX,28AH ；C口读入开关状态</span><br><span class="line">IN AL,DX</span><br><span class="line">MOV DX,289H ；B口输出</span><br><span class="line">OUT DX,AL</span><br><span class="line">JMP TEST0 ；继续循环</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2．利用8255设计跑马灯（软延时）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">MOV DX,28BH ；初始化8255</span><br><span class="line">MOV AL,10001001B；控制字</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AH,01H ；暂存01位置的灯</span><br><span class="line"></span><br><span class="line">TEST0:</span><br><span class="line">MOV DX,28AH ；从C口读入开关状态</span><br><span class="line">IN AL,DX</span><br><span class="line">CMP AL,80H ；如果不是K7开关，则循环等待</span><br><span class="line">JNZ TEST0</span><br><span class="line"></span><br><span class="line">TEST1:</span><br><span class="line">MOV AL,AH</span><br><span class="line">MOV DX,289H ；B口输出</span><br><span class="line">OUT DX,AL</span><br><span class="line">ROL AL,1 ；左移一位</span><br><span class="line">MOV BX,150H ；两层嵌套循环，软延时</span><br><span class="line"></span><br><span class="line">CIRCLE:</span><br><span class="line">MOV CX,65535</span><br><span class="line"></span><br><span class="line">DELAY:</span><br><span class="line">LOOP DELAY</span><br><span class="line">DEC BX</span><br><span class="line">JNZ CIRCLE</span><br><span class="line">MOV AH,AL ；暂存灯的状态</span><br><span class="line">JMP TEST0；继续循环</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x02-8253"><a href="#0x02-8253" class="headerlink" title="0x02 8253"></a>0x02 8253</h2><p><strong>1．8253定时实验，利用8253完成2秒的延时。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">;第一级通道2，方式2，先写低字节，后写高字节</span><br><span class="line">MOV AL ,00110101B</span><br><span class="line">MOV DX ,28BH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;计数初值5000</span><br><span class="line">MOV DX ,28AH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,50H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;第二级通道0，方式3，先写低字节，再写高字节</span><br><span class="line">MOV AL,01110111B</span><br><span class="line">MOV DX,28BH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;初值800</span><br><span class="line">MOV DX,288H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,08H</span><br><span class="line">OUT DX,AL</span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2．利用8253硬件延时控制跑马灯运行。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">MOV DX,2ABH；初始化8255</span><br><span class="line">MOV AL,10001011B</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,01H；暂存第一个灯，保证起始第一个灯亮</span><br><span class="line">MOV BL,AL</span><br><span class="line"></span><br><span class="line">TEST0:</span><br><span class="line">MOV DX,2AAH;判断是否是开关1</span><br><span class="line">IN AL,DX</span><br><span class="line">TEST AL,01H</span><br><span class="line">JZ TEST0</span><br><span class="line"></span><br><span class="line">TEST1:</span><br><span class="line">;第一级通道0，方式2，先写低字节，后写高字节</span><br><span class="line">MOV AL ,00110101B</span><br><span class="line">MOV DX ,28BH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;计数初值5000</span><br><span class="line">MOV DX ,28AH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,50H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;第二级通道1，方式3，先写低字节，再写高字节</span><br><span class="line">MOV AL,01110111B</span><br><span class="line">MOV DX,28BH</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;初值800</span><br><span class="line">MOV DX,288H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,08H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;脉冲2MHz，周期2s</span><br><span class="line">T3:</span><br><span class="line">MOV AL,BL</span><br><span class="line">MOV DX,2A8H</span><br><span class="line">OUT DX,AL；输出到A口</span><br><span class="line">ROL AL,1;左移一位</span><br><span class="line">MOV BL,AL；暂存当前灯的位置</span><br><span class="line"></span><br><span class="line">T4:</span><br><span class="line">MOV DX,2A9H；读取两次OUT1状态，判断翻转</span><br><span class="line">IN AL,DX</span><br><span class="line">MOV CL,AL</span><br><span class="line">IN AL,DX</span><br><span class="line">CMP AL,CL ；没翻转，继续循环</span><br><span class="line">JZ T4</span><br><span class="line">JMP TEST1</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x03-A-D转换"><a href="#0x03-A-D转换" class="headerlink" title="0x03 A/D转换"></a>0x03 A/D转换</h2><p><strong>1．利用0809完成1个通道的模拟量采集，并利用8255输出二进制码。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">MOV DX,283H；初始化8255</span><br><span class="line">MOV AL,10010000B</span><br><span class="line">OUT DX,AL</span><br><span class="line"></span><br><span class="line">NEXT:</span><br><span class="line">MOV DX,29CH ；虚写，启动一次转换</span><br><span class="line">OUT DX,AL</span><br><span class="line"></span><br><span class="line">TEST0:</span><br><span class="line">MOV DX,280H </span><br><span class="line">IN AL,DX ；A口读入EOC状态</span><br><span class="line">CMP AL,01H ；检查AL的D0是否等于1，若是则转换已经结束</span><br><span class="line">JNZ TEST0 ；如果不是，继续检查</span><br><span class="line"></span><br><span class="line">MOV DX,29CH</span><br><span class="line">IN AL,DX   ；读入转换后的数据</span><br><span class="line">MOV DX,282H</span><br><span class="line">OUT DX,AL ；C口输出</span><br><span class="line">JMP NEXT</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2.利用0832产生三角波输出，并在直流电机上观察结果。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">BEGIN:</span><br><span class="line">MOV AL,1AH ；下限电压</span><br><span class="line"></span><br><span class="line">UP:</span><br><span class="line">MOV DX,290H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV DX,291H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV BX,20H；两层嵌套循环，软延时</span><br><span class="line">INC AL；自增</span><br><span class="line"></span><br><span class="line">DELAY0:</span><br><span class="line">MOV CX,65535</span><br><span class="line"></span><br><span class="line">DELAY1:</span><br><span class="line">LOOP DELAY1</span><br><span class="line">DEC BX</span><br><span class="line">JNZ DELAY0</span><br><span class="line"></span><br><span class="line">CMP AL,100 ；比较是否达到上限值</span><br><span class="line">JNZ UP ；没到继续上升</span><br><span class="line"></span><br><span class="line">DEC AL</span><br><span class="line">DOWN: </span><br><span class="line">MOV DX,290H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV DX,291H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV BX,20H ；软延时</span><br><span class="line">DEC AL；自减</span><br><span class="line"></span><br><span class="line">DELAY2:</span><br><span class="line">MOV CX,65535</span><br><span class="line"></span><br><span class="line">DELAY3:</span><br><span class="line">LOOP DELAY3</span><br><span class="line">DEC BX</span><br><span class="line">JNZ DELAY2</span><br><span class="line"></span><br><span class="line">CMP AL,19H ；比较是否下降到下限值</span><br><span class="line">JNZ DOWN； 没到继续下降</span><br><span class="line"></span><br><span class="line">JMP BEGIN</span><br><span class="line">CODE ENDS</span><br><span class="line">END BEGIN</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x04-键盘"><a href="#0x04-键盘" class="headerlink" title="0x04 键盘"></a>0x04 键盘</h2><p><strong>实现扫描键盘上的按键，并在数码管上显示</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">PORT_A EQU 280H</span><br><span class="line">PORT_B EQU 281H</span><br><span class="line">PORT_C EQU 282H</span><br><span class="line">PORT_CTL EQU 283H</span><br><span class="line"> </span><br><span class="line">DATA SEGMENT</span><br><span class="line">TABLE DB 77H,7BH,7DH,7EH,0B7H,0BBH,0BDH,0BEH,0D7H,0DBH,0DDH,0DEH,0E7H,0EBH,0EDH,0EEH</span><br><span class="line">;TABLE1 DB 40H,79H,24H,30H,19H,12H,02H,78H,00H,18H,08H,03H,46H,21H,06H,0EH;共阴</span><br><span class="line">TABLE1 DB 0BFH,86H,0DBH,0CFH,0E6H,0EDH,0FDH,87H,0FFH,0E7H,0F7H,0FCH,0B9H, 0DEH,0F9H,0F1H</span><br><span class="line">;共阳</span><br><span class="line">DATA ENDS;数据段</span><br><span class="line"> </span><br><span class="line">STACK SEGMENT STACK;堆栈段</span><br><span class="line">DW 50 DUP(0)</span><br><span class="line">TOP_STACK LABEL WORD;TOP_STACK定义为字类型，偏移地址100</span><br><span class="line">STACK ENDS</span><br><span class="line"></span><br><span class="line">CODE SEGMENT;代码段</span><br><span class="line"> </span><br><span class="line">ASSUME CS:CODE,DS:DATA,SS:STACK</span><br><span class="line">START:</span><br><span class="line">MOV AX,STACK</span><br><span class="line">MOV SS,AX</span><br><span class="line">LEA SP,TOP_STACK</span><br><span class="line">MOV AX,DATA</span><br><span class="line">MOV DS,AX</span><br><span class="line">;初始化8255，B口输入，A,C口输出 </span><br><span class="line">MOV DX,PORT_CTL</span><br><span class="line">MOV AL,10000010B</span><br><span class="line">OUT DX,AL</span><br><span class="line">INIT:</span><br><span class="line">MOV DX,PORT_A;A端口输出低电平</span><br><span class="line">MOV AL,00H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV DX,PORT_B</span><br><span class="line"> </span><br><span class="line">WAIT_OPEN:</span><br><span class="line">IN AL,DX;判断按键是否都松开</span><br><span class="line">AND AL,0FH;取低四位（列值）</span><br><span class="line">CMP AL,0FH</span><br><span class="line">JNZ WAIT_OPEN;若有键没有松开，就循环检查</span><br><span class="line"> </span><br><span class="line">WAIT_PRES:</span><br><span class="line">IN AL,DX;判断是否有键按下</span><br><span class="line">AND AL,0FH;取低四位列值</span><br><span class="line">CMP AL,0FH</span><br><span class="line">JE WAIT_PRES;若没有键按下，则循环检查</span><br><span class="line"> </span><br><span class="line">MOV CX,16EAH;消除键抖动，延时20ms</span><br><span class="line">DELAY:LOOP DELAY</span><br><span class="line"> </span><br><span class="line">IN AL,DX;再次检查，看键是否仍被压着</span><br><span class="line">AND AL,0FH</span><br><span class="line">CMP AL,0FH</span><br><span class="line">JE WAIT_PRES</span><br><span class="line"> </span><br><span class="line">MOV AL,0FEH;先使D0=0</span><br><span class="line">MOV CL,AL;CL=1111 1110B</span><br><span class="line"> </span><br><span class="line">NEXT_ROW:</span><br><span class="line">MOV DX,PORT_A</span><br><span class="line">OUT DX,AL ;A口第一行输出低电平</span><br><span class="line">MOV DX,PORT_B</span><br><span class="line">IN AL,DX ;B口读取状态</span><br><span class="line">AND AL,0FH;取低四位列值</span><br><span class="line">CMP AL,0FH</span><br><span class="line">JNE ENCODE;不为零表示有键按下，转到ENCODE</span><br><span class="line">ROL CL,01;若无键按下，循环左移，使下一行输出低电平</span><br><span class="line">MOV AL,CL</span><br><span class="line">JMP NEXT_ROW</span><br><span class="line"> </span><br><span class="line">ENCODE:MOV BX,000FH;从下标F开始</span><br><span class="line">IN AL,DX</span><br><span class="line">NEXT_TRY:CMP AL,TABLE[BX];在表中寻找与读入的状态相等的值</span><br><span class="line">JE DONE;若找到则跳转DONE</span><br><span class="line">DEC BX;没找到，指向下一个地址</span><br><span class="line">JNS NEXT_TRY;没有减到0，则循环检查</span><br><span class="line">MOV AH,01</span><br><span class="line">JMP EXIT;小于零则，报错退出</span><br><span class="line">DONE:</span><br><span class="line">MOV AL,TABLE1[BX];在数码管表中找到相应数字</span><br><span class="line">AND AL,7FH;消除小数点</span><br><span class="line">MOV DX,PORT_C</span><br><span class="line">OUT DX,AL;C口输出，显示在数码管上</span><br><span class="line">JMP INIT;重新循环，读入下一个按键</span><br><span class="line">EXIT:HLT</span><br><span class="line">CODE ENDS</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="进阶区"><a href="#进阶区" class="headerlink" title="进阶区"></a>进阶区</h1><h2 id="0x10-来自热心同学小张"><a href="#0x10-来自热心同学小张" class="headerlink" title="0x10 来自热心同学小张"></a>0x10 来自热心同学小张</h2><p>​    要求：当0809 采集数据超过4.5V 时，由 8253 提供 0.5 秒控制 8255 输出8个发光二极管中的红灯闪烁。当低于4.5V时输出正常的二进制值。<br>​    0809 地址为 298H~29FH，8253 0 通道地址 2A8H, 8255 控制口地址 293H， 8253 通道 1 工作方式 2，8253 通道 0 工作方式 3。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line"> ASSUME CS:CODE</span><br><span class="line"> START:</span><br><span class="line">      MOV DX,293H      ;写入8255控制口</span><br><span class="line">      MOV AL,10011001B ;控制字，AC输入B输出</span><br><span class="line">      OUT DX,AL ;写入控制字</span><br><span class="line">L1: MOV DX,298H   ;0809控制</span><br><span class="line">    OUT DX,AL     ;虚写</span><br><span class="line">L2: MOV DX,292H  ;8255 C口，读入0809状态</span><br><span class="line">    IN AL,DX</span><br><span class="line">    TEST AL,01H   </span><br><span class="line">    JZ L2          ;测试是否准备好</span><br><span class="line">   </span><br><span class="line">    MOV DX,298H   ;</span><br><span class="line">    IN AL,DX ; </span><br><span class="line">   </span><br><span class="line">    CMP AL,0E6H  ;与4.5V比较 ，小于4.5 跳到 OUT2 转换二进制</span><br><span class="line">    JB OUT2</span><br><span class="line">    ;8253</span><br><span class="line">    MOV DX,2ABH        ;8235控制口</span><br><span class="line">    MOV AL,01110101B   ;控制字</span><br><span class="line">    OUT DX,AL    ;读入控制字</span><br><span class="line">    MOV AL,00H ;初值</span><br><span class="line">    MOV DX,2A9H ;1 通道 1</span><br><span class="line">    OUT DX,AL</span><br><span class="line">    MOV AL,10H ;初值</span><br><span class="line">    MOV DX,2A9H ;1通道1</span><br><span class="line">    OUT DX,AL</span><br><span class="line">    MOV DX,2ABH   ;控制口</span><br><span class="line">    MOV AL,00110111B;控制字</span><br><span class="line">    OUT DX,AL</span><br><span class="line">    MOV AL,00H  ;初值</span><br><span class="line">    MOV DX,2A8H ;0 通道 2</span><br><span class="line">    OUT DX,AL</span><br><span class="line">    MOV AL,10H   ;初值</span><br><span class="line">    MOV DX,2A8H ; 0通道 2</span><br><span class="line">    OUT DX,AL</span><br><span class="line"></span><br><span class="line">  OUTO:</span><br><span class="line">    MOV DX,291H             ;8255B口输出</span><br><span class="line">    MOV AL,10011100B        ;红灯亮</span><br><span class="line">    OUT DX,AL</span><br><span class="line">   </span><br><span class="line">;硬延时判断</span><br><span class="line">  MOV DX,290H ;A口读取8253状态       </span><br><span class="line">LOOP1:</span><br><span class="line">  IN AL,DX</span><br><span class="line">  TEST AL,00000001B  ;测试高低电频变化</span><br><span class="line">  JZ LOOP1</span><br><span class="line"> </span><br><span class="line">LOOP2:</span><br><span class="line">  IN AL,DX</span><br><span class="line">  TEST AL,00000001B ;测试高低电频变化</span><br><span class="line">  JNZ LOOP2</span><br><span class="line">   </span><br><span class="line">   MOV AL,00H      ;灯暗</span><br><span class="line">   MOV DX,291H</span><br><span class="line">   OUT DX,AL</span><br><span class="line">;硬延时</span><br><span class="line">MOV DX,290H</span><br><span class="line">LOOP3:</span><br><span class="line">  IN AL,DX</span><br><span class="line">  TEST AL,00000001B ;测试高低电频</span><br><span class="line">  JZ LOOP3</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">LOOP4:</span><br><span class="line">  IN AL,DX</span><br><span class="line">  TEST AL,00000001B ;测试高低电频变化</span><br><span class="line">  JNZ LOOP4   </span><br><span class="line">  </span><br><span class="line">  MOV BX,200H</span><br><span class="line">  JMP L1  ;跳回，测试0809数值</span><br><span class="line">   </span><br><span class="line">OUT2:</span><br><span class="line">  MOV DX,291H  ;直接输出二进制</span><br><span class="line">  OUT DX,AL</span><br><span class="line"></span><br><span class="line">  JMP L1    ;跳回</span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x02-来自一叶飘零学长"><a href="#0x02-来自一叶飘零学长" class="headerlink" title="0x02 来自一叶飘零学长"></a>0x02 来自<a target="_blank" rel="noopener" href="https://skysec.top/">一叶飘零</a>学长</h2><p>利用0809采集数据，转换后用IN5打到数码管上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">PORT_A EQU 290H		;8255A口地址</span><br><span class="line">PORT_B EQU 291H		;8255B口地址</span><br><span class="line">PORT_C EQU 292H		;8255C口地址</span><br><span class="line">PORT_CTL EQU 293H	;8255控制口地址</span><br><span class="line">DATA SEGMENT</span><br><span class="line">;数码管表,共阳（实验是共阴，所以要取反）</span><br><span class="line">;           0   1   2   3   4   5   6   7</span><br><span class="line">TUBE	DB 40H,79H,24H,30H,19H,12H,02H,78H</span><br><span class="line">;           8   9   A   B   C   D   E   F</span><br><span class="line">	    DB 00H,10H,08H,03H,46H,21H,06H,0EH</span><br><span class="line">DATA ENDS</span><br><span class="line">CODE	SEGMENT</span><br><span class="line">	ASSUME	CS:CODE,DS:DATA</span><br><span class="line">START:</span><br><span class="line">	MOV AX,DATA</span><br><span class="line">	MOV DX,AX</span><br><span class="line">	MOV DX,PORT_CTL		;初始化8255</span><br><span class="line">	MOV AL,10010001B	;A口输入，读值，B口输出，打到数码管，C口输入，PC0接EOC判断用</span><br><span class="line">	OUT DX,AL</span><br><span class="line">NEXT:	MOV DX,280H		;指向ADC通道0</span><br><span class="line">	OUT DX,AL		;启动转换</span><br><span class="line">	MOV DX,PORT_C		;指向8255的C口</span><br><span class="line">POLL:</span><br><span class="line">	IN AL,DX		;读C口值</span><br><span class="line">	TEST AL,01H		;测试PC0是否为1</span><br><span class="line">	JZ POLL			;是0，转换未结束，继续等待</span><br><span class="line">	MOV AL,10000000B</span><br><span class="line">	MOV DX,PORT_C</span><br><span class="line">	OUT DX,AL</span><br><span class="line">	MOV DX,280H		;是1，转换结束，指向ADC通道0</span><br><span class="line">	IN AL,DX		;读取转换后数据		</span><br><span class="line">	AND AL,0FH		;取低4位</span><br><span class="line">	MOV BX,OFFSET TUBE	;指向数码管表</span><br><span class="line">	XLAT</span><br><span class="line">	NOT AL			;取反</span><br><span class="line">	MOV DX,PORT_B		;指向8255的B口</span><br><span class="line">	OUT DX,AL		;将低4位值显示在数码管上</span><br><span class="line">	MOV BX,15</span><br><span class="line">DELAY:				;双重延时</span><br><span class="line">	MOV CX,0FFFFH</span><br><span class="line">DELAY1:</span><br><span class="line">	LOOP DELAY1</span><br><span class="line">    	DEC BX</span><br><span class="line">	JNZ DELAY</span><br><span class="line">	MOV AL,01000000B</span><br><span class="line">	MOV DX,PORT_C</span><br><span class="line">	OUT DX,AL</span><br><span class="line">	MOV DX,280H		;延时结束后，再指回ADC的通道0</span><br><span class="line">	IN AL,DX		;再读一次数据</span><br><span class="line">	AND AL,0F0H 		;取高4位</span><br><span class="line">	MOV CL,4</span><br><span class="line">	ROR AL,CL</span><br><span class="line">	MOV BX,OFFSET TUBE	;指向数码管表</span><br><span class="line">	XLAT</span><br><span class="line">	NOT AL			;取反</span><br><span class="line">	MOV DX,PORT_B		;指向8255的B口</span><br><span class="line">	OUT DX,AL		;将高4位值显示在数码管上</span><br><span class="line">	MOV BX,15	</span><br><span class="line">DELAY2:				;再次双重延时</span><br><span class="line">	MOV CX,0FFFFH</span><br><span class="line">DELAY3:</span><br><span class="line">	LOOP DELAY3</span><br><span class="line">    	DEC BX</span><br><span class="line">	JNZ DELAY2</span><br><span class="line">	JMP NEXT		;延时结束，跳回NEXT，进行一下轮实现</span><br><span class="line">CODE ENDS</span><br><span class="line">	END START</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x03-实现左右轮循环跑马灯"><a href="#0x03-实现左右轮循环跑马灯" class="headerlink" title="0x03 实现左右轮循环跑马灯"></a>0x03 实现左右轮循环跑马灯</h2><p>利用8253提供定时时间（2秒），8255输出至发光二极管，显示要求为：从左向右移位显示一次循环，然后从右向左移位显示一次循环。8253控制口地址283H，8255控制口地址293H。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">ORT_A EQU 290H			;8255A口地址</span><br><span class="line">PORT_B EQU 291H			;8255B口地址</span><br><span class="line">PORT_C EQU 292H			;8255C口地址</span><br><span class="line">PORT_CTL EQU 293H		;8255控制口地址</span><br><span class="line"></span><br><span class="line">PORT_1 EQU 280H</span><br><span class="line">PORT_2 EQU 281H</span><br><span class="line">PORT_3 EQU 282H</span><br><span class="line">PORT_CTL2 EQU 283H</span><br><span class="line"></span><br><span class="line">STACK SEGMENT STACK</span><br><span class="line">	DB 50 DUP(?)</span><br><span class="line">TOP_S	LABEL WORD</span><br><span class="line">STACK ENDS</span><br><span class="line"></span><br><span class="line">CODE SEGMENT</span><br><span class="line">	ASSUME CS:CODE,SS:STACK</span><br><span class="line"></span><br><span class="line">START:</span><br><span class="line">	MOV AX,STACK</span><br><span class="line">	MOV SS,AX</span><br><span class="line">	LEA SP,TOP_S</span><br><span class="line"></span><br><span class="line">	MOV AL,00110101B	;8253的通道0，先送低字节，再送高字节，方式2，BCD码</span><br><span class="line">	MOV DX,PORT_CTL2</span><br><span class="line">	OUT DX,AL		;8253初始化</span><br><span class="line">	MOV AL,00H		;向8253的通道0，N0赋5000</span><br><span class="line">	MOV DX,PORT_1</span><br><span class="line">	OUT DX,AL</span><br><span class="line">	MOV AL,50H</span><br><span class="line">	MOV DX,PORT_1</span><br><span class="line">	OUT DX,AL		</span><br><span class="line"></span><br><span class="line">	MOV AL,01110111B	;8253的通道1，先送低字节，再送高字节，方式3，BCD码</span><br><span class="line">	MOV DX,PORT_CTL2</span><br><span class="line">	OUT DX,AL		;8253初始化</span><br><span class="line">	MOV AL,00H		;向8253的通道1，N1赋800</span><br><span class="line">	MOV DX,PORT_2</span><br><span class="line">	OUT DX,AL</span><br><span class="line">	MOV AL,08H		</span><br><span class="line">	MOV DX,PORT_2</span><br><span class="line">	OUT DX,AL</span><br><span class="line">	</span><br><span class="line">	MOV DX,PORT_CTL		;8255初始化</span><br><span class="line">	MOV AL,10011001B	;B端口输出,A端口控制输入,C端口延时输入</span><br><span class="line">	OUT DX,AL</span><br><span class="line">	MOV AL,10000000B	;先亮最左边的灯</span><br><span class="line">	PUSH AX			;压栈</span><br><span class="line"></span><br><span class="line">TEST1:	</span><br><span class="line">	MOV DX,PORT_B		;B口输出</span><br><span class="line">	POP AX			;AL出栈</span><br><span class="line">	OUT DX,AL</span><br><span class="line">	PUSH AX			;将此时的AL再压栈</span><br><span class="line"></span><br><span class="line">	cmp AL,00000001B	;看有没有到右边</span><br><span class="line">	JZ TEST2		;到右边了即跳到test2</span><br><span class="line"></span><br><span class="line">DELAY1:				;延时</span><br><span class="line">	MOV DX,PORT_C</span><br><span class="line">	IN AL,DX</span><br><span class="line">	AND AL,00000001B	;取PC0</span><br><span class="line">	CMP AL,00000001B</span><br><span class="line">	JZ DELAY1		;低电平跳出</span><br><span class="line">DELAY2:</span><br><span class="line">	IN AL,DX</span><br><span class="line">	AND AL,00000001B	;取PC0</span><br><span class="line">	CMP AL,00000001B</span><br><span class="line">	JNZ DELAY2		;高电平跳出</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	POP AX			;AL出栈</span><br><span class="line">	ROR AL,01		;循环右移</span><br><span class="line">	PUSH AX			;AL再压栈</span><br><span class="line">	JMP TEST1		;返回TEST1</span><br><span class="line"></span><br><span class="line">TEST2:	</span><br><span class="line">	MOV DX,PORT_B		</span><br><span class="line">	POP AX			;此时AL=00000001B</span><br><span class="line">	OUT DX,AL		;亮最右边的灯</span><br><span class="line">	PUSH AX			</span><br><span class="line">	CMP AL,10000000B	;看是否亮到了最左边的灯</span><br><span class="line">	JZ TEST1		;是，跳回TEST1</span><br><span class="line"></span><br><span class="line">DELAY3:</span><br><span class="line">	MOV DX,PORT_C</span><br><span class="line">	IN AL,DX</span><br><span class="line">	AND AL,00000001B	;取PC0</span><br><span class="line">	CMP AL,00000001B</span><br><span class="line">	JZ DELAY3		;低电平跳出</span><br><span class="line">DELAY4:</span><br><span class="line">	IN AL,DX</span><br><span class="line">	AND AL,00000001B	;取PC0</span><br><span class="line">	CMP AL,00000001B</span><br><span class="line">	JNZ DELAY4		;高电平跳出</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	POP AX</span><br><span class="line">	ROL AL,01		;循环左移</span><br><span class="line">	PUSH AX</span><br><span class="line">	JMP TEST2</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">	END START</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="0x04记微机实验考试"><a href="#0x04记微机实验考试" class="headerlink" title="0x04记微机实验考试"></a>0x04记微机实验考试</h2><blockquote>
+<p>要求：利用8253提供定时时间（1秒），8255输出为跑马灯形式至发光二极管。显示要求为从左向右每次移2位循环4次，然后以8253以2秒延时从右向左每次移1位循环5次后灯全<br>亮后停止。控制跑马灯暂停键为K4键，当K4键位时暂停。<br>8253 控制口地址 2A3H,8255A 口地址 2B0H。</p>
+</blockquote>
+<p>拿到题目的一瞬间全组狂喜，</p>
+<p>很简单，8255、8253两个芯片，两个硬延时就可以了</p>
+<p>但是一个看似三十分钟程序却做了将近一个半小时，事情是这样的</p>
+<p>在写完第一个延时后，本想先测试一下效果，但正常测试几次后LED灯突然就不亮了</p>
+<p>？？？疑惑，研究了好久，写了程序测试小灯、换线，最后直接5v接上，还是不行</p>
+<p>而且小灯的迷惑行为止不亮这么简单，它的亮灭随机的，不断调整线的位置并且分析灯的亮灭规律我们断定——箱子坏了</p>
+<p>没办法，找老师，老师瞄了一眼，“线有问题，换线就好……”</p>
+<p>心态崩了，明知道换线行不通，又不好意思让老师来帮忙找问题，没办法自己来吧</p>
+<p>就这样估计半个小时过去了，突然萄萄调线的时候动了一下电源插头</p>
+<p>！！！！灯亮了，竟然没想过是电源接触的问题</p>
+<p>打扰了，问题解决后</p>
+<p>接着很快代码完成，应该是第一组完成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">CODE SEGMENT</span><br><span class="line">ASSUME CS:CODE</span><br><span class="line">START:</span><br><span class="line">MOV DX,2B3H ;初始化8255</span><br><span class="line">MOV AL,10010010B</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,80H ;暂存第8个灯，保证起始灯亮</span><br><span class="line">MOV AH,AL</span><br><span class="line">MOV BX,4</span><br><span class="line">TEST1:</span><br><span class="line">;第一级通道0，方式2，先写低字节，后写高字节</span><br><span class="line">MOV AL ,00110101B</span><br><span class="line">MOV DX ,2A3H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;计数初值5000</span><br><span class="line">MOV DX ,2A0H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,50H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;第二级通道1，方式3，先写低字节，再写高字节</span><br><span class="line">MOV AL,01110111B</span><br><span class="line">MOV DX,2A3H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;初值400</span><br><span class="line">MOV DX,2A1H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,08H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;脉冲2MHz，周期2s</span><br><span class="line">TEST0:</span><br><span class="line">MOV DX,2B1H ;判断是否是开关K4</span><br><span class="line">IN AL,DX</span><br><span class="line">TEST AL,10H</span><br><span class="line">JZ TEST0</span><br><span class="line">T3:</span><br><span class="line">MOV AL,AH</span><br><span class="line">MOV DX,2B2H</span><br><span class="line">OUT DX,AL;输出到C口</span><br><span class="line">ROR AL,2;右移两位</span><br><span class="line">MOV AH,AL;暂存当前灯的位置</span><br><span class="line">T4:         </span><br><span class="line">MOV DX,2B0H     ;延时</span><br><span class="line">IN AL,DX</span><br><span class="line">TEST AL,01H</span><br><span class="line">JNZ T4</span><br><span class="line">DEC BX</span><br><span class="line">JNZ TEST1</span><br><span class="line"></span><br><span class="line">MOV BX,5</span><br><span class="line">TESTA:</span><br><span class="line">;第一级通道0，方式2，先写低字节，后写高字节</span><br><span class="line">MOV AL ,00110101B</span><br><span class="line">MOV DX ,2A3H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;计数初值5000</span><br><span class="line">MOV DX ,2A0H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,50H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;第二级通道1，方式3，先写低字节，再写高字节</span><br><span class="line">MOV AL,01110111B</span><br><span class="line">MOV DX,2A3H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,00H;初值400</span><br><span class="line">MOV DX,2A1H</span><br><span class="line">OUT DX,AL</span><br><span class="line">MOV AL,16H</span><br><span class="line">OUT DX,AL</span><br><span class="line">;脉冲2MHz，周期4s</span><br><span class="line"></span><br><span class="line">TESTB:</span><br><span class="line">MOV DX,2B1H ;判断是否是开关K4</span><br><span class="line">IN AL,DX</span><br><span class="line">TEST AL,10H</span><br><span class="line">JZ TESTB</span><br><span class="line">MOV AL,AH</span><br><span class="line">MOV DX,2B2H</span><br><span class="line">OUT DX,AL;输出到C口</span><br><span class="line">ROL AL,1;左移一位</span><br><span class="line">MOV AH,AL;暂存当前灯的位置</span><br><span class="line">TC:         </span><br><span class="line">MOV DX,2B0H     ;延时</span><br><span class="line">IN AL,DX</span><br><span class="line">TEST AL,01H   </span><br><span class="line">JNZ TC</span><br><span class="line">DEC BX</span><br><span class="line">JNZ TESTA</span><br><span class="line">LOOP1:</span><br><span class="line">MOV AL,0FFH </span><br><span class="line">MOV DX,2B2H</span><br><span class="line">OUT DX,AL;输出到C口</span><br><span class="line">JMP LOOP1</span><br><span class="line"></span><br><span class="line">CODE ENDS</span><br><span class="line">END START</span><br></pre></td></tr></table></figure>
+
+<p>遗憾的是老师竟然没问我什么问题，</p>
+<p>总的来说考试还算顺利，收拾书包走人…</p>
+<h2 id="0x05-小结"><a href="#0x05-小结" class="headerlink" title="0x05 小结"></a>0x05 小结</h2><p>从第一次接触汇编到现在也算有点收获，虽然只是一些皮毛</p>
+<p>但学习二进制以后还会经常和汇编打交道，现在混个脸熟，将来慢慢深入了解也不迟</p>
+<p>暂时告别芯片和箱子，我会想你的，ﾉBye~</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://ld1ng.top/2020/06/15/Microcomputer/">http://ld1ng.top/2020/06/15/Microcomputer/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/06/16/GOTPLT/">学习PLT表GOT表</a>
+            
+            
+            <a class="next" rel="next" href="/2020/06/14/signal/">2020 网鼎杯_signal</a>
+            
+        </section>
+
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+      var gitalk = new Gitalk({
+        clientID: '458a98372426d92cae5a',
+        clientSecret: '91e874ad339e3ffbd20d52f4d247739c8e722a72',
+        repo: 'ld1ng.github.io',
+        owner: 'Ld1ng',
+        admin: 'Ld1ng',
+        id: md5(location.pathname),
+        labels: 'Gitalk'.split(',').filter(l => l),
+        perPage: 10,
+        pagerDirection: 'last',
+        createIssueManually: true,
+        distractionFreeMode: false
+      })
+      gitalk.render('gitalk-container')
+</script>
+
+
+    </article>
+</div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>Ld1ng🍕 © 2020 - 2023 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

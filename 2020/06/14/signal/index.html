@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Ld1ng">
+
+
+
+    <meta name="description" content="Ld1ng's Blog">
+
+
+    <meta name="keywords" content="CTF,code,CUMT">
+
+
+<title>2020 网鼎杯_signal | Ld1ng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/links">Links</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">2020 网鼎杯_signal</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Ld1ng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">June 14, 2020</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/REVERSE/">REVERSE</a>
+                            
+                        </span>
+                    
+                     
+    <span class="post-count">
+Words:
+    <a href="">2.5k</a>  
+    </span>
+
+
+    <span class="post-count">
+Time:
+    <a href="">11min</a>  
+    </span>
+
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>之前网鼎杯的逆向题，说实话，这是我第一次见虚拟机的逆向</p>
+<p>现在已经深夜了，害怕第二天就忘了，所以赶紧记下来</p>
+<hr>
+<p>已经第二天了，刚刚写出脚本，回来接着写</p>
+<p>说实话第一次见虚拟机的题目还挺有新鲜感的</p>
+<p>不过真正吃透一道题也不容易（还是自己太菜）</p>
+<p>本题三种解法我了解的差不多了，当作笔记好好记录一下</p>
+<hr>
+<h2 id="0x01-程序分析"><a href="#0x01-程序分析" class="headerlink" title="0x01 程序分析"></a>0x01 程序分析</h2><p>主函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [esp+18h] [ebp-1D4h]</span></span><br><span class="line"></span><br><span class="line">  __main();</span><br><span class="line">  qmemcpy(&amp;v4, &amp;unk_403040, <span class="number">0x1C8</span>u);</span><br><span class="line">  vm_operad(&amp;v4, <span class="number">114</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;good,The answer format is:flag &#123;&#125;&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不管别的，把<code>&amp;unk_403040</code>的值扣下来再说</p>
+<p><img src="https://i.loli.net/2020/06/14/TWOQHMdemzoRqYb.png"></p>
+<p>主函数做的是先把<code>&amp;unk_403040</code>的值赋给<code>&amp;v4</code>，然后进入<code>vm_operad</code>函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">vm_operad</span><span class="params">(<span class="keyword">int</span> *a1, <span class="keyword">int</span> a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> result; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">char</span> v3[<span class="number">100</span>]; <span class="comment">// [esp+13h] [ebp-E5h]</span></span><br><span class="line">  <span class="keyword">char</span> v4[<span class="number">100</span>]; <span class="comment">// [esp+77h] [ebp-81h]</span></span><br><span class="line">  <span class="keyword">char</span> v5; <span class="comment">// [esp+DBh] [ebp-1Dh]</span></span><br><span class="line">  <span class="keyword">int</span> v6; <span class="comment">// [esp+DCh] [ebp-1Ch]</span></span><br><span class="line">  <span class="keyword">int</span> v7; <span class="comment">// [esp+E0h] [ebp-18h]</span></span><br><span class="line">  <span class="keyword">int</span> v8; <span class="comment">// [esp+E4h] [ebp-14h]</span></span><br><span class="line">  <span class="keyword">int</span> v9; <span class="comment">// [esp+E8h] [ebp-10h]</span></span><br><span class="line">  <span class="keyword">int</span> v10; <span class="comment">// [esp+ECh] [ebp-Ch]</span></span><br><span class="line"></span><br><span class="line">  v10 = <span class="number">0</span>;</span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  v8 = <span class="number">0</span>;</span><br><span class="line">  v7 = <span class="number">0</span>;</span><br><span class="line">  v6 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    result = v10;</span><br><span class="line">    <span class="keyword">if</span> ( v10 &gt;= a2 )</span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">    <span class="keyword">switch</span> ( a1[v10] )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        v4[v7] = v5;</span><br><span class="line">        ++v10;</span><br><span class="line">        ++v7;</span><br><span class="line">        ++v9;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        v5 = a1[v10 + <span class="number">1</span>] + v3[v9];</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">        v5 = v3[v9] - LOBYTE(a1[v10 + <span class="number">1</span>]);</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">        v5 = a1[v10 + <span class="number">1</span>] ^ v3[v9];</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">        v5 = a1[v10 + <span class="number">1</span>] * v3[v9];</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">6</span>:</span><br><span class="line">        ++v10;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">7</span>:</span><br><span class="line">        <span class="keyword">if</span> ( v4[v8] != a1[v10 + <span class="number">1</span>] )</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="built_in">printf</span>(<span class="string">&quot;what a shame...&quot;</span>);</span><br><span class="line">          <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        ++v8;</span><br><span class="line">        v10 += <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">8</span>:</span><br><span class="line">        v3[v6] = v5;</span><br><span class="line">        ++v10;</span><br><span class="line">        ++v6;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">10</span>:</span><br><span class="line">        read(v3);</span><br><span class="line">        ++v10;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">11</span>:</span><br><span class="line">        v5 = v3[v9] - <span class="number">1</span>;</span><br><span class="line">        ++v10;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">12</span>:</span><br><span class="line">        v5 = v3[v9] + <span class="number">1</span>;</span><br><span class="line">        ++v10;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一次见，感觉这么多数一定很麻烦，但其实如果理解了其中的操作并不难</p>
+<p>粗略的看一下，有 what a shame 这样的字符串，所以应该是要比较字符</p>
+<p>再仔细分析程序，switch 这里用的参数是 a1（0x403040的值），v10 相当于是索引，从0开始递增，</p>
+<p>进而遍历 0x403040之后的所有数（四字节为单位）。</p>
+<p>所以说 0x403040 这里面储存的都是操作数，然后一个一个取出来，找相应的case进行操作。</p>
+<p>##特别要注意的是case7，操作码最后部分的07H都是进行比较用的</p>
+<p><img src="https://i.loli.net/2020/06/14/2mfMaRsH1nxLw5e.png" alt="image-20200614135000672"></p>
+<hr>
+<p>接下来只要根据相应的操作数一步一步分析，</p>
+<p>首先通过分析知道，a1是存入的操作数，v3是你输入的字符，v4，v5用于暂存数据</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">case1：进行赋值操作，将v5的值赋给v4，标号索引全加<span class="number">1</span>  </span><br><span class="line"><span class="comment">//后面可以知道v4内数据用来作最后的比较</span></span><br><span class="line">case2：v3与a1的下一个值相加，索引加<span class="number">2</span>（跳过用于运算的数值）</span><br><span class="line">case3：v3减去a1的下一个值，索引加<span class="number">2</span></span><br><span class="line">case4：a1的下一个数值与v3异或，索引加<span class="number">2</span></span><br><span class="line">case5：a1下一个数值与v3相乘，索引加<span class="number">2</span></span><br><span class="line">case6：空操作</span><br><span class="line">case7：v4的数值分别与a1的下一个数值进行比较，全正确则通过</span><br><span class="line">case8：相当于一个复制操作，保存当前值</span><br><span class="line">case9：刚发现没有case9</span><br><span class="line">case10：输入<span class="number">15</span>位数值，放在v3中</span><br><span class="line">case11：v3<span class="number">-1</span></span><br><span class="line">case12：v3+<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>了解了全部操作，那么就可以分析它的实现流程了</p>
+<h2 id="0x02-实现流程"><a href="#0x02-实现流程" class="headerlink" title="0x02 实现流程"></a>0x02 实现流程</h2><p>对照着<code>0x403040</code>的数据可以一步一步摸清它的脉络</p>
+<p>首先第一个操作码是10，是输入15位数据（也就是要求的flag）</p>
+<p>下一个操作码是4，flag[0]与a1的下一个数值（16）进行异或，索引加2</p>
+<p>下一个操作码是8，保存当前状态。</p>
+<p>下一个操作码是3，当前值减去a1下一个数据（5）</p>
+<p>下一个操作码是1，将现在的数据赋值给v4，各个索引均加1</p>
+<p>进行对下一位flag[1]的运算操作</p>
+<p>所以可以从中找出规律，对于每一位数据的操作都结束于case1，也就是说，程序是将flag[0~14]这15位数据依次作运算，存入v4中，最后将v4的数值分别与对应的数值进行比较</p>
+<hr>
+<h2 id="0x03-脚本"><a href="#0x03-脚本" class="headerlink" title="0x03 脚本"></a>0x03 脚本</h2><p><strong>1.手撕程序</strong></p>
+<p>那么可以动笔来算一下，<del>写的有点乱，无伤大雅，勉强能冲</del>。</p>
+<p><img src="https://i.loli.net/2020/06/14/vFeAPrMR5ZzUtc8.png" alt="image-20200614133839058"></p>
+<p>由于题目的位数不多，逻辑不难，所以手撕还是挺快<del>（乐）</del>的，贴上代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">34</span>+<span class="number">5</span>)^<span class="number">16</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">63</span>//<span class="number">3</span>)^<span class="number">32</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>(<span class="number">52</span>+<span class="number">2</span>+<span class="number">1</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">50</span>^<span class="number">4</span>)-<span class="number">1</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">114</span>+<span class="number">33</span>)//<span class="number">3</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>(<span class="number">51</span>+<span class="number">1</span>+<span class="number">1</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">24</span>+<span class="number">32</span>)^<span class="number">9</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">167</span>^<span class="number">36</span>)-<span class="number">81</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>(<span class="number">49</span>+<span class="number">1</span>-<span class="number">1</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">241</span>-<span class="number">37</span>)//<span class="number">2</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">40</span>^<span class="number">65</span>)-<span class="number">54</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>(<span class="number">132</span>-<span class="number">32</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">193</span>-<span class="number">37</span>)//<span class="number">3</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>((<span class="number">30</span>+<span class="number">32</span>)^<span class="number">9</span>),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="built_in">chr</span>(<span class="number">122</span>-<span class="number">1</span>-<span class="number">65</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">##疯狂print，虽然看上去很low，但简单粗暴，效率很高</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2.<del>高级</del>脚本</strong></p>
+<p>基本的逆向思维</p>
+<p><img src="https://i.loli.net/2020/06/14/udbCneJyRa9hYHN.png" alt="image-20200614145058127"></p>
+<p>找出v4的值，分别反向做逆运算就可以找出flag</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">v4 = [<span class="number">34</span>,<span class="number">63</span>,<span class="number">52</span>,<span class="number">50</span>,<span class="number">114</span>,<span class="number">51</span>,<span class="number">24</span>,<span class="number">167</span>,<span class="number">49</span>,<span class="number">241</span>,<span class="number">40</span>,<span class="number">132</span>,<span class="number">193</span>,<span class="number">30</span>,<span class="number">122</span>]</span><br><span class="line">v4.reverse()</span><br><span class="line">a=[<span class="number">10</span>, <span class="number">4</span>, <span class="number">16</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">32</span>, <span class="number">8</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">8</span>, <span class="number">11</span>, <span class="number">1</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">33</span>, <span class="number">1</span>, <span class="number">11</span>, <span class="number">8</span>, <span class="number">11</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">81</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">36</span>, <span class="number">1</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">11</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">8</span>, <span class="number">2</span>, <span class="number">37</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">54</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">65</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">32</span>, <span class="number">8</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">8</span>, <span class="number">2</span>, <span class="number">37</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">65</span>, <span class="number">8</span>, <span class="number">12</span>, <span class="number">1</span>]</span><br><span class="line">a.reverse()</span><br><span class="line">v9=<span class="number">0</span></span><br><span class="line">v3=<span class="number">0</span><span class="comment">#flag</span></span><br><span class="line">v5=<span class="number">0</span></span><br><span class="line">flag=[]</span><br><span class="line">final=<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(a)):</span><br><span class="line">    <span class="keyword">if</span> i ==<span class="built_in">len</span>(a)-<span class="number">1</span>:</span><br><span class="line">        flag.append(v3)                   </span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">1</span> <span class="keyword">and</span> a[i-<span class="number">1</span>]!=<span class="number">1</span>:</span><br><span class="line">        v5 = v4[v9]</span><br><span class="line">        v9+=<span class="number">1</span></span><br><span class="line">        flag.append(v3)                    </span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">2</span>:</span><br><span class="line">        v3 = v5 - a[i-<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">3</span>:</span><br><span class="line">        v3 = v5 + a[i-<span class="number">1</span>] </span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">4</span>:                  </span><br><span class="line">        v3 = v5^a[i-<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">5</span>:                 </span><br><span class="line">        v3 = <span class="built_in">int</span>(v5/a[i-<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">8</span>:</span><br><span class="line">        v5 = v3                            </span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">11</span>:</span><br><span class="line">        v3 = v5+<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> a[i]==<span class="number">12</span>:</span><br><span class="line">        v3 = v5-<span class="number">1</span></span><br><span class="line">flag.reverse()</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> flag:</span><br><span class="line">    final +=<span class="built_in">chr</span>(j)</span><br><span class="line"><span class="built_in">print</span> (final)</span><br><span class="line"><span class="comment">#看上去很高级，但....有这个时间手算不香吗</span></span><br></pre></td></tr></table></figure>
+
+<p>为了写的通俗易懂，脚本可能会存在考虑不周的地方，不过解出本题还是可以的</p>
+<p>附上队里一位<a target="_blank" rel="noopener" href="https://hanxu-ideits.gitee.io/hanxuerr/">Han Xu小姐姐</a>的脚本,比赛时就解出来是真的强，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">v1=[<span class="number">0xa</span>,<span class="number">4</span>,<span class="number">0x10</span>,<span class="number">8</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">0x20</span>,<span class="number">8</span>,<span class="number">5</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">8</span>,<span class="number">0xb</span>,</span><br><span class="line">            <span class="number">1</span>,<span class="number">0xc</span>,<span class="number">8</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">3</span>,<span class="number">8</span>,<span class="number">3</span>,<span class="number">0x21</span>,<span class="number">1</span>,<span class="number">0xb</span>,<span class="number">0x8</span>,<span class="number">0xb</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">8</span>,<span class="number">3</span>,</span><br><span class="line">            <span class="number">0x20</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0x51</span>,<span class="number">8</span>,<span class="number">4</span>,<span class="number">0x24</span>,<span class="number">1</span>,<span class="number">0xc</span>,<span class="number">8</span>,<span class="number">0xb</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">2</span>,<span class="number">8</span>,<span class="number">2</span>,<span class="number">0x25</span>,</span><br><span class="line">            <span class="number">1</span>,<span class="number">2</span>,<span class="number">0x36</span>,<span class="number">8</span>,<span class="number">4</span>,<span class="number">0x41</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0x20</span>,<span class="number">8</span>,<span class="number">5</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">3</span>,<span class="number">8</span>,<span class="number">2</span>,<span class="number">0x25</span>,</span><br><span class="line">            <span class="number">1</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">8</span>,<span class="number">3</span>,<span class="number">0x20</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0x41</span>,<span class="number">8</span>,<span class="number">0xc</span>,<span class="number">1</span>,<span class="number">7</span>,<span class="number">0x22</span>,<span class="number">7</span>,<span class="number">0x3f</span>,<span class="number">7</span>,</span><br><span class="line">            <span class="number">0x34</span>,<span class="number">7</span>,<span class="number">0x32</span>,<span class="number">7</span>,<span class="number">0x72</span>,<span class="number">7</span>,<span class="number">0x33</span>,<span class="number">7</span>,<span class="number">0x18</span>,<span class="number">7</span>,<span class="number">0xa7</span>,</span><br><span class="line">            <span class="number">7</span>,<span class="number">0x31</span>,<span class="number">7</span>,<span class="number">0xf1</span>,<span class="number">7</span>,<span class="number">0x28</span>,<span class="number">7</span>,<span class="number">0x84</span>,</span><br><span class="line">            <span class="number">7</span>,<span class="number">0xc1</span>,<span class="number">7</span>,<span class="number">0x1e</span>,<span class="number">7</span>,<span class="number">0x7a</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(v1))   </span><br><span class="line">v4=[<span class="number">0</span>]*<span class="number">15</span></span><br><span class="line">v3=[<span class="number">0</span>]*<span class="number">15</span></span><br><span class="line">v7=<span class="number">0</span></span><br><span class="line">v9=<span class="number">15</span></span><br><span class="line">v6=<span class="number">14</span></span><br><span class="line">v4=[<span class="number">122</span>, <span class="number">30</span>, <span class="number">193</span>, <span class="number">132</span>, <span class="number">40</span>, <span class="number">241</span>, <span class="number">49</span>, <span class="number">167</span>, <span class="number">24</span>, <span class="number">51</span>, <span class="number">114</span>, <span class="number">50</span>, <span class="number">52</span>, <span class="number">63</span>, <span class="number">34</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(v4))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(v1)-<span class="number">1</span>,-<span class="number">1</span>,-<span class="number">1</span>):</span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">1</span>):</span><br><span class="line">        v5=v4[v7]</span><br><span class="line">        v7+=<span class="number">1</span></span><br><span class="line">        v9-=<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">12</span>):</span><br><span class="line">        v3[v9]=v5-<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">11</span>):</span><br><span class="line">        v3[v9]=v5+<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">8</span>):</span><br><span class="line">        v5=v3[v6]</span><br><span class="line">        v6-=<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">2</span>):</span><br><span class="line">        v3[v9]=v5-v1[i+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">3</span>):</span><br><span class="line">        v3[v9]=v5+v1[i+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">4</span> ):</span><br><span class="line">        v3[v9]=v5^v1[i+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span>(v1[i]==<span class="number">5</span>):</span><br><span class="line">        v3[v9]=v5//v1[i+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">else</span> :</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line"><span class="built_in">print</span>(v4)</span><br><span class="line"><span class="built_in">print</span>(v3)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&quot;&quot;</span>.join(<span class="built_in">chr</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> v3))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>3.Angr</strong></p>
+<p>angr也叫符号执行暴力破解，用于解CTF题目，emmm实战中应该作用不大</p>
+<p>这一块是我的知识盲区，直接贴上<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5df6c4567a7d">学习资源1</a>、<a target="_blank" rel="noopener" href="https://www.secpulse.com/archives/83197.html">学习资源2</a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/whym1/article/details/78838026">学习资源3</a>…….<a target="_blank" rel="noopener" href="https://github.com/angr/angr">学习资源N</a>，先记下来，以后慢慢看（咕咕咕）</p>
+<p>贴上大佬们的脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">p = angr.Project(<span class="string">&#x27;./signal.exe&#x27;</span>)   <span class="comment">#指定angr跑的程序</span></span><br><span class="line">state = p.factory.entry_state()    <span class="comment">#新建一个SimState的对象，得到一个初始化到二进制入口函数的SimState对象。</span></span><br><span class="line">simgr = p.factory.simgr(state)   <span class="comment">#创建simulation manager，angr的主要入口</span></span><br><span class="line"></span><br><span class="line">simgr.explore(find=<span class="number">0x004017A5</span> ,avoid=<span class="number">0x004016E6</span>)  <span class="comment">#争取跑到输出成功的地址，避免跑到输出wrong的地址</span></span><br><span class="line">flag = simgr.found[<span class="number">0</span>].posix.dumps(<span class="number">0</span>)[:<span class="number">15</span>]     <span class="comment">#得到flag</span></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"><span class="comment">#HanXu的脚本</span></span><br><span class="line"><span class="keyword">import</span> angr</span><br><span class="line">p = angr.Project(<span class="string">&#x27;./signal.exe&#x27;</span>)</span><br><span class="line">state = p.factory.entry_state()</span><br><span class="line">sm = p.factory.simulation_manager(state)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">good</span>(<span class="params">state</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">b&quot;good&quot;</span> <span class="keyword">in</span> state.posix.dumps(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bad</span>(<span class="params">state</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">b&quot;what&quot;</span> <span class="keyword">in</span> state.posix.dumps(<span class="number">1</span>)</span><br><span class="line">sm.explore(find = good, avoid = bad)</span><br><span class="line"><span class="keyword">if</span> sm.found:</span><br><span class="line">    find_state = sm.found[<span class="number">0</span>]</span><br><span class="line">flag = find_state.posix.dumps(<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<p><img src="https://i.loli.net/2020/06/14/AvlxX4KD5fezk9m.png" alt="image-20200614160910068"></p>
+<hr>
+<h2 id="0x04-小结"><a href="#0x04-小结" class="headerlink" title="0x04 小结"></a>0x04 小结</h2><p>这可能是我赛后复现过的第一题，还是时隔了这么久。。。</p>
+<p>之前总感觉要从基础学起，从入门题慢慢进阶，后来发现进步速度实在缓慢，</p>
+<p>小结做一下简单的反思</p>
+<p>去翻一下<a target="_blank" rel="noopener" href="https://ljzjsc.com/">炜哥</a>的博客，发现他每次赛后都会写一篇博客复现一下当时没解出来的题目，</p>
+<p>我们英语课经常会讨论一些逆向的话题，他说必须要逼着自己做一些难题，大家一开始都不会，就是通过每一次复现题目来强制自己学习新的知识，否则会一直停留在入门水平。</p>
+<p>我目前的状态确实不像想学习的态度，比如说比赛题目只要没见过、或者很复杂，我很难静下心来解题，一般这种情况我会直接关掉网页，然后安慰自己，嗯…这题不是给我做的。</p>
+<p>逆向大佬<a target="_blank" rel="noopener" href="http://iyzyi.com/">子洋</a>、炜哥遇到巨难的题目会慢慢地啃，就算一道题目花费几天的时间，真正搞懂原理和逻辑也是值得的，说实话，这道signal题难度远不及他们的博客的平均水平，可以说是最简单的虚拟机题目（炜哥比赛手撕半个小时解决），虽然花了几个小时才搞懂，但还是很有成就感的</p>
+<p>张老师说过比赛和题目都不是关键，关键是你能从中学到什么，分清主次，明确学习规划才是当前最重要的</p>
+<p>好好学逆向，争取比赛不再只是去纠结MISC</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://ld1ng.top/2020/06/14/signal/">http://ld1ng.top/2020/06/14/signal/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/06/15/Microcomputer/">微机实验记录</a>
+            
+            
+            <a class="next" rel="next" href="/2020/05/08/OpenCV/">基于OpenCV的动态识别系统——随笔</a>
+            
+        </section>
+
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+      var gitalk = new Gitalk({
+        clientID: '458a98372426d92cae5a',
+        clientSecret: '91e874ad339e3ffbd20d52f4d247739c8e722a72',
+        repo: 'ld1ng.github.io',
+        owner: 'Ld1ng',
+        admin: 'Ld1ng',
+        id: md5(location.pathname),
+        labels: 'Gitalk'.split(',').filter(l => l),
+        perPage: 10,
+        pagerDirection: 'last',
+        createIssueManually: true,
+        distractionFreeMode: false
+      })
+      gitalk.render('gitalk-container')
+</script>
+
+
+    </article>
+</div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>Ld1ng🍕 © 2020 - 2023 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
