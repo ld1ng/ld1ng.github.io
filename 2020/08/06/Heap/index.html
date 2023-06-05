@@ -524,7 +524,7 @@ Words:
 
     <span class="post-count">
 Time:
-    <a href="">42min</a>  
+    <a href="">43min</a>  
     </span>
 
 &nbsp;
@@ -743,10 +743,10 @@ Time:
 
 <p>从small bin中取出最后一个chunk的时候，对双向链表做了完整性的检查，然而，后面将剩余chunk放入tcache bin的时候，却没有这个检查。因此只要修改smallbin中最后一个chunk的bk为target地址，那么通过完整性检查后，它就被放入tcache中，就可以将target申请出来进行利用。</p>
 <p>值得注意的一点是，需要使用到calloc()，可以绕过tcache，直接申请smallbin。因此该方法的利用条件为可以控制smallbin的bk，存在一条tcache bin（未满）和两个相同大小的smallbin存在的时候，通过calloc函数申请此大小的堆块触发将后一个smallbin中的堆块插入tcachebin链中。</p>
-<p>glibc2.32引入的新的防御机制-<strong>safe-linking</strong>(异或加密) <a target="_blank" rel="noopener" href="http://blog.nsfocus.net/glibc-234/">参考</a></p>
+<p>glibc2.32引入的新的防御机制-<strong>safe-linking</strong>(异或加密) <a target="_blank" rel="noopener" href="http://blog.nsfocus.net/glibc-234/">参考</a>，tcache链也从7个增到16个</p>
 <figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PROTECT_PTR(pos, ptr) \</span></span><br><span class="line"><span class="meta">  ((__typeof (ptr)) ((((size_t) pos) &gt;&gt; 12) ^ ((size_t) ptr)))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REVEAL_PTR(ptr)  PROTECT_PTR (&amp;ptr, ptr)</span></span><br></pre></td></tr></tbody></table></figure>
 
-<p>也就是说此时chunk的fd为 (&amp;(p2-&gt;next)&gt;&gt;12) ^ &amp;p1</p>
+<p>也就是说此时chunk的fd为 (&amp;(p2-&gt;next)&gt;&gt;12) ^ &amp;p1，自己的地址&gt;&gt;12 ^ fd</p>
 <p>glibc2.34之后取消了free_hook malloc_hook等</p>
 <h3 id="8-unsorted-bin-attack"><a href="#8-unsorted-bin-attack" class="headerlink" title="8. unsorted bin attack"></a>8. unsorted bin attack</h3><p>双向循环链表，先进先出，以下几种情况会分到 unsorted bin 中</p>
 <blockquote>
