@@ -518,14 +518,14 @@
                      
     <span class="post-count">
 Words:
-    <a href="">1.1k</a>  
+    <a href="">1.2k</a>  
     </span>
 
 &nbsp;
 
     <span class="post-count">
 Time:
-    <a href="">3min</a>  
+    <a href="">4min</a>  
     </span>
 
 &nbsp;
@@ -583,6 +583,15 @@ Time:
 <li>在动态链接库里面找这个函数的地址，赋值给 *rel-&gt;r_offset，也就是 GOT 表就完成了一次函数的动态链接</li>
 </ol>
 <p><img src="https://i.loli.net/2021/08/22/xzyGeFWMm27wNO4.png" alt="image-20210822212347908"></p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> {</span></span><br><span class="line">    Elf32_Addr r_offset;    <span class="comment">// 对于可执行文件，此值为虚拟地址</span></span><br><span class="line">    Elf32_Word r_info;      <span class="comment">// 符号表索引</span></span><br><span class="line">} Elf32_Rel;</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>.rel.plt</code>节是用于函数重定位</p>
+<p><code>.rel.dyn</code>节是用于变量重定位</p>
+<p><code>.got</code>节保存全局变量偏移表</p>
+<p><code>.got.plt</code>节保存全局函数偏移表，对应着<code>Elf32_Rel</code>结构中<code>r_offset</code>的值</p>
+<p><code>.dynsym</code>节包含了动态链接符号表</p>
+<p><code>.dynstr</code>节包含了动态链接的字符串</p>
+<p><code>.plt</code>节是过程链接表</p>
 
         </div>
 
@@ -681,7 +690,7 @@ Time:
             </div>
             <footer id="footer" class="footer">
     <div class="copyright">
-        <span>Ld1ng🍕 © 2020 - 2023 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a><a></a>
+        <span>Ld1ng🍕 © 2020 - 2024 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a><a></a>
 		
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
