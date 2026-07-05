@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="google-site-verification" content="CXc5oa8hp0JI3nqiGKAoIQDPqSR7lhLCgNr11-7-XAA" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Ld1ng">
+
+
+
+    <meta name="description" content="Ld1ng's Blog">
+
+
+    <meta name="keywords" content="CTF,code,CUMT">
+
+
+<title>DST联机版 服务器搭建 | Ld1ng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <link rel="stylesheet" href="/fonts/font_oytys7w58zn/iconfont.css">
+    
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+    <script src="/js/jquery-3.7.0.min.js"></script>
+    
+
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<!-- 搜索的部分 -->
+
+
+
+    <script>
+    // function searchToggle() {
+    //     const width = $(document.body).width()
+    //     if(width > 479) {
+    //         return;
+    //     }
+    //     const search = $('.search');
+    //     const searchForm = $('.form-search')
+
+    //     if(!search.hasClass("mobile-search")) {
+    //         search.addClass("mobile-search");
+    //     } else {
+    //         search.removeClass("mobile-search");
+    //     } 
+    // }
+
+    function searchToggle() {
+        const width = $(document.body).width()
+        if(width > 479) {
+            return;
+        }
+        const search = $('.search');
+        const searchForm = $('.form-search');
+        const menuToggle = $('.menu-toggle');
+        const title = $('.navbar-header-title ');
+
+        if(!search.hasClass("mobile-search")) {
+            search.addClass("mobile-search");
+            menuToggle.addClass("open-search")
+            title.addClass("mobile-title-hidden")
+        } else {
+            search.removeClass("mobile-search");
+            menuToggle.removeClass("open-search")
+            // title.css({visibility: 'visible'})
+            title.removeClass("mobile-title-hidden")
+        } 
+    }
+
+
+
+    function search(searchInputEl, formEl, flag) {
+        const path = "/" + "search.json"; // 可以在public 下查看这个search.json
+        $(formEl).submit(function(e){
+            e.preventDefault();
+            let target = null
+            if(searchInputEl == null) {
+                const screenWidth = $(document.body).width();
+                target = screenWidth > 479 ? $('#pc-search-input') : $('#mobile-search-input');
+                console.log(target);
+            } else {
+                target = $(searchInputEl)
+            }
+
+            if(!flag && target.val() === '') {
+                return ;
+            }
+
+            $("#u-search").fadeIn(500, function() {
+                $("body > .wrapper").addClass("modal-active");
+
+                $.ajax({
+                    url: path,
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $input = target.val();
+                        $(".form-input").val($input);
+                        const loadingBar = $('.search-loading-bar') 
+                        loadingBar.css({
+                            width:'100%',
+                            display: 'block'
+                        });
+                    },
+                    success: function( datas ) {
+                        console.log(datas);
+                        const $resultPanel = $(".modal-body")[0];
+                        let str = `<ul class="modal-results">`;
+                        var keywords = $(".form-input").val().trim().toLowerCase().split(/[\s\-]+/);
+                        $resultPanel.innerHTML = "";
+                        let hasResult = false
+                        let text = `<div class="no-result">找不到与关键词相关的内容....</div>`;
+
+                        if ($(".form-input").val().trim().length <= 0) {
+                            // 没有结果
+                            $resultPanel.innerHTML = text;
+                            return;
+                        }
+                        datas.forEach(function (data, index) {
+                            var isMatch = true;
+                            if (!data.title || data.title.trim() === '') {
+                                data.title = "Untitled";
+                            }
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content && data.content.trim().replace(/<[^>]+>/g, "").toLowerCase() || '';
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty contents
+                            if (data_content !== '') {
+                                keywords.forEach(function (keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        hasResult = true
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            } else {
+                                isMatch = false;
+                            }
+                            // show search results
+                            if (isMatch) {
+                                str += `<li class='result-item'><a href='${data_url}' class='result-item-detail'> <span class="title">${data_title}</span>`;
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 200 characters
+                                    var start = first_occur - 40;
+                                    var end = first_occur + 160;
+
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+
+                                    if (start == 0) {
+                                        end = 200;
+                                    }
+
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+
+                                    var match_content = content.substring(start, end);
+
+                                    // highlight all keywords
+                                    keywords.forEach(function (keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, `<em class="search-keyword">${keyword}</em>`);
+                                    });
+
+                                    str += `<span class="content"> ${match_content} ...</span></a>`;
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        if(hasResult) {
+                            $resultPanel.innerHTML = str;
+                        } else {
+                            $resultPanel.innerHTML = text;
+                        }
+
+                    },
+                    complete: function() {
+                        setTimeout(() => {
+                                const loadingBar = $('.search-loading-bar') 
+                                loadingBar.css({
+                                    width:'0%',
+                                    display: 'none'
+                                });
+                        }, 300)
+                    }
+                });
+            })
+
+        });
+    }
+
+    $(document).ready(function() {
+        $('.modal-close').click(function () { 
+            $("#u-search").fadeOut();
+            $("body > .wrapper").removeClass("modal-active")
+        })
+
+        $('.modal-overlay').click(function() {
+            $("#u-search").fadeOut();
+            $("body > .wrapper").removeClass("modal-active")
+        })
+        search(null, ".form-search", false)
+        search("#u-search-modal-form .form-input", ".u-search-modal-form", true)
+    })
+</script>
+
+<meta name="generator" content="Hexo 6.0.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/"><i class="iconfont icon-home1"></i> Home</a></div>
+            <div class="menu navbar-right">
+                <!-- 这里表示的是pc端搜索框 -->
+				
+				
+    <div class="search ">
+        <div class="search-btn" onClick="searchToggle()">
+            <img src="/image/search.png" class="search-btn-img" />
+        </div>
+        <form class="form-search">
+            <input class="input" placeholder="Searching" autocomplete="off" id="pc-search-input"/>
+        </form>
+    </div>
+
+				
+				
+				  
+				  
+				  <a class="menu-item" href="/archives">
+					<i class="iconfont icon-navicon-wzgl"></i>
+					Posts
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/categories">
+					<i class="iconfont icon-fenlei"></i>
+					Categories
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/tags">
+					<i class="iconfont icon-tag1"></i>
+					Tags
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/links">
+					<i class="iconfont icon-link1"></i>
+					Links
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/about">
+					<i class="iconfont icon-diandengpao"></i>
+					About
+				  </a>
+				
+				<input id="switch_default" type="checkbox" class="switch_default">
+				<label for="switch_default" class="toggleBtn"></label>
+        </div>
+    </div>
+</nav>
+
+    
+<nav class="navbar-mobile" id="nav-mobile">
+    <div class="container">
+        <div class="navbar-header">
+            <div>
+                <a href="/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+            </div>
+            <div class="navbar-mobile-right">
+                
+                
+    <div class="search ">
+        <div class="search-btn" onClick="searchToggle()">
+            <img src="/image/search.png" class="search-btn-img" />
+        </div>
+        <form class="form-search">
+            <input class="input" placeholder="Searching" autocomplete="off" id="mobile-search-input"/>
+        </form>
+    </div>
+
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; 目录</div>
+            </div>
+
+        </div>
+        <div class="menu" id="mobile-menu">
+            
+            <a class="menu-item" href="/archives">Posts</a>
+            
+            <a class="menu-item" href="/categories">Categories</a>
+            
+            <a class="menu-item" href="/tags">Tags</a>
+            
+            <a class="menu-item" href="/links">Links</a>
+            
+            <a class="menu-item" href="/about">About</a>
+            
+        </div>
+    </div>
+</nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">DST联机版 服务器搭建</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Ld1ng</a>
+                    
+					&nbsp;
+                    
+                        <span class="post-time">
+                        Date: <a href="#">December 16, 2022</a>
+                        </span>
+                    
+					&nbsp;
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/LIFE/">LIFE</a>
+                            
+                        </span>
+                    
+					<br>
+                     
+    <span class="post-count">
+Words:
+    <a href="">3.3k</a>  
+    </span>
+
+&nbsp;
+
+    <span class="post-count">
+Time:
+    <a href="">13min</a>  
+    </span>
+
+&nbsp;
+<span id="busuanzi_container_page_pv">
+  Views: <a href=""><span id="busuanzi_value_page_pv"></a></span></a>  
+</span>
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>近期大件事，三年的疫情管控结束了，全国基本放开，不用做核酸，火车高铁和各种公共场合也不用查看健康码和行程码了；坏消息是🐏🐏🐏😥🐏🐏🐏…</p>
+<p>起因是学校提前一个月把我们赶回家，但在家难免有些清闲，忽思与友同戏《饥荒》，然卡顿异常，忍无可忍，不得已自搭服务器与之同乐。<del>顺便水篇博客</del></p>
+<h1 id="0x01-基础搭建"><a href="#0x01-基础搭建" class="headerlink" title="0x01 基础搭建"></a>0x01 基础搭建</h1><p>我太懒了，ssh一直的用root登录，建议一定要使用非root用户连接。</p>
+<p>这是我的服务器配置，3-4个人感觉问题不大。</p>
+<p><img src="https://files.catbox.moe/bbobla.png" alt="image-20221217184108264"></p>
+<p>安装一些依赖项，忘记了，必要时可以百度，接着安装steamcmd，并执行steamcmd.sh</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/steamcmd</span><br><span class="line">cd ~/steamcmd</span><br><span class="line">wget http://media.steampowered.com/installer/steamcmd_linux.tar.gz</span><br><span class="line">tar -xvzf steamcmd_linux.tar.gz</span><br><span class="line"></span><br><span class="line">./steamcmd.sh</span><br><span class="line">login anonymous</span><br><span class="line">force_install_dir "../myDSTserver/" #修改DST安装路径</span><br><span class="line">app_update 343050 validate</span><br><span class="line">quit</span><br></pre></td></tr></tbody></table></figure>
+
+<p>启动游戏，点击账号，用户信息里获取用户ID；游戏里获取服务器token</p>
+<p><img src="https://files.catbox.moe/zvjvgk.png" alt="image-20221217183345589"><img src="https://files.catbox.moe/dygskr.png" alt="image-20221217183540810"></p>
+<p>之后，可以使用旧存档的文件，或者点击配置服务器，新建一个新的存档文件夹。两种都差不多，我就把旧的存档上传到服务器上，路径是<code>~/.klei/DoNotStarveTogether/Cluster_1/</code>，目录结构是这样的</p>
+<figure class="highlight tex"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">├── Cluster<span class="built_in">_</span>1/</span><br><span class="line">│    ├── cluster.ini</span><br><span class="line">│    ├── cluster<span class="built_in">_</span>token.txt</span><br><span class="line">│    ├── Caves/</span><br><span class="line">│    │    ├── server.ini</span><br><span class="line">│    │    ├── leveldataoverride.lua</span><br><span class="line">│    │    ├── modoverrides.lua</span><br><span class="line">│    ├── Master/</span><br><span class="line">│    │    ├── server.ini</span><br><span class="line">│    │    ├── leveldataoverride.lua</span><br><span class="line">│    │    ├── modoverrides.lua</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这是一个完整的位面所需要配置的文件</p>
+<ul>
+<li><code>cluster_token.txt</code> 存储的是从 Klei 官网拿到的 token</li>
+<li><code>cluster.ini</code> 即这个位面的主配置，主要配置游戏模式、游戏人数、服务器名、密码、 steam 组等等</li>
+<li><code>Master/server.ini</code> 与 <code>Caves/server.ini</code> 配置基本相同，主要是世界的端口号和主次世界设置</li>
+<li><code>modoverrides.lua</code> 配置开启的 mod 的设置</li>
+<li><code>leveldataoverride.lua</code> 配置这个世界的资源、设置</li>
+</ul>
+<p>另外在安装目录中有个 mods 的目录，其中可以添加服务器模组，当然仅仅是安装到服务器上。用不用还是需要看世界中 modoverrides.lua 的设置。</p>
+<p>地上世界(洞穴)基础配置文件 leveldataoverride.lua</p>
+<figure class="highlight lua"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> {</span><br><span class="line">  desc=<span class="string">"The standard Don't Starve experience."</span>,</span><br><span class="line">  hideminimap=<span class="literal">false</span>,</span><br><span class="line">  id=<span class="string">"SURVIVAL_TOGETHER"</span>,</span><br><span class="line">  location=<span class="string">"forest"</span>,</span><br><span class="line">  max_playlist_position=<span class="number">999</span>,</span><br><span class="line">  min_playlist_position=<span class="number">0</span>,</span><br><span class="line">  name=<span class="string">"Standard Forest"</span>,</span><br><span class="line">  <span class="comment">-- 雕像的数量</span></span><br><span class="line">  numrandom_set_pieces=<span class="number">4</span>,</span><br><span class="line">  override_level_string=<span class="literal">false</span>,</span><br><span class="line">  overrides={</span><br><span class="line">    <span class="comment">-- 资源设置的可选项分别为:</span></span><br><span class="line">    <span class="comment">----- "never"    无</span></span><br><span class="line">    <span class="comment">----- "rare"     较少</span></span><br><span class="line">    <span class="comment">----- "default"  默认</span></span><br><span class="line">    <span class="comment">----- "often"    较多</span></span><br><span class="line">    <span class="comment">----- "always"   大量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 全局设置</span></span><br><span class="line">    <span class="comment">--- 特殊事件</span></span><br><span class="line">    <span class="comment">----- "none"                 无</span></span><br><span class="line">    <span class="comment">----- "default"              自动</span></span><br><span class="line">    <span class="comment">----- "crow_carnival"        盛夏鸦年华</span></span><br><span class="line">    <span class="comment">----- "hallowed_nights"      万圣之夜</span></span><br><span class="line">    <span class="comment">----- "winters_feast"        冬季盛宴</span></span><br><span class="line">    <span class="comment">----- "year_of_the_gobbler"  火鸡之年</span></span><br><span class="line">    <span class="comment">----- "year_of_the_varg"     座狼之年</span></span><br><span class="line">    <span class="comment">----- "year_of_the_pig"      猪王之年</span></span><br><span class="line">    <span class="comment">----- "year_of_the_carrat"   胡萝卜鼠之年</span></span><br><span class="line">    <span class="comment">----- "year_of_the_beefalo"  皮弗娄牛之年</span></span><br><span class="line">    specialevent=<span class="string">"default"</span>,</span><br><span class="line">    <span class="comment">--- 季节</span></span><br><span class="line">    <span class="comment">----- "noseason"         无季节</span></span><br><span class="line">    <span class="comment">----- "veryshortseason"  非常短</span></span><br><span class="line">    <span class="comment">----- "shortseason"      较短</span></span><br><span class="line">    <span class="comment">----- "default"          默认长度</span></span><br><span class="line">    <span class="comment">----- "longseason"       较长</span></span><br><span class="line">    <span class="comment">----- "verylongseason"   非常长</span></span><br><span class="line">    <span class="comment">----- "random"           随机长度</span></span><br><span class="line">    autumn=<span class="string">"default"</span>,  <span class="comment">--- 秋季, 根据设置天数依次为 5 / 12 / 20 / 30 / 50</span></span><br><span class="line">    winter=<span class="string">"default"</span>,  <span class="comment">--- 冬季, 根据设置天数依次为 5 / 10 / 15 / 22 / 40</span></span><br><span class="line">    spring=<span class="string">"default"</span>,  <span class="comment">--- 春季, 根据设置天数依次为 5 / 12 / 20 / 30 / 50</span></span><br><span class="line">    summer=<span class="string">"default"</span>,  <span class="comment">--- 夏季, 根据设置天数依次为 5 / 10 / 15 / 22 / 40</span></span><br><span class="line">    <span class="comment">--- 天类型</span></span><br><span class="line">    <span class="comment">----- "default"    默认</span></span><br><span class="line">    <span class="comment">----- "longday"    加长白天</span></span><br><span class="line">    <span class="comment">----- "longdusk"   加长黄昏</span></span><br><span class="line">    <span class="comment">----- "longnight"  加长黑夜</span></span><br><span class="line">    <span class="comment">----- "noday"      无白天</span></span><br><span class="line">    <span class="comment">----- "nodusk"     无黄昏</span></span><br><span class="line">    <span class="comment">----- "nonight"    无黑夜</span></span><br><span class="line">    <span class="comment">----- "onlyday"    只有白天</span></span><br><span class="line">    <span class="comment">----- "onlydusk"   只有黄昏</span></span><br><span class="line">    <span class="comment">----- "onlynight"  只有黑夜</span></span><br><span class="line">    day=<span class="string">"default"</span>,</span><br><span class="line">    beefaloheat=<span class="string">"default"</span>,  <span class="comment">--- 野牛发情</span></span><br><span class="line">    krampus=<span class="string">"default"</span>,      <span class="comment">--- 坎普斯</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 求生者设置</span></span><br><span class="line">    <span class="comment">--- 额外起始资源</span></span><br><span class="line">    <span class="comment">----- "0"        总是</span></span><br><span class="line">    <span class="comment">----- "5"        5 天后</span></span><br><span class="line">    <span class="comment">----- "default"  10 天后</span></span><br><span class="line">    <span class="comment">----- "15"       15 天后</span></span><br><span class="line">    <span class="comment">----- "20"       20 天后</span></span><br><span class="line">    <span class="comment">----- "none"     从不</span></span><br><span class="line">    extrastartingitems=<span class="string">"default"</span>,</span><br><span class="line">    seasonalstartingitems=<span class="string">"default"</span>,    <span class="comment">--- 季节起始物品, "never" / "default"</span></span><br><span class="line">    spawnprotection=<span class="string">"default"</span>,          <span class="comment">--- 出生点保护, "never" / "default" / "always"</span></span><br><span class="line">    dropeverythingondespawn=<span class="string">"default"</span>,  <span class="comment">--- 退出掉落物品, "default" / "always"</span></span><br><span class="line">    brightmarecreatures=<span class="string">"default"</span>,      <span class="comment">--- 启蒙怪兽数量</span></span><br><span class="line">    shadowcreatures=<span class="string">"default"</span>,          <span class="comment">--- 理智怪兽数量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 世界设置</span></span><br><span class="line">    <span class="comment">--- 石化</span></span><br><span class="line">    <span class="comment">----- "none"     无</span></span><br><span class="line">    <span class="comment">----- "few"      慢</span></span><br><span class="line">    <span class="comment">----- "default"  默认</span></span><br><span class="line">    <span class="comment">----- "many"     快</span></span><br><span class="line">    <span class="comment">----- "max"      极快</span></span><br><span class="line">    petrification=<span class="string">"default"</span>,</span><br><span class="line">    frograin=<span class="string">"default"</span>,       <span class="comment">--- 蛙雨</span></span><br><span class="line">    hounds=<span class="string">"default"</span>,         <span class="comment">--- 猎犬来袭频率</span></span><br><span class="line">    alternatehunt=<span class="string">"default"</span>,  <span class="comment">--- 追猎惊喜</span></span><br><span class="line">    hunt=<span class="string">"default"</span>,           <span class="comment">--- 狩猎</span></span><br><span class="line">    lightning=<span class="string">"default"</span>,      <span class="comment">--- 闪电</span></span><br><span class="line">    meteorshowers=<span class="string">"default"</span>,  <span class="comment">--- 流星</span></span><br><span class="line">    weather=<span class="string">"default"</span>,        <span class="comment">--- 雨</span></span><br><span class="line">    wildfires=<span class="string">"default"</span>,      <span class="comment">--- 野火</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 资源再生的可选项分别为:</span></span><br><span class="line">    <span class="comment">----- "never"     从不</span></span><br><span class="line">    <span class="comment">----- "veryslow"  非常慢</span></span><br><span class="line">    <span class="comment">----- "slow"      缓慢</span></span><br><span class="line">    <span class="comment">----- "default"   默认</span></span><br><span class="line">    <span class="comment">----- "fast"      快速</span></span><br><span class="line">    <span class="comment">----- "veryfast"  非常快</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 资源再生设置</span></span><br><span class="line">    regrowth=<span class="string">"default"</span>,                <span class="comment">--- 再生速度</span></span><br><span class="line">    deciduoustree_regrowth=<span class="string">"default"</span>,  <span class="comment">--- 桦栗树再生</span></span><br><span class="line">    carrots_regrowth=<span class="string">"default"</span>,        <span class="comment">--- 胡萝卜再生</span></span><br><span class="line">    evergreen_regrowth=<span class="string">"default"</span>,      <span class="comment">--- 常青树再生</span></span><br><span class="line">    flowers_regrowth=<span class="string">"default"</span>,        <span class="comment">--- 花再生</span></span><br><span class="line">    moon_tree_regrowth=<span class="string">"default"</span>,      <span class="comment">--- 月树再生</span></span><br><span class="line">    saltstack_regrowth=<span class="string">"default"</span>,      <span class="comment">--- 盐矿再生</span></span><br><span class="line">    twiggytrees_regrowth=<span class="string">"default"</span>,    <span class="comment">--- 多枝树再生</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 生物设置</span></span><br><span class="line">    bees_setting=<span class="string">"default"</span>,      <span class="comment">--- 蜜蜂</span></span><br><span class="line">    birds=<span class="string">"default"</span>,             <span class="comment">--- 鸟</span></span><br><span class="line">    bunnymen_setting=<span class="string">"default"</span>,  <span class="comment">--- 兔人</span></span><br><span class="line">    butterfly=<span class="string">"default"</span>,         <span class="comment">--- 蝴蝶</span></span><br><span class="line">    catcoons=<span class="string">"default"</span>,          <span class="comment">--- 浣猫</span></span><br><span class="line">    gnarwail=<span class="string">"default"</span>,          <span class="comment">--- 一角鲸</span></span><br><span class="line">    perd=<span class="string">"default"</span>,              <span class="comment">--- 火鸡</span></span><br><span class="line">    grassgekkos=<span class="string">"default"</span>,       <span class="comment">--- 草蜥蜴</span></span><br><span class="line">    moles_setting=<span class="string">"default"</span>,     <span class="comment">--- 鼹鼠</span></span><br><span class="line">    penguins=<span class="string">"default"</span>,          <span class="comment">--- 企鹅</span></span><br><span class="line">    pigs_setting=<span class="string">"default"</span>,      <span class="comment">--- 猪人</span></span><br><span class="line">    rabbits_setting=<span class="string">"default"</span>,   <span class="comment">--- 兔子</span></span><br><span class="line">    fishschools=<span class="string">"default"</span>,       <span class="comment">--- 鱼群</span></span><br><span class="line">    wobsters=<span class="string">"default"</span>,          <span class="comment">--- 龙虾</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 敌对生物设置</span></span><br><span class="line">    bats_setting=<span class="string">"default"</span>,     <span class="comment">--- 蝙蝠</span></span><br><span class="line">    cookiecutters=<span class="string">"default"</span>,    <span class="comment">--- 饼干切割机</span></span><br><span class="line">    frogs=<span class="string">"default"</span>,            <span class="comment">--- 青蛙</span></span><br><span class="line">    mutated_hounds=<span class="string">"default"</span>,   <span class="comment">--- 恐怖猎犬, "never" / "default"</span></span><br><span class="line">    hound_mounds=<span class="string">"default"</span>,     <span class="comment">--- 猎犬</span></span><br><span class="line">    wasps=<span class="string">"default"</span>,            <span class="comment">--- 杀人蜂</span></span><br><span class="line">    lureplants=<span class="string">"default"</span>,       <span class="comment">--- 食人花</span></span><br><span class="line">    walrus_setting=<span class="string">"default"</span>,   <span class="comment">--- 海象</span></span><br><span class="line">    merms=<span class="string">"default"</span>,            <span class="comment">--- 鱼人</span></span><br><span class="line">    penguins_moon=<span class="string">"default"</span>,    <span class="comment">--- 月石企鹅, "never" / "default"</span></span><br><span class="line">    mosquitos=<span class="string">"default"</span>,        <span class="comment">--- 蚊子</span></span><br><span class="line">    sharks=<span class="string">"default"</span>,           <span class="comment">--- 鲨鱼</span></span><br><span class="line">    moon_spider=<span class="string">"default"</span>,      <span class="comment">--- 破碎蜘蛛</span></span><br><span class="line">    squid=<span class="string">"default"</span>,            <span class="comment">--- 乌贼</span></span><br><span class="line">    spider_warriors=<span class="string">"default"</span>,  <span class="comment">--- 蜘蛛战士, "never" / "default"</span></span><br><span class="line">    spiders_setting=<span class="string">"default"</span>,  <span class="comment">--- 蜘蛛</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 巨型生物设置</span></span><br><span class="line">    antliontribute=<span class="string">"default"</span>,    <span class="comment">--- 蚁狮</span></span><br><span class="line">    bearger=<span class="string">"default"</span>,           <span class="comment">--- 熊獾</span></span><br><span class="line">    beequeen=<span class="string">"default"</span>,          <span class="comment">--- 蜂后</span></span><br><span class="line">    crabking=<span class="string">"default"</span>,          <span class="comment">--- 帝王蟹</span></span><br><span class="line">    deerclops=<span class="string">"default"</span>,         <span class="comment">--- 独眼巨鹿</span></span><br><span class="line">    dragonfly=<span class="string">"default"</span>,         <span class="comment">--- 龙蝇</span></span><br><span class="line">    eyeofterror=<span class="string">"default"</span>,       <span class="comment">--- 泰拉瑞亚之眼</span></span><br><span class="line">    klaus=<span class="string">"default"</span>,             <span class="comment">--- 克劳斯</span></span><br><span class="line">    fruitfly=<span class="string">"default"</span>,          <span class="comment">--- 果蝇王</span></span><br><span class="line">    malbatross=<span class="string">"default"</span>,        <span class="comment">--- 邪天翁</span></span><br><span class="line">    goosemoose=<span class="string">"default"</span>,        <span class="comment">--- 麋鹿鹅</span></span><br><span class="line">    deciduousmonster=<span class="string">"default"</span>,  <span class="comment">--- 毒桦栗树</span></span><br><span class="line">    spiderqueen=<span class="string">"default"</span>,       <span class="comment">--- 蜘蛛女王</span></span><br><span class="line">    liefs=<span class="string">"default"</span>,             <span class="comment">--- 树精守卫</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 世界生成中等级分别为:</span></span><br><span class="line">    <span class="comment">----- "never"      无</span></span><br><span class="line">    <span class="comment">----- "uncommon"   很少</span></span><br><span class="line">    <span class="comment">----- "rare"       较少</span></span><br><span class="line">    <span class="comment">----- "default"    默认</span></span><br><span class="line">    <span class="comment">----- "often"      较多</span></span><br><span class="line">    <span class="comment">----- "mostly"     很多</span></span><br><span class="line">    <span class="comment">----- "always"     大量</span></span><br><span class="line">    <span class="comment">----- "insane"     疯狂</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 全局生成</span></span><br><span class="line">    <span class="comment">--- 起始季节</span></span><br><span class="line">    <span class="comment">----- "default"                      秋</span></span><br><span class="line">    <span class="comment">----- "winter"                       冬</span></span><br><span class="line">    <span class="comment">----- "spring"                       春</span></span><br><span class="line">    <span class="comment">----- "summer"                       夏</span></span><br><span class="line">    <span class="comment">----- "autumn|spring"                秋或春</span></span><br><span class="line">    <span class="comment">----- "winter|summer"                冬或夏</span></span><br><span class="line">    <span class="comment">----- "autumn|winter|spring|summer"  随机</span></span><br><span class="line">    season_start=<span class="string">"default"</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 世界生成</span></span><br><span class="line">    <span class="comment">--- 生物群落</span></span><br><span class="line">    <span class="comment">----- "default"  联机版</span></span><br><span class="line">    <span class="comment">----- "classic"  经典</span></span><br><span class="line">    task_set=<span class="string">"default"</span>,</span><br><span class="line">    <span class="comment">--- 出生点</span></span><br><span class="line">    <span class="comment">----- "plus"      额外资源</span></span><br><span class="line">    <span class="comment">----- "darkness"  黑暗</span></span><br><span class="line">    <span class="comment">----- "default"   默认</span></span><br><span class="line">    start_location=<span class="string">"default"</span>,</span><br><span class="line">    world_size=<span class="string">"default"</span>,  <span class="comment">--- 世界大小, "small" / "medium" / "default" / "huge"</span></span><br><span class="line">    <span class="comment">--- 世界分支</span></span><br><span class="line">    <span class="comment">----- "never"    从不</span></span><br><span class="line">    <span class="comment">----- "least"    少</span></span><br><span class="line">    <span class="comment">----- "default"  默认</span></span><br><span class="line">    <span class="comment">----- "most"     多</span></span><br><span class="line">    <span class="comment">----- "random"   随机</span></span><br><span class="line">    branching=<span class="string">"default"</span>,</span><br><span class="line">    loop=<span class="string">"default"</span>,               <span class="comment">--- 环形世界, "never" / "default" / "always"</span></span><br><span class="line">    touchstone=<span class="string">"default"</span>,         <span class="comment">--- 试金石</span></span><br><span class="line">    boons=<span class="string">"default"</span>,              <span class="comment">--- 前辈</span></span><br><span class="line">    prefabswaps_start=<span class="string">"default"</span>,  <span class="comment">--- 初始资源多样化, "classic" / "default" / "random"</span></span><br><span class="line">    moon_fissure=<span class="string">"default"</span>,       <span class="comment">--- 天体裂隙</span></span><br><span class="line">    terrariumchest=<span class="string">"default"</span>,     <span class="comment">--- 泰拉瑞亚, "never" / "default"</span></span><br><span class="line">    roads=<span class="string">"default"</span>,              <span class="comment">--- 道路, "never" / "default"</span></span><br><span class="line">    wormhole_prefab=<span class="string">"wormhole"</span>,   <span class="comment">--- 虫洞多样性, "wormhole" (虫洞) / "tentacle_pillar" (巨大触手)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 资源</span></span><br><span class="line">    moon_starfish=<span class="string">"default"</span>,         <span class="comment">--- 海星</span></span><br><span class="line">    moon_bullkelp=<span class="string">"default"</span>,         <span class="comment">--- 公牛海带茎</span></span><br><span class="line">    berrybush=<span class="string">"default"</span>,             <span class="comment">--- 浆果从</span></span><br><span class="line">    rock=<span class="string">"default"</span>,                  <span class="comment">--- 岩石</span></span><br><span class="line">    ocean_bullkelp=<span class="string">"default"</span>,        <span class="comment">--- 公牛海带</span></span><br><span class="line">    cactus=<span class="string">"default"</span>,                <span class="comment">--- 仙人掌</span></span><br><span class="line">    carrot=<span class="string">"default"</span>,                <span class="comment">--- 胡萝卜</span></span><br><span class="line">    flint=<span class="string">"default"</span>,                 <span class="comment">--- 燧石</span></span><br><span class="line">    flowers=<span class="string">"default"</span>,               <span class="comment">--- 花</span></span><br><span class="line">    grass=<span class="string">"default"</span>,                 <span class="comment">--- 草</span></span><br><span class="line">    moon_hotspring=<span class="string">"default"</span>,        <span class="comment">--- 温泉</span></span><br><span class="line">    moon_rock=<span class="string">"default"</span>,             <span class="comment">--- 月亮石</span></span><br><span class="line">    moon_sapling=<span class="string">"default"</span>,          <span class="comment">--- 月亮树苗</span></span><br><span class="line">    moon_tree=<span class="string">"default"</span>,             <span class="comment">--- 月树</span></span><br><span class="line">    meteorspawner=<span class="string">"default"</span>,         <span class="comment">--- 流星区</span></span><br><span class="line">    rock_ice=<span class="string">"default"</span>,              <span class="comment">--- 迷你冰川</span></span><br><span class="line">    mushroom=<span class="string">"default"</span>,              <span class="comment">--- 蘑菇</span></span><br><span class="line">    ponds=<span class="string">"default"</span>,                 <span class="comment">--- 池塘</span></span><br><span class="line">    reeds=<span class="string">"default"</span>,                 <span class="comment">--- 芦苇</span></span><br><span class="line">    sapling=<span class="string">"default"</span>,               <span class="comment">--- 小树苗</span></span><br><span class="line">    ocean_seastack=<span class="string">"ocean_default"</span>,  <span class="comment">--- 海矿, 参数需要加 "ocean_" 前缀</span></span><br><span class="line">    marshbush=<span class="string">"default"</span>,             <span class="comment">--- 荆棘树枝</span></span><br><span class="line">    moon_berrybush=<span class="string">"default"</span>,        <span class="comment">--- 石果树</span></span><br><span class="line">    trees=<span class="string">"default"</span>,                 <span class="comment">--- 树 (所有)</span></span><br><span class="line">    tumbleweed=<span class="string">"default"</span>,            <span class="comment">--- 风滚草</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 生物及刷新点</span></span><br><span class="line">    bees=<span class="string">"default"</span>,               <span class="comment">--- 蜂巢</span></span><br><span class="line">    beefalo=<span class="string">"default"</span>,            <span class="comment">--- 皮弗娄牛</span></span><br><span class="line">    buzzard=<span class="string">"default"</span>,            <span class="comment">--- 秃鸠</span></span><br><span class="line">    moon_carrot=<span class="string">"default"</span>,        <span class="comment">--- 胡萝卜鼠</span></span><br><span class="line">    catcoon=<span class="string">"default"</span>,            <span class="comment">--- 猫桩</span></span><br><span class="line">    moles=<span class="string">"default"</span>,              <span class="comment">--- 鼹鼠洞</span></span><br><span class="line">    pigs=<span class="string">"default"</span>,               <span class="comment">--- 猪人房</span></span><br><span class="line">    rabbits=<span class="string">"default"</span>,            <span class="comment">--- 兔子洞</span></span><br><span class="line">    moon_fruitdragon=<span class="string">"default"</span>,   <span class="comment">--- 沙拉蝾螈</span></span><br><span class="line">    ocean_shoal=<span class="string">"default"</span>,        <span class="comment">--- 鱼群</span></span><br><span class="line">    lightninggoat=<span class="string">"default"</span>,      <span class="comment">--- 伏特羊</span></span><br><span class="line">    ocean_wobsterden=<span class="string">"default"</span>,   <span class="comment">--- 龙虾窝</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 敌对生物及刷新点</span></span><br><span class="line">    chess=<span class="string">"default"</span>,                   <span class="comment">--- 发条装置</span></span><br><span class="line">    houndmound=<span class="string">"default"</span>,              <span class="comment">--- 猎犬冢</span></span><br><span class="line">    angrybees=<span class="string">"default"</span>,               <span class="comment">--- 杀人蜂巢</span></span><br><span class="line">    merm=<span class="string">"default"</span>,                    <span class="comment">--- 漏雨的小屋</span></span><br><span class="line">    walrus=<span class="string">"default"</span>,                  <span class="comment">--- 海象营地</span></span><br><span class="line">    ocean_waterplant=<span class="string">"ocean_default"</span>,  <span class="comment">--- 海草</span></span><br><span class="line">    moon_spiders=<span class="string">"default"</span>,            <span class="comment">--- 破碎蜘蛛洞</span></span><br><span class="line">    spiders=<span class="string">"default"</span>,                 <span class="comment">--- 蜘蛛巢</span></span><br><span class="line">    tallbirds=<span class="string">"default"</span>,               <span class="comment">--- 高脚鸟巢</span></span><br><span class="line">    tentacles=<span class="string">"default"</span>,               <span class="comment">--- 触手</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">--- Other</span></span><br><span class="line">    has_ocean=<span class="literal">true</span>,</span><br><span class="line">    keep_disconnected_tiles=<span class="literal">true</span>,</span><br><span class="line">    layout_mode=<span class="string">"LinkNodesByKeys"</span>,</span><br><span class="line">    no_joining_islands=<span class="literal">true</span>,</span><br><span class="line">    no_wormholes_to_disconnected_tiles=<span class="literal">true</span></span><br><span class="line">  },</span><br><span class="line">  random_set_pieces={r</span><br><span class="line">    <span class="string">"Sculptures_2"</span>,</span><br><span class="line">    <span class="string">"Sculptures_3"</span>,</span><br><span class="line">    <span class="string">"Sculptures_4"</span>,</span><br><span class="line">    <span class="string">"Sculptures_5"</span>,</span><br><span class="line">    <span class="string">"Chessy_1"</span>,      <span class="comment">-- 2发条骑士，2齿轮，长矛，棋盘地皮</span></span><br><span class="line">    <span class="string">"Chessy_2"</span>,      <span class="comment">-- 2发条主教，棋盘、牛毛地皮，Maxwell 雕像，(2齿轮)</span></span><br><span class="line">    <span class="string">"Chessy_3"</span>,      <span class="comment">-- 发条战车，蜂蜜药膏，背包，棋盘、牛毛地皮</span></span><br><span class="line">    <span class="string">"Chessy_4"</span>,      <span class="comment">-- 发条战车，2大理石，鹤嘴锄，2大理石柱，1大理石树，棋盘、牛毛地皮，Maxwell 雕像</span></span><br><span class="line">    <span class="string">"Chessy_5"</span>,      <span class="comment">-- 1发条骑士，1发条主教，竖琴雕像，棋盘、牛毛地皮</span></span><br><span class="line">    <span class="string">"Chessy_6"</span>,      <span class="comment">-- 1发条骑士，1发条主教，棋盘、牛毛地皮</span></span><br><span class="line">    <span class="string">"Maxwell1"</span>,      <span class="comment">-- 1发条战车，3发条骑士，棋盘、牛毛地皮，4大理石柱，9大理石树，大量恶魔花</span></span><br><span class="line">    <span class="string">"Maxwell2"</span>,      <span class="comment">-- 1发条战车，4发条骑士，棋盘、牛毛地皮，8大理石树，Maxwell 雕像</span></span><br><span class="line">    <span class="string">"Maxwell3"</span>,      <span class="comment">-- 5发条骑士，棋盘、牛毛地皮，Maxwell 雕像</span></span><br><span class="line">    <span class="string">"Maxwell4"</span>,      <span class="comment">-- 棋盘、牛毛地皮，8大理石树，Maxwell 雕像</span></span><br><span class="line">    <span class="string">"Maxwell5"</span>,      <span class="comment">-- 1发条骑士，牛毛地皮，8竖琴雕像，Maxwell 雕像，少量恶魔花</span></span><br><span class="line">    <span class="string">"Maxwell6"</span>,      <span class="comment">-- 5大理石树，牛毛地皮</span></span><br><span class="line">    <span class="string">"Maxwell7"</span>,      <span class="comment">-- 2发条骑士，棋盘、牛毛地皮，4大理石树，Maxwell 雕像，少量恶魔花</span></span><br><span class="line">    <span class="string">"Warzone_1"</span>,</span><br><span class="line">    <span class="string">"Warzone_2"</span>,</span><br><span class="line">    <span class="string">"Warzone_3"</span></span><br><span class="line">  },</span><br><span class="line">  required_prefabs={ <span class="string">"multiplayer_portal"</span> },</span><br><span class="line">  <span class="comment">-- 必须包含的雕像种类，而非随机生成。这里指定必须生成完整的三棋子雕像</span></span><br><span class="line">  required_setpieces={ <span class="string">"Sculptures_1"</span> },</span><br><span class="line">  settings_desc=<span class="string">"The standard Don't Starve experience."</span>,</span><br><span class="line">  settings_id=<span class="string">"SURVIVAL_TOGETHER"</span>,</span><br><span class="line">  settings_name=<span class="string">"Standard Forest"</span>,</span><br><span class="line">  substitutes={  },</span><br><span class="line">  version=<span class="number">4</span>,</span><br><span class="line">  worldgen_desc=<span class="string">"The standard Don't Starve experience."</span>,</span><br><span class="line">  worldgen_id=<span class="string">"SURVIVAL_TOGETHER"</span>,</span><br><span class="line">  worldgen_name=<span class="string">"Standard Forest"</span></span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p>根目录下的<code>cluster.ini</code></p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">[GAMEPLAY]</span><br><span class="line">max_players = <span class="number">6</span>                    <span class="comment"># 最大游戏人数</span></span><br><span class="line">pvp = true                         <span class="comment"># 能不能攻击其他玩家，能不能给其他玩家喂屎</span></span><br><span class="line">game_mode = survival               <span class="comment"># 游戏模式，可选 survival, endless or wilderness，与玩家死亡后的负面影响有关</span></span><br><span class="line">pause_when_empty = false           <span class="comment"># 没人服务器暂停，刷天数必备</span></span><br><span class="line">vote_kick_enabled = false          <span class="comment"># 投票踢人</span></span><br><span class="line"></span><br><span class="line">[STEAM]</span><br><span class="line">steam_group_only = false           <span class="comment"># 只允许某 Steam 组的成员加入</span></span><br><span class="line">steam_group_id = <span class="number">0</span>                 <span class="comment"># 指定某个 Steam 组，填写组 ID</span></span><br><span class="line">steam_group_admins = false         <span class="comment"># 开启后，Steam 组的管理员拥有服务器的管理权限</span></span><br><span class="line"></span><br><span class="line">[NETWORK]</span><br><span class="line">cluster_description = ~            <span class="comment"># 游戏房间描述</span></span><br><span class="line">cluster_name = ~                   <span class="comment"># 游戏房间名称</span></span><br><span class="line">cluster_intention = social         <span class="comment"># 游戏偏好，可选 cooperative, competitive, social,  madness</span></span><br><span class="line">cluster_password =                 <span class="comment"># 游戏密码，不设置表示无密码</span></span><br><span class="line">offline_server = false             <span class="comment"># 是否离线服务器，只有局域网用户能加入，并且所有依赖于 Steam 的任何功能都无效，比如说饰品掉落</span></span><br><span class="line">tick_rate = <span class="number">15</span>                     <span class="comment"># 每秒通信次数，越高游戏体验越好，但是会加大服务器负担</span></span><br><span class="line">whitelist_slots = <span class="number">0</span>                <span class="comment"># 为白名单用户保留的游戏位</span></span><br><span class="line">lan_only_cluster = false           <span class="comment"># 局域网游戏</span></span><br><span class="line"></span><br><span class="line">[MISC]</span><br><span class="line">console_enabled = true             <span class="comment"># 是否开启控制台</span></span><br><span class="line">max_snapshots = <span class="number">6</span>                  <span class="comment"># 最大快照数，决定了可回滚的天数</span></span><br><span class="line"></span><br><span class="line">[SHARD]</span><br><span class="line">shard_enabled = true               <span class="comment"># 是否允许地上及洞穴互通，开启洞穴的话必须填true</span></span><br><span class="line">bind_ip = <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>                <span class="comment"># 服务器监听的地址，单服务器搭建填 127.0.0.1，双服务器搭建填0.0.0.0</span></span><br><span class="line">master_ip = <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>              <span class="comment"># 主世界服务器的 IP，单服务器搭建填127.0.0.1，双服务器搭建填写服务器的公网IP</span></span><br><span class="line">master_port = <span class="number">10889</span>                <span class="comment"># 监听 master 服务器的 UDP 端口</span></span><br><span class="line">cluster_key = supersecretkey       <span class="comment"># 游戏通讯密码，每台服务器必须相同</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>地上(洞穴)的server.ini</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[NETWORK]</span><br><span class="line">server_port = <span class="number">11000</span>                <span class="comment"># 监听的 UDP 端口，只能介于 10998 - 11018 之间，确保每个实例都不相同</span></span><br><span class="line"></span><br><span class="line">[SHARD]</span><br><span class="line">is_master = true                  <span class="comment"># 是否是 master 服务器，只能存在一个 true，其他全是 false</span></span><br><span class="line"></span><br><span class="line">[STEAM]</span><br><span class="line">master_server_port = <span class="number">27018</span>        <span class="comment"># Steam 用的端口，确保每个实例都不相同</span></span><br><span class="line">authentication_port = <span class="number">8768</span>        <span class="comment"># Steam 用的端口，确保每个实例都不相同</span></span><br><span class="line"></span><br><span class="line">[ACCOUNT]</span><br><span class="line">encode_user_path = true</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这些配置文件可根据自己的需求设置。最后执行脚本启动服务即可。</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line">cd ~/myDSTserver/bin</span><br><span class="line">screen -S "Don't Starve Together Server" ./dontstarve_dedicated_server_nullrenderer</span><br></pre></td></tr></tbody></table></figure>
+
+<p>ctrl a ,ctrl d后台运行，screen -r 恢复</p>
+<h1 id="0x02-添加服务器mod"><a href="#0x02-添加服务器mod" class="headerlink" title="0x02 添加服务器mod"></a>0x02 添加服务器mod</h1><p>无mod，不饥荒。在本地目录可以找到自己的模组，可以先创建世界后，导出配置文件并上传到服务器。这里就不放了，还有更简单的方法，在服务器的DST的mods目录下，有个dedicated_server_mods_setup.lua文件，在里面写入想要更新的mod即可，很方便。下载并安装这些 Mod（如果没有下载的话），并更新到最新版本。</p>
+<p><img src="https://files.catbox.moe/j350t6.png" alt="image-20221217190311944"></p>
+<p>接着启动mod，在<code>~/.klei/DoNotStarveTogether/Cluster_1/Master</code>目录下，编辑 <code>modoverrides.lua</code> 文件保存即可。格式如下：</p>
+<figure class="highlight lua"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> {</span><br><span class="line">  [<span class="string">"workshop-797304209"</span>]={ configuration_options={  }, enabled=<span class="literal">true</span> },</span><br><span class="line">  [<span class="string">"workshop-806984122"</span>]={ configuration_options={  }, enabled=<span class="literal">true</span> },</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>饥荒的模组很多，推荐几个比较常用的，服务器模组有显示食物补充值，显示地图队友位置，显示野怪血量，原地复活。</p>
+<p>客户端模组有禁止弹出模组信息和Combined Status：显示状态信息，非常实用！</p>
+<p><img src="https://files.catbox.moe/1175wj.png" alt="image-20221217190543967"></p>
+<h1 id="0x03-添加管理员"><a href="#0x03-添加管理员" class="headerlink" title="0x03 添加管理员"></a>0x03 添加管理员</h1><p>饥荒的管理员会有特殊操作权限，如果创建者不在而你因为特殊原因要回滚世界 ，就需要被赋予管理员权限才能执行回退世界的操作。</p>
+<p>1、首先获取自己的KLEI用户ID，进游戏之后点“账户”即可查看</p>
+<p>2、在服务器存档下新建一个文本文档，命名为<code>adminlist.txt</code>，将你的KLEI<code>用户ID</code>写进去就可以，保存退出。</p>
+<h1 id="0x04-其他"><a href="#0x04-其他" class="headerlink" title="0x04 其他"></a>0x04 其他</h1><p>运行 <code>dontstarve_dedicated_server_nullrenderer</code>，还有其他的启动参数。主要参数如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">-persistent_storage_root</td>
+<td>指定存档根目录的位置，必须是绝对目录。默认为 <code>~/.klei</code>。</td>
+</tr>
+<tr>
+<td align="left">-conf_dir</td>
+<td>指定配置文件的目录名。默认为 <code>DoNotStarveTogether</code>，和上一个参数拼在一起就是你存档的完整位置了，默认为 <code>~/.klei/DoNotStarveTogether</code>，所有的存档都在这里。</td>
+</tr>
+<tr>
+<td align="left">-cluster</td>
+<td>指定启动的世界，默认为 <code>Cluster_1</code>。服务端启动时会去找 <code>&lt;persistent_storage_root&gt;/&lt;conf_dir&gt;/&lt;cluster&gt;</code> 目录下的 <code>cluster.ini</code> 这个配置文件，你的世界名称、密码、游戏模式之类的都是在这里配置的（网上有些教程里用的 <code>setting.ini</code>，那个是旧版的）。同理，你的存档文件夹也可以不使用类似 <code>Cluster_X</code> 的名字，改成其他什么乱七八糟的都可以，只要启动时指定本参数就行了。</td>
+</tr>
+<tr>
+<td align="left">-shard</td>
+<td>默认为 <code>Master</code>，启动时将此参数指定为 <code>Cave</code> 就可以启动洞穴服务器。</td>
+</tr>
+</tbody></table>
+<p>如果游戏更新后，服务器DST不更新也无法运行，更新步骤如下：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cd ~/steamcmd</span><br><span class="line">./steamcmd.sh</span><br><span class="line">force_install_dir ../myDSTserver </span><br><span class="line">login anonymous </span><br><span class="line">app_update 343050 validate </span><br><span class="line">quit</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="0x05-小结"><a href="#0x05-小结" class="headerlink" title="0x05 小结"></a>0x05 小结</h1><p>这样就可以正常玩耍了，总体还是比较简单的，不需要太多的操作。后期如果还有要改进的地方再继续来更新。</p>
+<p><img src="https://files.catbox.moe/814xew.png" alt="image-20221227195422183"></p>
+
+        </div>
+
+
+            <section class="post-copyright">
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://ld1ng.github.io/2022/12/16/DST_Server/">https://ld1ng.github.io/2022/12/16/DST_Server/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+		
+		<section class="post-tags">
+		<div>
+		<span>Tags: </span>
+		<span class="tag">
+		
+		
+		<!-- <a href="/tags/DST/"># DST</a> -->
+		<a href="/tags/DST/">🏷️DST</a>
+		
+		<!-- <a href="/tags/GAME/"># GAME</a> -->
+		<a href="/tags/GAME/">🏷️GAME</a>
+		
+		
+		</span>
+		</div>
+		<!-- 支持一下的按钮与图片 -->
+		<div class="reward" id="reward">
+		<div class="sponser">
+		<div class="sponser_btn">☕Buy Me a Coffee</div>
+		<div class="sponser_img">
+		<div class="sponser_container">
+	
+		<div class="alipay">
+		<span class="sponser_alipay_title"></span>
+		<div>
+		<img class="sponser_alipay" src="/image/Wechat.jpg">
+		</div>
+		</div>
+	
+		</div>
+		</div>
+		</div>
+		</div>
+		<div>
+		<a href="javascript:window.history.back();">Back</a>
+		<span>· </span>
+		<a href="/">Home</a>
+		</div>
+		</section>
+		
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2024/06/03/weibo/">某博协议逆向</a>
+            
+            
+            <a class="next" rel="next" href="/2022/12/14/Match22/">PWN记录_2022</a>
+            
+        </section>
+		
+
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+      var gitalk = new Gitalk({
+        clientID: '458a98372426d92cae5a',
+        clientSecret: '91e874ad339e3ffbd20d52f4d247739c8e722a72',
+        repo: 'ld1ng.github.io',
+        owner: 'Ld1ng',
+        admin: 'Ld1ng',
+        id: md5(location.pathname),
+        labels: 'Gitalk'.split(',').filter(l => l),
+        perPage: 10,
+        pagerDirection: 'last',
+        createIssueManually: true,
+        distractionFreeMode: false
+      })
+      gitalk.render('gitalk-container')
+</script>
+
+
+    </article>
+</div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>Ld1ng🍕 © 2020 - 2026 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a><a></a>
+		
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<span class="site-pv">
+    | Visitors: 
+    <i class="busuanzi-value" id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></i>
+</span>
+
+
+</span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+<!-- 搜索功能 -->
+<!-- Chic/layout.ejs -->
+<div id="u-search">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="container">
+                <form id="u-search-modal-form" class="u-search-modal-form">
+                    <button type="submit" class="form-submit-btn">
+                        <img src="/image/search.png" class="search-btn-img" />
+                    </button>
+                    <input placeholder="搜索内容..." class="form-input" id="modal-form-input">
+                </form>
+                <a class="modal-close">x</a>
+            </div>
+            <div class="search-loading">
+                <div class="search-loading-bar"></div>
+            </div>
+        </div>
+        <div class="modal-body">
+        </div>
+    </div>
+    <div class="modal-overlay"></div>
+</div>
+
+</html>

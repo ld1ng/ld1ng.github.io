@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="google-site-verification" content="CXc5oa8hp0JI3nqiGKAoIQDPqSR7lhLCgNr11-7-XAA" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Ld1ng">
+
+
+
+    <meta name="description" content="Ld1ng's Blog">
+
+
+    <meta name="keywords" content="CTF,code,CUMT">
+
+
+<title>学习PLT表GOT表 | Ld1ng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <link rel="stylesheet" href="/fonts/font_oytys7w58zn/iconfont.css">
+    
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+    <script src="/js/jquery-3.7.0.min.js"></script>
+    
+
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<!-- 搜索的部分 -->
+
+
+
+    <script>
+    // function searchToggle() {
+    //     const width = $(document.body).width()
+    //     if(width > 479) {
+    //         return;
+    //     }
+    //     const search = $('.search');
+    //     const searchForm = $('.form-search')
+
+    //     if(!search.hasClass("mobile-search")) {
+    //         search.addClass("mobile-search");
+    //     } else {
+    //         search.removeClass("mobile-search");
+    //     } 
+    // }
+
+    function searchToggle() {
+        const width = $(document.body).width()
+        if(width > 479) {
+            return;
+        }
+        const search = $('.search');
+        const searchForm = $('.form-search');
+        const menuToggle = $('.menu-toggle');
+        const title = $('.navbar-header-title ');
+
+        if(!search.hasClass("mobile-search")) {
+            search.addClass("mobile-search");
+            menuToggle.addClass("open-search")
+            title.addClass("mobile-title-hidden")
+        } else {
+            search.removeClass("mobile-search");
+            menuToggle.removeClass("open-search")
+            // title.css({visibility: 'visible'})
+            title.removeClass("mobile-title-hidden")
+        } 
+    }
+
+
+
+    function search(searchInputEl, formEl, flag) {
+        const path = "/" + "search.json"; // 可以在public 下查看这个search.json
+        $(formEl).submit(function(e){
+            e.preventDefault();
+            let target = null
+            if(searchInputEl == null) {
+                const screenWidth = $(document.body).width();
+                target = screenWidth > 479 ? $('#pc-search-input') : $('#mobile-search-input');
+                console.log(target);
+            } else {
+                target = $(searchInputEl)
+            }
+
+            if(!flag && target.val() === '') {
+                return ;
+            }
+
+            $("#u-search").fadeIn(500, function() {
+                $("body > .wrapper").addClass("modal-active");
+
+                $.ajax({
+                    url: path,
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $input = target.val();
+                        $(".form-input").val($input);
+                        const loadingBar = $('.search-loading-bar') 
+                        loadingBar.css({
+                            width:'100%',
+                            display: 'block'
+                        });
+                    },
+                    success: function( datas ) {
+                        console.log(datas);
+                        const $resultPanel = $(".modal-body")[0];
+                        let str = `<ul class="modal-results">`;
+                        var keywords = $(".form-input").val().trim().toLowerCase().split(/[\s\-]+/);
+                        $resultPanel.innerHTML = "";
+                        let hasResult = false
+                        let text = `<div class="no-result">找不到与关键词相关的内容....</div>`;
+
+                        if ($(".form-input").val().trim().length <= 0) {
+                            // 没有结果
+                            $resultPanel.innerHTML = text;
+                            return;
+                        }
+                        datas.forEach(function (data, index) {
+                            var isMatch = true;
+                            if (!data.title || data.title.trim() === '') {
+                                data.title = "Untitled";
+                            }
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content && data.content.trim().replace(/<[^>]+>/g, "").toLowerCase() || '';
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty contents
+                            if (data_content !== '') {
+                                keywords.forEach(function (keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        hasResult = true
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            } else {
+                                isMatch = false;
+                            }
+                            // show search results
+                            if (isMatch) {
+                                str += `<li class='result-item'><a href='${data_url}' class='result-item-detail'> <span class="title">${data_title}</span>`;
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 200 characters
+                                    var start = first_occur - 40;
+                                    var end = first_occur + 160;
+
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+
+                                    if (start == 0) {
+                                        end = 200;
+                                    }
+
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+
+                                    var match_content = content.substring(start, end);
+
+                                    // highlight all keywords
+                                    keywords.forEach(function (keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, `<em class="search-keyword">${keyword}</em>`);
+                                    });
+
+                                    str += `<span class="content"> ${match_content} ...</span></a>`;
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        if(hasResult) {
+                            $resultPanel.innerHTML = str;
+                        } else {
+                            $resultPanel.innerHTML = text;
+                        }
+
+                    },
+                    complete: function() {
+                        setTimeout(() => {
+                                const loadingBar = $('.search-loading-bar') 
+                                loadingBar.css({
+                                    width:'0%',
+                                    display: 'none'
+                                });
+                        }, 300)
+                    }
+                });
+            })
+
+        });
+    }
+
+    $(document).ready(function() {
+        $('.modal-close').click(function () { 
+            $("#u-search").fadeOut();
+            $("body > .wrapper").removeClass("modal-active")
+        })
+
+        $('.modal-overlay').click(function() {
+            $("#u-search").fadeOut();
+            $("body > .wrapper").removeClass("modal-active")
+        })
+        search(null, ".form-search", false)
+        search("#u-search-modal-form .form-input", ".u-search-modal-form", true)
+    })
+</script>
+
+<meta name="generator" content="Hexo 6.0.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/"><i class="iconfont icon-home1"></i> Home</a></div>
+            <div class="menu navbar-right">
+                <!-- 这里表示的是pc端搜索框 -->
+				
+				
+    <div class="search ">
+        <div class="search-btn" onClick="searchToggle()">
+            <img src="/image/search.png" class="search-btn-img" />
+        </div>
+        <form class="form-search">
+            <input class="input" placeholder="Searching" autocomplete="off" id="pc-search-input"/>
+        </form>
+    </div>
+
+				
+				
+				  
+				  
+				  <a class="menu-item" href="/archives">
+					<i class="iconfont icon-navicon-wzgl"></i>
+					Posts
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/categories">
+					<i class="iconfont icon-fenlei"></i>
+					Categories
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/tags">
+					<i class="iconfont icon-tag1"></i>
+					Tags
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/links">
+					<i class="iconfont icon-link1"></i>
+					Links
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/about">
+					<i class="iconfont icon-diandengpao"></i>
+					About
+				  </a>
+				
+				<input id="switch_default" type="checkbox" class="switch_default">
+				<label for="switch_default" class="toggleBtn"></label>
+        </div>
+    </div>
+</nav>
+
+    
+<nav class="navbar-mobile" id="nav-mobile">
+    <div class="container">
+        <div class="navbar-header">
+            <div>
+                <a href="/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+            </div>
+            <div class="navbar-mobile-right">
+                
+                
+    <div class="search ">
+        <div class="search-btn" onClick="searchToggle()">
+            <img src="/image/search.png" class="search-btn-img" />
+        </div>
+        <form class="form-search">
+            <input class="input" placeholder="Searching" autocomplete="off" id="mobile-search-input"/>
+        </form>
+    </div>
+
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; 目录</div>
+            </div>
+
+        </div>
+        <div class="menu" id="mobile-menu">
+            
+            <a class="menu-item" href="/archives">Posts</a>
+            
+            <a class="menu-item" href="/categories">Categories</a>
+            
+            <a class="menu-item" href="/tags">Tags</a>
+            
+            <a class="menu-item" href="/links">Links</a>
+            
+            <a class="menu-item" href="/about">About</a>
+            
+        </div>
+    </div>
+</nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">学习PLT表GOT表</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Ld1ng</a>
+                    
+					&nbsp;
+                    
+                        <span class="post-time">
+                        Date: <a href="#">June 16, 2020</a>
+                        </span>
+                    
+					&nbsp;
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/LEARNING/">LEARNING</a>
+                            
+                        </span>
+                    
+					<br>
+                     
+    <span class="post-count">
+Words:
+    <a href="">1.2k</a>  
+    </span>
+
+&nbsp;
+
+    <span class="post-count">
+Time:
+    <a href="">4min</a>  
+    </span>
+
+&nbsp;
+<span id="busuanzi_container_page_pv">
+  Views: <a href=""><span id="busuanzi_value_page_pv"></a></span></a>  
+</span>
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="对PLT表和GOT表的浅显理解"><a href="#对PLT表和GOT表的浅显理解" class="headerlink" title="对PLT表和GOT表的浅显理解"></a>对PLT表和GOT表的浅显理解</h1><p>之前做PWN题的时候了解过一点plt表和got表——plt表可跳转到got表，got表里存放着函数的真实地址</p>
+<p>今天巧合在网上翻到一篇用gdb调试plt表和got表关系的博客，这才对它有了进一步的了解。</p>
+<p>GOT（全局偏移表）和 PLT(过程链接表)，是两个表之间的交互才使得函数实现延迟绑定，通过这种方法将过程地址的绑定推迟到第一次调用该函数。</p>
+<h3 id="GOT表构成"><a href="#GOT表构成" class="headerlink" title="GOT表构成"></a>GOT表构成</h3><p>为了实现延迟绑定，GOT的头三条表目是特殊的：</p>
+<blockquote>
+<p>GOT[0]包含.dynamic段的地址，.dynamic段包含了动态链接器用来绑定过程地址的信息，比如符号的位置和重定位信息;</p>
+<p>GOT[1]包含动态链接器的标识;</p>
+<p>GOT[2]包含动态链接器的延迟绑定代码的入口点。</p>
+<p>GOT的其他表目为本模块要引用的一个全局变量或函数的地址。</p>
+</blockquote>
+<h3 id="PLT表构成"><a href="#PLT表构成" class="headerlink" title="PLT表构成"></a>PLT表构成</h3><p>PLT是一个以16字节(32位平台中)表目的数组形式出现的代码序列。就像GOT表，PLT表并不是每个表项都用于存放“函数地址“，其中PLT[0]是一个特殊的表目，它跳转到动态链接器中执行，换句话说，PLT[0]是一个函数，这个函数的作用是通过GOT[1]和GOT[2]来正确绑定一个函数的正式地址到GOT表中来。</p>
+<h3 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h3><p>每个定义在共享库中并被本模块调用的函数在PLT中都有一个表目，从PLT[1]开始．模块对函数的调用会转到相应PLT表目中执行，这些表目由三条指令构成。</p>
+<blockquote>
+<p>第一条指令是跳转到相应的GOT存储的地址值中．<br>第二条指令把函数相应的ID压入栈中，<br>第三条指令跳转到PLT[0]中调用动态链接器解析函数地址，并把函数真正地址存入相应的GOT表目中。</p>
+</blockquote>
+<p>被调用函数GOT相应表目中存储的最初地址为相应PLT表目中第二条指令的地址值，函数第一次被调用后．GOT表目中的值就为函数的真正地址。</p>
+<p>因此，第一次调用函数时开销比较大．但是其后的每次调用都只会花费一条指令和一个间接的存储器引用。</p>
+<hr>
+<p>所以第一次函数调用过程如下：</p>
+<blockquote>
+<p>1.调用函数找到plt表</p>
+<p>2.jmp 相应的got表</p>
+<p>3.push got表的下标//相应的标识</p>
+<p>4.jmp plt[0]</p>
+<p>5.plt[0]的指令转向got[2],进入动态连接器入口</p>
+<p>//由于GOT[2]中存储的是动态链接器的入口地址，所以通过GOT[1]中的数据作为参数，跳转到GOT[2]所对应的函数入口地址，这个动态链接器会将一个函数的真正地址绑定到相应的GOT[x]中</p>
+<p>6.将真正的函数地址覆盖到got表中</p>
+</blockquote>
+<p>其中2、3、4步（jmp、push、jmp）是第一次调用某函数时进行的三步操作，是实现延时绑定机制的关键</p>
+<p>可以理解为这种状态：</p>
+<p><img src="https://img-blog.csdnimg.cn/20190831142407693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsZXhZb3VuZzI4,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><img src="https://s2.loli.net/2022/04/10/1RqExVZ8Dl9bQsp.png" alt="image-20220410004226564"></p>
+<p>最后借用一下大佬的动图：</p>
+<p><img src="https://img-blog.csdnimg.cn/20200208160601515.gif" alt="在这里插入图片描述"></p>
+<hr>
+<p>后期补充：</p>
+<p>其实具体实现比想象的还要复杂一下，下面是动态链接的过程，也是dl_runtime_resolve需要掌握的</p>
+<ol>
+<li>dl_runtime_resolve 需要两个参数，一个是 reloc_arg，就是函数自己的 plt 表项 push 的内容，一个是link_map，这个是公共 plt 表项 push 进栈的，通过它可以找到.dynamic的地址</li>
+<li>而 .dynamic 可以找到 .dynstr、.dynsym、.rel.plt 的这些东西的地址</li>
+<li>.rel.plt 的地址加上 reloc_arg 可以得到函数重定位表项 Elf32_Rel 的指针，这个指针对应的里面放着 r_offset、r_info</li>
+<li>将 r_info&gt;&gt;8 得到的就是 .dynsym 的下标，这个下标的内容就是 name_offset</li>
+<li>.dynstr+name_offset 得到的就是 st_name，而 st_name 存放的就是要调用函数的函数名</li>
+<li>在动态链接库里面找这个函数的地址，赋值给 *rel-&gt;r_offset，也就是 GOT 表就完成了一次函数的动态链接</li>
+</ol>
+<p><img src="https://i.loli.net/2021/08/22/xzyGeFWMm27wNO4.png" alt="image-20210822212347908"></p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> {</span></span><br><span class="line">    Elf32_Addr r_offset;    <span class="comment">// 对于可执行文件，此值为虚拟地址</span></span><br><span class="line">    Elf32_Word r_info;      <span class="comment">// 符号表索引</span></span><br><span class="line">} Elf32_Rel;</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>.rel.plt</code>节是用于函数重定位</p>
+<p><code>.rel.dyn</code>节是用于变量重定位</p>
+<p><code>.got</code>节保存全局变量偏移表</p>
+<p><code>.got.plt</code>节保存全局函数偏移表，对应着<code>Elf32_Rel</code>结构中<code>r_offset</code>的值</p>
+<p><code>.dynsym</code>节包含了动态链接符号表</p>
+<p><code>.dynstr</code>节包含了动态链接的字符串</p>
+<p><code>.plt</code>节是过程链接表</p>
+
+        </div>
+
+
+            <section class="post-copyright">
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://ld1ng.github.io/2020/06/16/GOTPLT/">https://ld1ng.github.io/2020/06/16/GOTPLT/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+		
+		<section class="post-tags">
+		<div>
+		<span>Tags: </span>
+		<span class="tag">
+		
+		
+		<!-- <a href="/tags/KNOWLEDGE/"># KNOWLEDGE</a> -->
+		<a href="/tags/KNOWLEDGE/">🏷️KNOWLEDGE</a>
+		
+		
+		</span>
+		</div>
+		<!-- 支持一下的按钮与图片 -->
+		<div class="reward" id="reward">
+		<div class="sponser">
+		<div class="sponser_btn">☕Buy Me a Coffee</div>
+		<div class="sponser_img">
+		<div class="sponser_container">
+	
+		<div class="alipay">
+		<span class="sponser_alipay_title"></span>
+		<div>
+		<img class="sponser_alipay" src="/image/Wechat.jpg">
+		</div>
+		</div>
+	
+		</div>
+		</div>
+		</div>
+		</div>
+		<div>
+		<a href="javascript:window.history.back();">Back</a>
+		<span>· </span>
+		<a href="/">Home</a>
+		</div>
+		</section>
+		
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/06/20/Graduation/">观毕业季有感</a>
+            
+            
+            <a class="next" rel="next" href="/2020/06/15/Microcomputer/">微机实验记录</a>
+            
+        </section>
+		
+
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+      var gitalk = new Gitalk({
+        clientID: '458a98372426d92cae5a',
+        clientSecret: '91e874ad339e3ffbd20d52f4d247739c8e722a72',
+        repo: 'ld1ng.github.io',
+        owner: 'Ld1ng',
+        admin: 'Ld1ng',
+        id: md5(location.pathname),
+        labels: 'Gitalk'.split(',').filter(l => l),
+        perPage: 10,
+        pagerDirection: 'last',
+        createIssueManually: true,
+        distractionFreeMode: false
+      })
+      gitalk.render('gitalk-container')
+</script>
+
+
+    </article>
+</div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>Ld1ng🍕 © 2020 - 2026 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a><a></a>
+		
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<span class="site-pv">
+    | Visitors: 
+    <i class="busuanzi-value" id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></i>
+</span>
+
+
+</span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+<!-- 搜索功能 -->
+<!-- Chic/layout.ejs -->
+<div id="u-search">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="container">
+                <form id="u-search-modal-form" class="u-search-modal-form">
+                    <button type="submit" class="form-submit-btn">
+                        <img src="/image/search.png" class="search-btn-img" />
+                    </button>
+                    <input placeholder="搜索内容..." class="form-input" id="modal-form-input">
+                </form>
+                <a class="modal-close">x</a>
+            </div>
+            <div class="search-loading">
+                <div class="search-loading-bar"></div>
+            </div>
+        </div>
+        <div class="modal-body">
+        </div>
+    </div>
+    <div class="modal-overlay"></div>
+</div>
+
+</html>

